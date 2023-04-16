@@ -4,11 +4,12 @@ using Sirenix.OdinInspector;
 
 public class InputHandler : Singleton<InputHandler>
 {
-    [SerializeField]
+    [HorizontalGroup("Split", Title = "Swipe Properties", Width = 0.5f)]
+    [SerializeField, BoxGroup("Split/Min Swipe Distance"), HideLabel]
     private float minSwipeDistance = 0.5f;
 
-    [SerializeField, PropertyRange(0f,1f)]
-    private float directionThreshold = 0.9f;
+    [SerializeField, PropertyRange(0f, 1f), BoxGroup("Split/Direction Threshold"), HideLabel]
+    private float directionThreshold = 0.8f;
 
     private InputManager _inputManager;
 
@@ -18,13 +19,20 @@ public class InputHandler : Singleton<InputHandler>
     private void Awake()
     {
         _inputManager = InputManager.Instance;
-        _camera = Camera.main;
+
+        _camera = CameraController.Instance.MainCamera;
     }
 
+    private void StartTouch(Vector2 fingerPosition)
+    {
+        Vector3 fingerPos = Utils.ScreenToWorldPosition(_camera, fingerPosition);
+
+        Debug.Log($"{nameof(StartTouch)} in {fingerPos}");
+    }
 
     private void Tap(Vector3 worldFingerPosition)
     {
-        Debug.Log($"{nameof(Tap)} touch in {worldFingerPosition}");
+        Debug.Log($"{nameof(Tap)} in {worldFingerPosition}");
     }
 
 
@@ -32,11 +40,11 @@ public class InputHandler : Singleton<InputHandler>
     {
         Vector3 fingerPos = Utils.ScreenToWorldPosition(_camera, fingerPosition);
 
-        Debug.Log($"{nameof(Hold)} touch in {fingerPos}");
+        Debug.Log($"{nameof(Hold)} in {fingerPos}");
     }
 
 
-    private void Swipe(Vector2 startPosition, Vector2 endPosition)
+    private void Swipe(Vector2 startPosition, Vector2 endPosition, float timeDuration)
     {
         Vector3 startPos = Utils.ScreenToWorldPosition(_camera, startPosition);
 
@@ -44,9 +52,13 @@ public class InputHandler : Singleton<InputHandler>
 
         float distance = Vector3.Distance(startPos, endPos);
 
+        float speed = distance / timeDuration;
+
+        Debug.LogWarning(timeDuration + " | " + speed);
+
         if (distance < minSwipeDistance)
         {
-            Tap(startPosition);
+            Tap(startPos);
 
             return;
         }
@@ -57,28 +69,32 @@ public class InputHandler : Singleton<InputHandler>
 
         Vector2 direction2D = new Vector2(direction.x, direction.y).normalized;
 
-        SwipeDirection(direction2D);
+        SwipeDirection(direction2D, speed, timeDuration);
     }
 
 
-    private void SwipeDirection(Vector2 direction)
+    private void SwipeDirection(Vector2 direction, float speed, float timeDuration)
     {
-        if (Vector2.Dot(Vector2.up, direction) > directionThreshold)
+        if (Vector2.Dot(Vector2.up, direction) > directionThreshold ||
+            Vector2.Dot(Vector2.down, direction) > directionThreshold)
         {
-            Debug.Log("Swipe Up");
+            Debug.Log("Swipe " + direction + " | " + speed);
+            
+            CameraController.Instance.Move(direction.y * speed, timeDuration);
         }
-        else if (Vector2.Dot(Vector2.down, direction) > directionThreshold)
-        {
-            Debug.Log("Swipe Down");
-        }
-        else if (Vector2.Dot(Vector2.left, direction) > directionThreshold)
-        {
-            Debug.Log("Swipe Left");
-        }
-        else if (Vector2.Dot(Vector2.right, direction) > directionThreshold)
-        {
-            Debug.Log("Swipe Right");
-        }
+        // else if (Vector2.Dot(Vector2.down, direction) > directionThreshold)
+        // {
+        //     Debug.Log("Swipe Down " + direction + " | " + duration);
+        // }
+        // we don't use horizontal gestures
+        // else if (Vector2.Dot(Vector2.left, direction) > directionThreshold)
+        // {
+        //     Debug.Log("Swipe Left");
+        // }
+        // else if (Vector2.Dot(Vector2.right, direction) > directionThreshold)
+        // {
+        //     Debug.Log("Swipe Right");
+        //}
     }
 
 
@@ -86,6 +102,7 @@ public class InputHandler : Singleton<InputHandler>
 
     private void OnEnable()
     {
+        _inputManager.OnTouchStarted += StartTouch;
         _inputManager.OnHoldDetected += Hold;
         _inputManager.OnTouchEnded += Swipe;
     }
@@ -93,6 +110,7 @@ public class InputHandler : Singleton<InputHandler>
 
     private void OnDisable()
     {
+        _inputManager.OnTouchStarted -= StartTouch;
         _inputManager.OnHoldDetected -= Hold;
         _inputManager.OnTouchEnded -= Swipe;
     }

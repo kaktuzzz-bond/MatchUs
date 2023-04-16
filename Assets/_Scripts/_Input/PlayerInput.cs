@@ -28,15 +28,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             ""id"": ""0a7b30af-5796-4535-9ff9-57edbbccf86c"",
             ""actions"": [
                 {
-                    ""name"": ""TouchInput"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""dc69a639-1f55-4383-b2d1-22057e5baad9"",
-                    ""expectedControlType"": ""Touch"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""TouchPosition"",
                     ""type"": ""PassThrough"",
                     ""id"": ""311cc857-efeb-49e7-b48b-17afd959ca4c"",
@@ -74,17 +65,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""9961d6e4-3a9a-44e5-9394-b0e51fa77615"",
-                    ""path"": ""<Touchscreen>/primaryTouch"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""TouchInput"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": """",
                     ""id"": ""9fd1aa5f-d949-417d-a547-f64f57c68d43"",
@@ -136,7 +116,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
 }");
         // Touch
         m_Touch = asset.FindActionMap("Touch", throwIfNotFound: true);
-        m_Touch_TouchInput = m_Touch.FindAction("TouchInput", throwIfNotFound: true);
         m_Touch_TouchPosition = m_Touch.FindAction("TouchPosition", throwIfNotFound: true);
         m_Touch_Press = m_Touch.FindAction("Press", throwIfNotFound: true);
         m_Touch_Tap = m_Touch.FindAction("Tap", throwIfNotFound: true);
@@ -202,7 +181,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     // Touch
     private readonly InputActionMap m_Touch;
     private List<ITouchActions> m_TouchActionsCallbackInterfaces = new List<ITouchActions>();
-    private readonly InputAction m_Touch_TouchInput;
     private readonly InputAction m_Touch_TouchPosition;
     private readonly InputAction m_Touch_Press;
     private readonly InputAction m_Touch_Tap;
@@ -211,7 +189,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     {
         private @PlayerInput m_Wrapper;
         public TouchActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @TouchInput => m_Wrapper.m_Touch_TouchInput;
         public InputAction @TouchPosition => m_Wrapper.m_Touch_TouchPosition;
         public InputAction @Press => m_Wrapper.m_Touch_Press;
         public InputAction @Tap => m_Wrapper.m_Touch_Tap;
@@ -225,9 +202,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_TouchActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_TouchActionsCallbackInterfaces.Add(instance);
-            @TouchInput.started += instance.OnTouchInput;
-            @TouchInput.performed += instance.OnTouchInput;
-            @TouchInput.canceled += instance.OnTouchInput;
             @TouchPosition.started += instance.OnTouchPosition;
             @TouchPosition.performed += instance.OnTouchPosition;
             @TouchPosition.canceled += instance.OnTouchPosition;
@@ -244,9 +218,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
 
         private void UnregisterCallbacks(ITouchActions instance)
         {
-            @TouchInput.started -= instance.OnTouchInput;
-            @TouchInput.performed -= instance.OnTouchInput;
-            @TouchInput.canceled -= instance.OnTouchInput;
             @TouchPosition.started -= instance.OnTouchPosition;
             @TouchPosition.performed -= instance.OnTouchPosition;
             @TouchPosition.canceled -= instance.OnTouchPosition;
@@ -278,7 +249,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     public TouchActions @Touch => new TouchActions(this);
     public interface ITouchActions
     {
-        void OnTouchInput(InputAction.CallbackContext context);
         void OnTouchPosition(InputAction.CallbackContext context);
         void OnPress(InputAction.CallbackContext context);
         void OnTap(InputAction.CallbackContext context);

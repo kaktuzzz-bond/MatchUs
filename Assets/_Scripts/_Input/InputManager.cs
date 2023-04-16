@@ -7,11 +7,12 @@ public class InputManager : Singleton<InputManager>
 {
     #region Events
 
-    public delegate void HoldCallback(Vector2 fingerPosition);
+    public delegate void TouchPointCallback(Vector2 fingerPosition);
 
-    public event HoldCallback OnHoldDetected;
+    public event TouchPointCallback OnHoldDetected;
 
-    public delegate void EndTouchCallback(Vector2 startPosition, Vector2 endPosition);
+    public event TouchPointCallback OnTouchStarted;
+    public delegate void EndTouchCallback(Vector2 startPosition, Vector2 endPosition, float timeDuration);
 
     public event EndTouchCallback OnTouchEnded;
 
@@ -21,7 +22,9 @@ public class InputManager : Singleton<InputManager>
 
     private Vector2 _startTouchPosition;
 
-    private bool _isHoldTriggered;
+    private float _startTime;
+
+    //private bool _isHoldTriggered;
 
 
     private void Awake()
@@ -32,25 +35,29 @@ public class InputManager : Singleton<InputManager>
 
     private void StartTouch(InputAction.CallbackContext context)
     {
-        if (_isHoldTriggered) _isHoldTriggered = false;
+        //if (_isHoldTriggered) _isHoldTriggered = false;
 
         _startTouchPosition = _input.Touch.TouchPosition.ReadValue<Vector2>();
+        _startTime = (float)context.startTime;
+        
+        OnTouchStarted?.Invoke(_startTouchPosition);
     }
 
 
     private void EndTouch(InputAction.CallbackContext context)
     {
-        if (_isHoldTriggered) return;
+        //if (_isHoldTriggered) return;
 
-        Vector2 endTouchPosition = _input.Touch.TouchPosition.ReadValue<Vector2>();
-
-        OnTouchEnded?.Invoke(_startTouchPosition, endTouchPosition);
+        OnTouchEnded?.Invoke(
+                startPosition: _startTouchPosition,
+                endPosition: _input.Touch.TouchPosition.ReadValue<Vector2>(),
+                timeDuration: (float)context.time - _startTime);
     }
 
 
     private void Hold(InputAction.CallbackContext context)
     {
-        _isHoldTriggered = true;
+        //_isHoldTriggered = true;
 
         StartCoroutine(HoldRoutine());
     }
