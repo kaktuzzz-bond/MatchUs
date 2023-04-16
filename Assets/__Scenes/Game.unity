@@ -216,8 +216,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1936172045}
-  - component: {fileID: 1936172044}
   - component: {fileID: 1936172046}
+  - component: {fileID: 1936172044}
   m_Layer: 0
   m_Name: Controllers
   m_TagString: Untagged
@@ -264,3 +264,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a384fa746264a669d41d16e2f03a0c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minSwipeDistance: 0.5
+  directionThreshold: 0.9

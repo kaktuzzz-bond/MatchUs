@@ -64,13 +64,10 @@ public class InputManager : Singleton<InputManager>
 
             OnHoldDetected?.Invoke(touchPosition);
 
-            Debug.Log("Hold");
-
             yield return null;
         }
     }
 
-    
 
     #region Enabel / Disable
 

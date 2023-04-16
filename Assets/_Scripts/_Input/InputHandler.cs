@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 public class InputHandler : Singleton<InputHandler>
 {
     [SerializeField]
     private float minSwipeDistance = 0.5f;
 
-    [SerializeField, Range(0, 1)]
+    [SerializeField, PropertyRange(0f,1f)]
     private float directionThreshold = 0.9f;
 
     private InputManager _inputManager;
