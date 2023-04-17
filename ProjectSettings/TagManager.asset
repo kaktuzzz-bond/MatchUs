@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Chip
+  - Tile
+  - Pointer
   layers:
   - Default
   - TransparentFX
@@ -38,6 +41,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 4255077335
+    locked: 0
+  - name: Pointers
+    uniqueID: 3322515365
+    locked: 0
+  - name: Chips
+    uniqueID: 2066452507
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

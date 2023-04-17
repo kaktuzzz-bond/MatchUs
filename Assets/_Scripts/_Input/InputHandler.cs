@@ -75,17 +75,16 @@ public class InputHandler : Singleton<InputHandler>
 
     private void SwipeDirection(Vector2 direction, float speed, float timeDuration)
     {
-        if (Vector2.Dot(Vector2.up, direction) > directionThreshold ||
-            Vector2.Dot(Vector2.down, direction) > directionThreshold)
+        if (!(Vector2.Dot(Vector2.up, direction) > directionThreshold) &&
+            !(Vector2.Dot(Vector2.down, direction) > directionThreshold))
         {
-            Debug.Log("Swipe " + direction + " | " + speed);
-            
-            CameraController.Instance.Move(direction.y * speed, timeDuration);
+            return;
         }
-        // else if (Vector2.Dot(Vector2.down, direction) > directionThreshold)
-        // {
-        //     Debug.Log("Swipe Down " + direction + " | " + duration);
-        // }
+
+        Debug.Log("Swipe " + direction + " | " + speed);
+            
+        CameraController.Instance.Move(direction.y * speed, timeDuration);
+        
         // we don't use horizontal gestures
         // else if (Vector2.Dot(Vector2.left, direction) > directionThreshold)
         // {
