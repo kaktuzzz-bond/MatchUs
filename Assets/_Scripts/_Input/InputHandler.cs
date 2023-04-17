@@ -20,7 +20,7 @@ public class InputHandler : Singleton<InputHandler>
     {
         _inputManager = InputManager.Instance;
 
-        _camera = CameraController.Instance.MainCamera;
+        _camera = Camera.main;
     }
 
     private void StartTouch(Vector2 fingerPosition)

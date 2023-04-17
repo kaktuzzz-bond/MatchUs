@@ -5,6 +5,8 @@ using Random = UnityEngine.Random;
 
 public class Board : Singleton<Board>
 {
+    public event Action OnTilesGenerated;
+
     [HorizontalGroup("Size", Title = "Board Settings", Width = 0.5f)]
     [SerializeField, BoxGroup("Size/Width"), HideLabel, ReadOnly]
     private int width = 9;
@@ -28,15 +30,19 @@ public class Board : Singleton<Board>
     [ShowInInspector, FoldoutGroup("Parents")]
     public Transform PointerParent { get; private set; }
 
-    [SerializeField, ColorPalette("Colors")]
+    [SerializeField, FoldoutGroup("Chips"), ColorPalette]
     private Color[] colorPallet;
 
-    [SerializeField]
+    [SerializeField, FoldoutGroup("Chips")]
     private Sprite[] shapePallet;
 
+    public int Width => width;
 
-    // [Button("Draw Board")]
-    // private void ButtonClicked() => DrawBoard(width, height);
+    public int Height => height;
+
+
+    [Button("Draw Board")]
+    private void ButtonClicked() => DrawBoard(width, height);
 
 
     private Transform[,] _tiles;
@@ -83,6 +89,8 @@ public class Board : Singleton<Board>
                 DrawDot(x, y);
             }
         }
+
+        OnTilesGenerated?.Invoke();
     }
 
 
@@ -102,10 +110,10 @@ public class Board : Singleton<Board>
 
         dot.name = "Dot";
 
-        if (!dot.TryGetComponent(out SpriteRenderer spriteRenderer)) return;
+        SpriteRenderer sr = dot.GetComponentInChildren<SpriteRenderer>();
 
         int index = Random.Range(0, colorPallet.Length);
 
-        spriteRenderer.color = GetColor(index);
+        sr.color = GetColor(index);
     }
 }
