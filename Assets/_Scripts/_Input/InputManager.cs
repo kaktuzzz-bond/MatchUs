@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,58 +9,70 @@ public class InputManager : Singleton<InputManager>
 {
     #region Events
 
-    public delegate void TouchPointCallback(Vector2 fingerPosition);
+    public delegate void ScreenTouchedCallback(Vector3 tapPosition);
+
+    public event ScreenTouchedCallback OnTouchStarted;
+
+    public event ScreenTouchedCallback OnTapDetected;
+
+    public delegate void SwipeDetectedCallback(float tweenEndValue, float tweenDuration);
+
+    public event SwipeDetectedCallback OnSwipeDetected;
+
+    public delegate void TouchPointCallback(
+            Vector3 startPosition,
+            Vector3 endPosition,
+            float startTime,
+            float endTime);
 
     public event TouchPointCallback OnHoldDetected;
 
-    public event TouchPointCallback OnTouchStarted;
-    public delegate void EndTouchCallback(Vector2 startPosition, Vector2 endPosition, float timeDuration);
-
-    public event EndTouchCallback OnTouchEnded;
-
     #endregion
+
+    [HorizontalGroup("Split", Title = "Swipe Properties", Width = 0.5f)]
+    [SerializeField, BoxGroup("Split/Min Swipe Distance"), HideLabel]
+    private float minSwipeDistance = 0.5f;
+
+    [SerializeField, PropertyRange(0f, 1f), BoxGroup("Split/Direction Threshold"), HideLabel]
+    private float directionThreshold = 0.8f;
 
     private PlayerInput _input;
 
-    private Vector2 _startTouchPosition;
+    private Camera _camera;
 
-    private float _startTime;
+    private Vector3 _startTouchPosition;
 
-    //private bool _isHoldTriggered;
+    private Vector3 _endTouchPosition;
+
+    private float _startTouchTime;
+
+    private float _endTouchTime;
+
+    private Vector3 _holdOffset;
 
 
     private void Awake()
     {
         _input = new PlayerInput();
+
+        _camera = Camera.main;
     }
 
 
     private void StartTouch(InputAction.CallbackContext context)
     {
-        //if (_isHoldTriggered) _isHoldTriggered = false;
+        Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
 
-        _startTouchPosition = _input.Touch.TouchPosition.ReadValue<Vector2>();
-        _startTime = (float)context.startTime;
-        
+        _startTouchPosition = Utils.ScreenToWorldPosition(_camera, touch);
+
+        _startTouchTime = (float)context.startTime;
+
         OnTouchStarted?.Invoke(_startTouchPosition);
-    }
-
-
-    private void EndTouch(InputAction.CallbackContext context)
-    {
-        //if (_isHoldTriggered) return;
-
-        OnTouchEnded?.Invoke(
-                startPosition: _startTouchPosition,
-                endPosition: _input.Touch.TouchPosition.ReadValue<Vector2>(),
-                timeDuration: (float)context.time - _startTime);
     }
 
 
     private void Hold(InputAction.CallbackContext context)
     {
-        //_isHoldTriggered = true;
-
         StartCoroutine(HoldRoutine());
     }
 
@@ -67,12 +81,75 @@ public class InputManager : Singleton<InputManager>
     {
         while (_input.Touch.Press.ReadValue<float>() != 0f)
         {
-            Vector2 touchPosition = _input.Touch.TouchPosition.ReadValue<Vector2>();
+            Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
 
-            OnHoldDetected?.Invoke(touchPosition);
+            Vector3 touchPos = Utils.ScreenToWorldPosition(_camera, touch);
+
+            _holdOffset = touchPos - _startTouchPosition;
+
+            //todo Handle hold touch
 
             yield return null;
         }
+    }
+
+
+    private void EndTouch(InputAction.CallbackContext context)
+    {
+        Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
+
+        _endTouchPosition = Utils.ScreenToWorldPosition(_camera, touch);
+
+        _endTouchTime = (float)context.time;
+
+        float distance = Vector3.Distance(_startTouchPosition, _endTouchPosition);
+
+        if (CheckForTap(distance))
+        {
+            return;
+        }
+
+        DoSwipe(distance);
+    }
+
+
+    private bool CheckForTap(float distance)
+    {
+        if (distance > minSwipeDistance) return false;
+
+        OnTapDetected?.Invoke(_startTouchPosition);
+
+        return true;
+    }
+
+
+    private void DoSwipe(float distance)
+    {
+        float duration = _endTouchTime - _startTouchTime;
+
+        float speed = distance / duration;
+
+        Vector3 direction = _endTouchPosition - _startTouchPosition;
+
+        Vector2 direction2D = new Vector2(direction.x, direction.y).normalized;
+
+        if (!(Vector2.Dot(Vector2.up, direction2D) > directionThreshold) &&
+            !(Vector2.Dot(Vector2.down, direction2D) > directionThreshold))
+        {
+            return;
+        }
+
+        OnSwipeDetected?.Invoke(direction2D.y * speed, duration);
+
+        // we don't use horizontal gestures
+        // else if (Vector2.Dot(Vector2.left, direction) > directionThreshold)
+        // {
+        //     Debug.Log("Swipe Left");
+        // }
+        // else if (Vector2.Dot(Vector2.right, direction) > directionThreshold)
+        // {
+        //     Debug.Log("Swipe Right");
+        //}
     }
 
 

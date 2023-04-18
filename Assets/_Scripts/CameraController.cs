@@ -5,17 +5,27 @@ using Sirenix.OdinInspector;
 
 public class CameraController : Singleton<CameraController>
 {
-    [SerializeField, ReadOnly]
+    [SerializeField]
     private float durationMultiplier = 14f;
+
+    [SerializeField]
+    private float durationOnHold = 0.1f;
 
     private Camera _camera;
 
     private Board _board;
 
+    private InputManager _inputManager;
+
+    private Vector3 _cameraOffset;
+
 
     private void Awake()
     {
         _board = Board.Instance;
+
+        _inputManager = InputManager.Instance;
+
         _camera = Camera.main;
     }
 
@@ -27,8 +37,58 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private void SetOrthographicSize() =>
-            _camera.orthographicSize = (_board.Width + 1f) * Screen.height / Screen.width * 0.5f;
+    private void StartInput(Vector3 position)
+    {
+        Debug.Log("StartInput");
+
+        _camera.transform.DOKill();
+
+        Debug.Log("CamPos: " + _camera.transform.position);
+        Debug.Log("FingerPos: " + position);
+
+        _cameraOffset = position - _camera.transform.position;
+        Debug.Log("Offset: " + _cameraOffset);
+    }
+
+
+    private void DoOnTap(Vector3 position)
+    {
+        // Debug.Log($"{nameof(DetectTile)} in {position}");
+    }
+
+
+    private void MoveOnSwipe(float tweenEndValue, float tweenDuration)
+    {
+        Debug.Log("MoveOnSwipe ");
+
+        float targetValue = _camera.transform.position.y - tweenEndValue;
+
+        float targetDuration = tweenDuration * durationMultiplier;
+
+        _camera.transform
+                .DOMoveY(targetValue, targetDuration)
+                .SetEase(Ease.OutQuad);
+    }
+
+
+    private void MoveOnHold(Vector3 position)
+    {
+        Debug.LogWarning($"MoveOnHold " + position);
+
+        _camera.transform
+                .DOMoveY(position.y - _cameraOffset.y, durationOnHold)
+                .SetEase(Ease.Linear);
+    }
+
+
+    private void SetOrthographicSize()
+    {
+        // Bounds bounds = _board[0, 0].GetComponentInChildren<SpriteRenderer>().bounds;
+        //
+        // _camera.orthographicSize = (bounds.size.x * _board.Width + 1f) * Screen.height / Screen.width * 0.5f;
+
+        _camera.orthographicSize = (_board.Width + 1f) * Screen.height / Screen.width * 0.5f;
+    }
 
 
     private void SetInitialPosition() =>
@@ -38,27 +98,23 @@ public class CameraController : Singleton<CameraController>
                     _camera.nearClipPlane);
 
 
-    public void Move(float yValue, float timeDuration)
-    {
-        _camera.transform.DOKill();
-
-        _camera.transform
-                .DOMoveY(_camera.transform.position.y - yValue, timeDuration * durationMultiplier)
-                .SetEase(Ease.OutQuad);
-    }
-
-
     #region Enable / Disable
 
     private void OnEnable()
     {
-        Board.Instance.OnTilesGenerated += Setup;
+        _board.OnTilesGenerated += Setup;
+        _inputManager.OnTapDetected += DoOnTap;
+        _inputManager.OnSwipeDetected += MoveOnSwipe;
+        _inputManager.OnTouchStarted += StartInput;
     }
 
 
     private void OnDisable()
     {
-        Board.Instance.OnTilesGenerated -= Setup;
+        _board.OnTilesGenerated -= Setup;
+        _inputManager.OnTapDetected -= DoOnTap;
+        _inputManager.OnSwipeDetected -= MoveOnSwipe;
+        _inputManager.OnTouchStarted -= StartInput;
     }
 
     #endregion

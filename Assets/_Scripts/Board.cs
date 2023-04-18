@@ -42,12 +42,14 @@ public class Board : Singleton<Board>
 
 
     [Button("Draw Board")]
-    private void ButtonClicked() => DrawBoard(width, height);
+    private void ButtonClicked() => DrawBoard(Width, Height);
 
 
     private Transform[,] _tiles;
 
-    public Vector3 this[int x, int y] => _tiles[x, y].position;
+    public Transform this[int x, int y] => _tiles[x, y];
+
+    
 
 
     public Color GetColor(int index)
@@ -86,6 +88,8 @@ public class Board : Singleton<Board>
 
                 tile.name = $"Tile({x}, {y})";
 
+                _tiles[x, y] = tile;
+                
                 DrawDot(x, y);
             }
         }
@@ -96,11 +100,11 @@ public class Board : Singleton<Board>
 
     private void DrawDot(int x, int y)
     {
-        if (Random.value > 0.15f ||
-            x == x - 1 ||
-            y == y - 1) return;
+        if (x == Width - 1 ||
+            y == Height - 1 ||
+            Random.value > 0.15f) return;
 
-        Vector3 dotPos = new Vector3(x + 0.5f, -(y + 0.5f), 0f);
+        Vector3 dotPos = new(x + 0.5f, -(y + 0.5f), 0f);
 
         Transform dot = Instantiate(
                 original: dotPrefab,
