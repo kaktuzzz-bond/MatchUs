@@ -2103,7 +2103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   durationMultiplier: 14
-  durationOnHold: 1
+  onHoldCamSpeed: 2
+  onHoldCamDelay: 1
 --- !u!114 &1936172048
 MonoBehaviour:
   m_ObjectHideFlags: 0

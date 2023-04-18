@@ -19,13 +19,9 @@ public class InputManager : Singleton<InputManager>
 
     public event SwipeDetectedCallback OnSwipeDetected;
 
-    public delegate void TouchPointCallback(
-            Vector3 startPosition,
-            Vector3 endPosition,
-            float startTime,
-            float endTime);
+    public delegate void HoldCallback(Vector2 offset);
 
-    public event TouchPointCallback OnHoldDetected;
+    public event HoldCallback OnHoldPressed;
 
     #endregion
 
@@ -47,8 +43,6 @@ public class InputManager : Singleton<InputManager>
     private float _startTouchTime;
 
     private float _endTouchTime;
-
-    private Vector3 _holdOffset;
 
 
     private void Awake()
@@ -85,9 +79,9 @@ public class InputManager : Singleton<InputManager>
 
             Vector3 touchPos = Utils.ScreenToWorldPosition(_camera, touch);
 
-            _holdOffset = touchPos - _startTouchPosition;
+            Vector2 holdOffset = touchPos - _startTouchPosition;
 
-            //todo Handle hold touch
+            OnHoldPressed?.Invoke(holdOffset);
 
             yield return null;
         }

@@ -5,11 +5,15 @@ using Sirenix.OdinInspector;
 
 public class CameraController : Singleton<CameraController>
 {
-    [SerializeField]
+    [HorizontalGroup("Split", Title = "On Hold Properties")]
+    [SerializeField, BoxGroup("Split/Duration Multiplier"), HideLabel]
     private float durationMultiplier = 14f;
 
-    [SerializeField]
-    private float durationOnHold = 0.1f;
+    [SerializeField, BoxGroup("Split/On Hold Speed"), HideLabel]
+    private float onHoldCamSpeed = 2f;
+
+    [SerializeField, BoxGroup("Split/On Hold Delay"), HideLabel]
+    private float onHoldCamDelay = 0.1f;
 
     private Camera _camera;
 
@@ -17,7 +21,7 @@ public class CameraController : Singleton<CameraController>
 
     private InputManager _inputManager;
 
-    private Vector3 _cameraOffset;
+    private Vector3 _startCameraPosition;
 
 
     private void Awake()
@@ -43,11 +47,7 @@ public class CameraController : Singleton<CameraController>
 
         _camera.transform.DOKill();
 
-        Debug.Log("CamPos: " + _camera.transform.position);
-        Debug.Log("FingerPos: " + position);
-
-        _cameraOffset = position - _camera.transform.position;
-        Debug.Log("Offset: " + _cameraOffset);
+        _startCameraPosition = _camera.transform.position;
     }
 
 
@@ -71,12 +71,14 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private void MoveOnHold(Vector3 position)
+    private void MoveOnHold(Vector2 offset)
     {
-        Debug.LogWarning($"MoveOnHold " + position);
+        Debug.Log($"MoveOnHold " + offset);
+
+        float targetValue = _startCameraPosition.y - offset.y * onHoldCamSpeed;
 
         _camera.transform
-                .DOMoveY(position.y - _cameraOffset.y, durationOnHold)
+                .DOMoveY(targetValue, onHoldCamDelay)
                 .SetEase(Ease.Linear);
     }
 
@@ -106,6 +108,7 @@ public class CameraController : Singleton<CameraController>
         _inputManager.OnTapDetected += DoOnTap;
         _inputManager.OnSwipeDetected += MoveOnSwipe;
         _inputManager.OnTouchStarted += StartInput;
+        _inputManager.OnHoldPressed += MoveOnHold;
     }
 
 
@@ -115,6 +118,7 @@ public class CameraController : Singleton<CameraController>
         _inputManager.OnTapDetected -= DoOnTap;
         _inputManager.OnSwipeDetected -= MoveOnSwipe;
         _inputManager.OnTouchStarted -= StartInput;
+        _inputManager.OnHoldPressed -= MoveOnHold;
     }
 
     #endregion
