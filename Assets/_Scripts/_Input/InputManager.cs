@@ -61,15 +61,11 @@ public class InputManager : Singleton<InputManager>
 
         _startTouchTime = (float)context.startTime;
 
+        StartCoroutine(HoldRoutine());
+        
         OnTouchStarted?.Invoke(_startTouchPosition);
     }
-
-
-    private void Hold(InputAction.CallbackContext context)
-    {
-        StartCoroutine(HoldRoutine());
-    }
-
+    
 
     private IEnumerator HoldRoutine()
     {
@@ -103,6 +99,8 @@ public class InputManager : Singleton<InputManager>
             return;
         }
 
+      
+        
         DoSwipe(distance);
     }
 
@@ -155,7 +153,6 @@ public class InputManager : Singleton<InputManager>
 
         _input.Touch.Press.started += StartTouch;
         _input.Touch.Press.canceled += EndTouch;
-        _input.Touch.Hold.performed += Hold;
     }
 
 
@@ -163,7 +160,6 @@ public class InputManager : Singleton<InputManager>
     {
         _input.Touch.Press.started -= StartTouch;
         _input.Touch.Press.canceled -= EndTouch;
-        _input.Touch.Hold.performed -= Hold;
 
         _input.Disable();
     }

@@ -59,8 +59,6 @@ public class CameraController : Singleton<CameraController>
 
     private void MoveOnSwipe(float tweenEndValue, float tweenDuration)
     {
-        Debug.Log("MoveOnSwipe ");
-
         float targetValue = _camera.transform.position.y - tweenEndValue;
 
         float targetDuration = tweenDuration * durationMultiplier;
@@ -73,8 +71,6 @@ public class CameraController : Singleton<CameraController>
 
     private void MoveOnHold(Vector2 offset)
     {
-        Debug.Log($"MoveOnHold " + offset);
-
         float targetValue = _startCameraPosition.y - offset.y * onHoldCamSpeed;
 
         _camera.transform
@@ -85,11 +81,11 @@ public class CameraController : Singleton<CameraController>
 
     private void SetOrthographicSize()
     {
-        // Bounds bounds = _board[0, 0].GetComponentInChildren<SpriteRenderer>().bounds;
-        //
-        // _camera.orthographicSize = (bounds.size.x * _board.Width + 1f) * Screen.height / Screen.width * 0.5f;
+        Bounds bounds = _board[0, 0].GetComponentInChildren<SpriteRenderer>().bounds;
+        
+        _camera.orthographicSize = (bounds.size.x * _board.Width + 1f) * Screen.height / Screen.width * 0.5f;
 
-        _camera.orthographicSize = (_board.Width + 1f) * Screen.height / Screen.width * 0.5f;
+        //_camera.orthographicSize = (_board.Width + 1f) * Screen.height / Screen.width * 0.5f;
     }
 
 
