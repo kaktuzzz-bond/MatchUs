@@ -36,8 +36,8 @@ public class CameraController : Singleton<CameraController>
 
     private void Setup()
     {
-        SetOrthographicSize();
         SetInitialPosition();
+        SetOrthographicSize();
     }
 
 
@@ -81,19 +81,21 @@ public class CameraController : Singleton<CameraController>
 
     private void SetOrthographicSize()
     {
-        Bounds bounds = _board[0, 0].GetComponentInChildren<SpriteRenderer>().bounds;
-        
-        _camera.orthographicSize = (bounds.size.x * _board.Width + 1f) * Screen.height / Screen.width * 0.5f;
+        float aspectRatio = (float)Screen.height / Screen.width;
 
-        //_camera.orthographicSize = (_board.Width + 1f) * Screen.height / Screen.width * 0.5f;
+        _camera.orthographicSize = (_board.Width + 0.5f) * aspectRatio * 0.5f;
+
+        Debug.Log(" Complete Orthographic " + _camera.orthographicSize);
     }
 
 
-    private void SetInitialPosition() =>
-            _camera.transform.position = new Vector3(
-                    (_board.Width - 1f) * 0.5f,
-                    0f,
-                    _camera.nearClipPlane);
+    private void SetInitialPosition()
+    {
+        _camera.transform.position = new Vector3(
+                (_board.Width - 1f) * 0.5f,
+                0f,
+                _camera.transform.position.z);
+    }
 
 
     #region Enable / Disable

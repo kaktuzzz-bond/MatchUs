@@ -9,7 +9,7 @@ public class Board : Singleton<Board>
 
     [HorizontalGroup("Size", Title = "Board Settings", Width = 0.5f)]
     [SerializeField, BoxGroup("Size/Width"), HideLabel, ReadOnly]
-    private int width = 9;
+    private int width = 10;
 
     [SerializeField, BoxGroup("Size/Height"), HideLabel]
     private int height = 50;
@@ -42,14 +42,18 @@ public class Board : Singleton<Board>
 
 
     [Button("Draw Board")]
-    private void ButtonClicked() => DrawBoard(Width, Height);
+    private void ButtonClicked() => DrawBoard(width, height);
 
 
     private Transform[,] _tiles;
 
     public Transform this[int x, int y] => _tiles[x, y];
 
-    
+
+    private void Start()
+    {
+        DrawBoard(Width, Height);
+    }
 
 
     public Color GetColor(int index)
@@ -89,7 +93,7 @@ public class Board : Singleton<Board>
                 tile.name = $"Tile({x}, {y})";
 
                 _tiles[x, y] = tile;
-                
+
                 DrawDot(x, y);
             }
         }

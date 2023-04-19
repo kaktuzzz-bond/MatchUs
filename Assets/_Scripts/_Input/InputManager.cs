@@ -62,10 +62,10 @@ public class InputManager : Singleton<InputManager>
         _startTouchTime = (float)context.startTime;
 
         StartCoroutine(HoldRoutine());
-        
+
         OnTouchStarted?.Invoke(_startTouchPosition);
     }
-    
+
 
     private IEnumerator HoldRoutine()
     {
@@ -99,8 +99,6 @@ public class InputManager : Singleton<InputManager>
             return;
         }
 
-      
-        
         DoSwipe(distance);
     }
 
