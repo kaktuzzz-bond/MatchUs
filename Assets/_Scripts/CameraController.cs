@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -21,7 +22,14 @@ public class CameraController : Singleton<CameraController>
 
     private InputManager _inputManager;
 
+    private GameUIController _gameUIController;
+
     private Vector3 _startCameraPosition;
+
+    // Limits of camera movement
+    private Vector3 _topBoundPoint;
+
+    private Vector3 _bottomBoundPoint;
 
 
     private void Awake()
@@ -30,14 +38,27 @@ public class CameraController : Singleton<CameraController>
 
         _inputManager = InputManager.Instance;
 
+        _gameUIController = GameUIController.Instance;
+
         _camera = Camera.main;
     }
 
 
     private void Setup()
     {
-        SetInitialPosition();
         SetOrthographicSize();
+
+        StartCoroutine(Test());
+    }
+
+
+    private IEnumerator Test()
+    {
+        yield return new WaitForEndOfFrame();
+
+        SetBounds();
+
+        SetInitialPosition();
     }
 
 
@@ -89,12 +110,24 @@ public class CameraController : Singleton<CameraController>
     }
 
 
+    private void SetBounds()
+    {
+        var rectHeader = _gameUIController.GetHeaderCorners();
+
+        float headerHeight = rectHeader[1].y - rectHeader[0].y;
+
+        _topBoundPoint = new Vector3(
+                x: (_board.Width - 1f) * 0.5f,
+                y: headerHeight - _camera.orthographicSize + 0.5f,
+                z: _camera.transform.position.z);
+
+        _bottomBoundPoint = _topBoundPoint;
+    }
+
+
     private void SetInitialPosition()
     {
-        _camera.transform.position = new Vector3(
-                (_board.Width - 1f) * 0.5f,
-                0f,
-                _camera.transform.position.z);
+        _camera.transform.position = _topBoundPoint;
     }
 
 

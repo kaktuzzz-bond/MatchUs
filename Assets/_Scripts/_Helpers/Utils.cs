@@ -12,4 +12,12 @@ public class Utils : MonoBehaviour
         //camera.ScreenPointToRay();
     }
     
+    public static Vector3[] GetRectWorldCorners(RectTransform rt)
+    {
+        var corners = new Vector3[4];
+
+        rt.GetWorldCorners(corners);
+
+        return corners;
+    }
 }
