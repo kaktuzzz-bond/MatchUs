@@ -1,13 +1,16 @@
+using UnityEngine;
+
 public class PauseGameState : IGameState
 {
-    public void Prepare(IGameStateContext context)
-    {
-        context.SetState(new PrepareGameState());
-    }
+    public void Prepare(IGameStateContext context) { }
+
+
+    public void Loading(IGameStateContext context) { }
 
 
     public void Active(IGameStateContext context)
     {
+        Debug.Log("Return after pause");
         context.SetState(new ActiveGameState());
     }
 
@@ -17,6 +20,7 @@ public class PauseGameState : IGameState
 
     public void Exit(IGameStateContext context)
     {
+        Debug.Log("Exit");
         context.SetState(new ExitGameState());
     }
 }

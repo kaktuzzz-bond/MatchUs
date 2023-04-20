@@ -20,7 +20,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
             singletonObject.name = $"{typeof(T)} (Singleton)";
 
-            DontDestroyOnLoad(singletonObject);
+            //DontDestroyOnLoad(singletonObject);
 
             return _instance;
         }
