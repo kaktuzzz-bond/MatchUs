@@ -6,12 +6,6 @@ public class GameStateMachine : Singleton<GameStateMachine>, IGameStateContext
 
     private IGameState _currentGameState = new PrepareGameState();
 
-    // private void Awake()
-    // {
-    //     DontDestroyOnLoad(gameObject);
-    // }
-    //
-
 
     public void Prepare()
     {
