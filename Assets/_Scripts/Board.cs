@@ -40,11 +40,6 @@ public class Board : Singleton<Board>
 
     public int Height => height;
 
-
-    [Button("Draw Board")]
-    private void ButtonClicked() => DrawBoard(width, height);
-
-
     private Transform[,] _tiles;
 
     public Transform this[int x, int y] => _tiles[x, y];
