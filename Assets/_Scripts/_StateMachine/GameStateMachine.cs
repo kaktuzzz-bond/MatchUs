@@ -1,10 +1,19 @@
 using System;
-using Unity.VisualScripting;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class GameStateMachine : Singleton<GameStateMachine>, IStateContext
 {
+    [ShowInInspector]
     public IState CurrentState { get; private set; } = new InitialGameState();
+
+    private GameManager _gameManager;
+
+
+    private void Awake()
+    {
+        _gameManager = GameManager.Instance;
+    }
 
 
     private void Start()
@@ -13,19 +22,19 @@ public class GameStateMachine : Singleton<GameStateMachine>, IStateContext
     }
 
 
-    public void GoToInitial() => SetState(new InitialGameState());
+    public void Initial() => SetState(new InitialGameState());
 
 
-    public void GoToLoading() => SetState(new LoadingGameState());
+    public void Loading() => SetState(new LoadingGameState());
 
 
-    public void GoToActive() => SetState(new ActiveGameState());
+    public void Active() => SetState(new ActiveGameState());
 
 
-    public void GoToPause() => SetState(new PauseGameState());
+    public void Pause() => SetState(new PauseGameState());
 
 
-    public void GoToExit() => SetState(new ExitGamState());
+    public void Exit() => SetState(new ExitGamState());
 
 
     public void SetState(IState newState)
@@ -36,4 +45,20 @@ public class GameStateMachine : Singleton<GameStateMachine>, IStateContext
 
         CurrentState.Enter(this);
     }
+
+
+    #region Enable / Disable
+
+    private void OnEnable()
+    {
+        _gameManager.OnDifficultySelected += Loading;
+    }
+
+
+    private void OnDisable()
+    {
+        _gameManager.OnDifficultySelected -= Loading;
+    }
+
+    #endregion
 }

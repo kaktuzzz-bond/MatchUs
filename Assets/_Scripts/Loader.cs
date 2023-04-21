@@ -30,7 +30,7 @@ public class Loader : MonoBehaviour
 
         Debug.Log(" ...COMPLETED <<<");
 
-        _gameStateMachine.GoToActive();
+        _gameStateMachine.Active();
     }
 
 

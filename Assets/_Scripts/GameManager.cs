@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(GameStateMachine))]
 public class GameManager : Singleton<GameManager>
 {
+    public event Action OnDifficultySelected; 
     public DifficultyLevel Difficulty { get; private set; }
 
 
@@ -19,6 +20,6 @@ public class GameManager : Singleton<GameManager>
     {
         Difficulty = difficultyLevel;
 
-        GameStateMachine.Instance.GoToLoading();
+        OnDifficultySelected?.Invoke();
     }
 }
