@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class GameStateMachine : Singleton<GameStateMachine>, IGameStateContext
+public class OldGameStateMachine : Singleton<OldGameStateMachine>, IGameStateContext
 {
     public bool EnterGame { get; private set; } = true;
 
-    private IGameState _currentGameState = new PrepareGameState();
+    private IGameState _currentGameState = new OldPrepareGameState();
 
 
     public void Prepare()

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LoadingGameState : IGameState
+public class OldLoadingGameState : IGameState
 {
     public void Prepare(IGameStateContext context)
     {
@@ -9,7 +9,7 @@ public class LoadingGameState : IGameState
 
         SceneManager.LoadScene(0);
 
-        context.SetState(new PrepareGameState());
+        context.SetState(new OldPrepareGameState());
     }
 
 
@@ -22,7 +22,7 @@ public class LoadingGameState : IGameState
 
         SceneManager.LoadScene(2);
 
-        context.SetState(new ActiveGameState());
+        context.SetState(new OldActiveGameState());
     }
 
 

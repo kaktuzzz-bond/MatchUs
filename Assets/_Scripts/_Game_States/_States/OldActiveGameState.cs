@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ActiveGameState : IGameState
+public class OldActiveGameState : IGameState
 {
     public void Prepare(IGameStateContext context) { }
 
@@ -15,7 +15,7 @@ public class ActiveGameState : IGameState
     {
         Debug.Log("Pause");
 
-        context.SetState(new PauseGameState());
+        context.SetState(new OldPauseGameState());
     }
 
 

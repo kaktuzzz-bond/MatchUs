@@ -18,7 +18,7 @@ public class Loader : MonoBehaviour
 
     public void Start()
     {
-        StartCoroutine(_gameStateMachine.EnterGame ? LoadingRoutine() : SavingRoutine());
+        StartCoroutine(LoadingRoutine());
     }
 
 
@@ -30,18 +30,18 @@ public class Loader : MonoBehaviour
 
         Debug.Log(" ...COMPLETED <<<");
 
-        _gameStateMachine.MakeGameStateActive();
+        _gameStateMachine.GoToActive();
     }
 
 
-    private IEnumerator SavingRoutine()
-    {
-        Debug.Log(">>> SAVING...");
-
-        yield return _wait;
-
-        Debug.Log(" ...COMPLETED <<<");
-
-        _gameStateMachine.Prepare();
-    }
+    // private IEnumerator SavingRoutine()
+    // {
+    //     Debug.Log(">>> SAVING...");
+    //
+    //     yield return _wait;
+    //
+    //     Debug.Log(" ...COMPLETED <<<");
+    //
+    //     _gameStateMachine.Prepare();
+    // }
 }

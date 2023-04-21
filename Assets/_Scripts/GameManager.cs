@@ -19,6 +19,6 @@ public class GameManager : Singleton<GameManager>
     {
         Difficulty = difficultyLevel;
 
-        GameStateMachine.Instance.LoadData();
+        GameStateMachine.Instance.GoToLoading();
     }
 }

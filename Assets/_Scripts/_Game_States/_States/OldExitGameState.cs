@@ -1,17 +1,15 @@
-using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class PrepareGameState : IGameState
+public class OldExitGameState : IGameState
 {
     public void Prepare(IGameStateContext context) { }
 
 
     public void Loading(IGameStateContext context)
     {
-        SceneManager.LoadScene(1);
+        Debug.Log("Saving on exit game");
 
-        context.SetState(new LoadingGameState());
+        context.SetState(new OldLoadingGameState());
     }
 
 
