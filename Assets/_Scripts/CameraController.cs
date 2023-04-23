@@ -55,26 +55,12 @@ public class CameraController : Singleton<CameraController>
 
     private void Update()
     {
-        if (_camera.transform.position.y > _topBoundPoint.y)
-        {
-            _camera.transform
-                    .DOMoveY(_topBoundPoint.y, onHoldMoveDuration)
-                    .SetEase(Ease.Linear);
-        }
-
-        if (_camera.transform.position.y < _bottomBoundPoint.y)
-        {
-            _camera.transform
-                    .DOMoveY(_bottomBoundPoint.y, onHoldMoveDuration)
-                    .SetEase(Ease.Linear);
-        }
+        LimitCameraMovementToBounds();
     }
 
 
     private void DoOnStartTouch(Vector3 position)
     {
-        Debug.Log("DoOnStartTouch");
-
         _isStopMovement = Mathf.Abs(_camera.velocity.y) > cameraVelocityThreshold;
 
         _camera.transform.DOKill();
@@ -89,7 +75,9 @@ public class CameraController : Singleton<CameraController>
     {
         if (_isStopMovement) return;
 
-        Debug.LogWarning($"TAP in world point {(Vector2)position}");
+        Vector2Int boardCoords = Utils.ConvertWorldToBoardCoordinates(position);
+        
+        Debug.LogWarning($"TAP in world point {boardCoords}");
     }
 
 
@@ -116,6 +104,24 @@ public class CameraController : Singleton<CameraController>
         _camera.transform
                 .DOMoveY(targetValue, endTouchMoveDuration)
                 .SetEase(Ease.OutQuad);
+    }
+
+
+    private void LimitCameraMovementToBounds()
+    {
+        if (_camera.transform.position.y > _topBoundPoint.y)
+        {
+            _camera.transform
+                    .DOMoveY(_topBoundPoint.y, onHoldMoveDuration)
+                    .SetEase(Ease.Linear);
+        }
+
+        if (_camera.transform.position.y < _bottomBoundPoint.y)
+        {
+            _camera.transform
+                    .DOMoveY(_bottomBoundPoint.y, onHoldMoveDuration)
+                    .SetEase(Ease.Linear);
+        }
     }
 
 
