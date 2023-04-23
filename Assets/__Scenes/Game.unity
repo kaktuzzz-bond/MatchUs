@@ -2334,7 +2334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraVelocityThreshold: 1
   endTouchMoveDuration: 1
-  onHoldMoveDuration: 0.1
+  onHoldMoveDuration: 0.2
 --- !u!114 &1936172048
 MonoBehaviour:
   m_ObjectHideFlags: 0

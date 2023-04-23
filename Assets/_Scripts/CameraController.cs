@@ -8,13 +8,13 @@ public class CameraController : Singleton<CameraController>
 {
     [HorizontalGroup("Split", Title = "On Hold Properties")]
     [SerializeField, PropertyRange(0f, 2f), BoxGroup("Split/Velocity Threshold"), HideLabel]
-    private float cameraVelocityThreshold = 0.1f;
+    private float cameraVelocityThreshold = 1f;
 
     [SerializeField, MinValue(0), BoxGroup("Split/On Hold Speed"), HideLabel]
     private float endTouchMoveDuration = 1f;
 
     [SerializeField, MinValue(0), BoxGroup("Split/On Hold Delay"), HideLabel]
-    private float onHoldMoveDuration = 0.1f;
+    private float onHoldMoveDuration = 0.2f;
 
 #region Component Links
 
@@ -51,13 +51,7 @@ public class CameraController : Singleton<CameraController>
 
         _camera = Camera.main;
     }
-
-
-    private void Update()
-    {
-        LimitCameraMovementToBounds();
-    }
-
+    
 
     private void DoOnStartTouch(Vector3 position)
     {
@@ -76,7 +70,7 @@ public class CameraController : Singleton<CameraController>
         if (_isStopMovement) return;
 
         Vector2Int boardCoords = Utils.ConvertWorldToBoardCoordinates(position);
-        
+
         Debug.LogWarning($"TAP in world point {boardCoords}");
     }
 
@@ -101,26 +95,29 @@ public class CameraController : Singleton<CameraController>
 
         float targetValue = currentValue + verticalVelocity;
 
-        _camera.transform
-                .DOMoveY(targetValue, endTouchMoveDuration)
-                .SetEase(Ease.OutQuad);
+        LimitCameraMovementToBounds(targetValue);
     }
 
 
-    private void LimitCameraMovementToBounds()
+    private void LimitCameraMovementToBounds(float targetValue)
     {
-        if (_camera.transform.position.y > _topBoundPoint.y)
+        if (targetValue > _topBoundPoint.y)
         {
             _camera.transform
                     .DOMoveY(_topBoundPoint.y, onHoldMoveDuration)
                     .SetEase(Ease.Linear);
         }
-
-        if (_camera.transform.position.y < _bottomBoundPoint.y)
+        else if (targetValue < _bottomBoundPoint.y)
         {
             _camera.transform
                     .DOMoveY(_bottomBoundPoint.y, onHoldMoveDuration)
                     .SetEase(Ease.Linear);
+        }
+        else
+        {
+            _camera.transform
+                    .DOMoveY(targetValue, endTouchMoveDuration)
+                    .SetEase(Ease.OutQuad);
         }
     }
 
