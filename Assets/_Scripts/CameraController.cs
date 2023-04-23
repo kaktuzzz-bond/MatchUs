@@ -7,14 +7,16 @@ using Sirenix.OdinInspector;
 public class CameraController : Singleton<CameraController>
 {
     [HorizontalGroup("Split", Title = "On Hold Properties")]
-    [SerializeField, BoxGroup("Split/Duration Multiplier"), HideLabel]
-    private float durationMultiplier = 14f;
+    [SerializeField, PropertyRange(0f, 2f), BoxGroup("Split/Velocity Threshold"), HideLabel]
+    private float cameraVelocityThreshold = 0.1f;
 
-    [SerializeField, BoxGroup("Split/On Hold Speed"), HideLabel]
-    private float onHoldCamSpeed = 2f;
+    [SerializeField, MinValue(0), BoxGroup("Split/On Hold Speed"), HideLabel]
+    private float endTouchMoveDuration = 1f;
 
-    [SerializeField, BoxGroup("Split/On Hold Delay"), HideLabel]
-    private float onHoldCamDelay = 0.1f;
+    [SerializeField, MinValue(0), BoxGroup("Split/On Hold Delay"), HideLabel]
+    private float onHoldMoveDuration = 0.1f;
+
+#region Component Links
 
     private Camera _camera;
 
@@ -24,9 +26,16 @@ public class CameraController : Singleton<CameraController>
 
     private GameUIController _gameUIController;
 
+#endregion
+
     private Vector3 _startCameraPosition;
 
+    private Vector3 _startTouchFingerPosition;
+
+    private bool _isStopMovement;
+
     // Limits of camera movement
+
     private Vector3 _topBoundPoint;
 
     private Vector3 _bottomBoundPoint;
@@ -44,16 +53,64 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private void Setup()
+    private void DoOnStartTouch(Vector3 position)
     {
-        SetOrthographicSize();
+        Debug.Log("DoOnStartTouch");
 
-        StartCoroutine(Test());
+        _isStopMovement = Mathf.Abs(_camera.velocity.y) > cameraVelocityThreshold;
+
+        _camera.transform.DOKill();
+
+        _startCameraPosition = _camera.transform.position;
+
+        _startTouchFingerPosition = position;
     }
 
 
-    private IEnumerator Test()
+    private void DoOnTapDetected(Vector3 position)
     {
+        if (_isStopMovement) return;
+
+        Debug.LogWarning($"TAP in world point {(Vector2)position}");
+    }
+
+
+    private void MovementOnHoldTouch(Vector3 position)
+    {
+        float offset = position.y - _startTouchFingerPosition.y;
+
+        float targetValue = _startCameraPosition.y - offset;
+
+        _camera.transform
+                .DOMoveY(targetValue, onHoldMoveDuration)
+                .SetEase(Ease.Linear);
+    }
+
+
+    private void MovementOnEndTouch()
+    {
+        float currentValue = _camera.transform.position.y;
+
+        float verticalVelocity = _camera.velocity.y;
+
+        float targetValue = currentValue + verticalVelocity;
+
+        _camera.transform
+                .DOMoveY(targetValue, endTouchMoveDuration)
+                .SetEase(Ease.OutQuad);
+    }
+
+
+    private void SetupCamera()
+    {
+        StartCoroutine(SetupCameraRoutine());
+    }
+
+
+    private IEnumerator SetupCameraRoutine()
+    {
+        SetOrthographicSize();
+
         yield return new WaitForEndOfFrame();
 
         SetBounds();
@@ -62,51 +119,11 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private void StartInput(Vector3 position)
-    {
-        Debug.Log("StartInput");
-
-        _camera.transform.DOKill();
-
-        _startCameraPosition = _camera.transform.position;
-    }
-
-
-    private void DoOnTap(Vector3 position)
-    {
-        // Debug.Log($"{nameof(DetectTile)} in {position}");
-    }
-
-
-    private void MoveOnSwipe(float tweenEndValue, float tweenDuration)
-    {
-        float targetValue = _camera.transform.position.y - tweenEndValue;
-
-        float targetDuration = tweenDuration * durationMultiplier;
-
-        _camera.transform
-                .DOMoveY(targetValue, targetDuration)
-                .SetEase(Ease.OutQuad);
-    }
-
-
-    private void MoveOnHold(Vector2 offset)
-    {
-        float targetValue = _startCameraPosition.y - offset.y * onHoldCamSpeed;
-
-        _camera.transform
-                .DOMoveY(targetValue, onHoldCamDelay)
-                .SetEase(Ease.Linear);
-    }
-
-
     private void SetOrthographicSize()
     {
         float aspectRatio = (float)Screen.height / Screen.width;
 
         _camera.orthographicSize = (_board.Width + 0.5f) * aspectRatio * 0.5f;
-
-        Debug.Log(" Complete Orthographic " + _camera.orthographicSize);
     }
 
 
@@ -131,26 +148,34 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    #region Enable / Disable
+#region Enable / Disable
 
     private void OnEnable()
     {
-        _board.OnTilesGenerated += Setup;
-        _inputManager.OnTapDetected += DoOnTap;
-        _inputManager.OnSwipeDetected += MoveOnSwipe;
-        _inputManager.OnTouchStarted += StartInput;
-        _inputManager.OnHoldPressed += MoveOnHold;
+        _board.OnTilesGenerated += SetupCamera;
+
+        _inputManager.OnTouchStarted += DoOnStartTouch;
+
+        _inputManager.OnPressed += MovementOnHoldTouch;
+
+        _inputManager.OnTouchEnded += MovementOnEndTouch;
+
+        _inputManager.OnTapDetected += DoOnTapDetected;
     }
 
 
     private void OnDisable()
     {
-        _board.OnTilesGenerated -= Setup;
-        _inputManager.OnTapDetected -= DoOnTap;
-        _inputManager.OnSwipeDetected -= MoveOnSwipe;
-        _inputManager.OnTouchStarted -= StartInput;
-        _inputManager.OnHoldPressed -= MoveOnHold;
+        _board.OnTilesGenerated -= SetupCamera;
+
+        _inputManager.OnTouchStarted -= DoOnStartTouch;
+
+        _inputManager.OnPressed -= MovementOnHoldTouch;
+
+        _inputManager.OnTouchEnded -= MovementOnEndTouch;
+
+        _inputManager.OnTapDetected -= DoOnTapDetected;
     }
 
-    #endregion
+#endregion
 }

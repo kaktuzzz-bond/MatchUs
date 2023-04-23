@@ -7,30 +7,24 @@ using UnityEngine.InputSystem;
 [DefaultExecutionOrder(-1)]
 public class InputManager : Singleton<InputManager>
 {
-    #region Events
+#region Events
 
-    public delegate void ScreenTouchedCallback(Vector3 tapPosition);
+    public event Action<Vector3> OnTouchStarted;
 
-    public event ScreenTouchedCallback OnTouchStarted;
+    public event Action<Vector3> OnPressed;
 
-    public event ScreenTouchedCallback OnTapDetected;
+    public event Action<Vector3> OnTapDetected;
 
-    public delegate void SwipeDetectedCallback(float tweenEndValue, float tweenDuration);
+    public event Action OnTouchEnded;
 
-    public event SwipeDetectedCallback OnSwipeDetected;
-
-    public delegate void HoldCallback(Vector2 offset);
-
-    public event HoldCallback OnHoldPressed;
-
-    #endregion
+#endregion
 
     [HorizontalGroup("Split", Title = "Swipe Properties", Width = 0.5f)]
-    [SerializeField, BoxGroup("Split/Min Swipe Distance"), HideLabel]
+    [SerializeField, PropertyRange(0f, 2f), BoxGroup("Split/Min Swipe Distance"), HideLabel]
     private float minSwipeDistance = 0.5f;
 
     [SerializeField, PropertyRange(0f, 1f), BoxGroup("Split/Direction Threshold"), HideLabel]
-    private float directionThreshold = 0.8f;
+    private float minTouchDuration = 0.2f;
 
     private PlayerInput _input;
 
@@ -75,9 +69,7 @@ public class InputManager : Singleton<InputManager>
 
             Vector3 touchPos = Utils.ScreenToWorldPosition(_camera, touch);
 
-            Vector2 holdOffset = touchPos - _startTouchPosition;
-
-            OnHoldPressed?.Invoke(holdOffset);
+            OnPressed?.Invoke(touchPos);
 
             yield return null;
         }
@@ -94,56 +86,50 @@ public class InputManager : Singleton<InputManager>
 
         float distance = Vector3.Distance(_startTouchPosition, _endTouchPosition);
 
-        if (CheckForTap(distance))
+        float touchDuration = _endTouchTime - _startTouchTime;
+
+        if (touchDuration < minTouchDuration &&
+            distance < minSwipeDistance)
         {
+            OnTapDetected?.Invoke(_startTouchPosition);
+
             return;
         }
 
-        DoSwipe(distance);
+        OnTouchEnded?.Invoke();
     }
 
 
-    private bool CheckForTap(float distance)
-    {
-        if (distance > minSwipeDistance) return false;
+    // private void DoSwipe(float distance)
+    // {
+    //     float duration = _endTouchTime - _startTouchTime;
+    //
+    //     float speed = distance / duration;
+    //
+    //     Vector3 direction = _endTouchPosition - _startTouchPosition;
+    //
+    //     Vector2 direction2D = new Vector2(direction.x, direction.y).normalized;
+    //
+    //     if (!(Vector2.Dot(Vector2.up, direction2D) > directionThreshold) &&
+    //         !(Vector2.Dot(Vector2.down, direction2D) > directionThreshold))
+    //     {
+    //         return;
+    //     }
+    //
+    //    // OnSwipeDetected?.Invoke(direction2D.y * speed, duration);
+    //
+    //     // we don't use horizontal gestures
+    //     // else if (Vector2.Dot(Vector2.left, direction) > directionThreshold)
+    //     // {
+    //     //     Debug.Log("Swipe Left");
+    //     // }
+    //     // else if (Vector2.Dot(Vector2.right, direction) > directionThreshold)
+    //     // {
+    //     //     Debug.Log("Swipe Right");
+    //     //}
+    // }
 
-        OnTapDetected?.Invoke(_startTouchPosition);
-
-        return true;
-    }
-
-
-    private void DoSwipe(float distance)
-    {
-        float duration = _endTouchTime - _startTouchTime;
-
-        float speed = distance / duration;
-
-        Vector3 direction = _endTouchPosition - _startTouchPosition;
-
-        Vector2 direction2D = new Vector2(direction.x, direction.y).normalized;
-
-        if (!(Vector2.Dot(Vector2.up, direction2D) > directionThreshold) &&
-            !(Vector2.Dot(Vector2.down, direction2D) > directionThreshold))
-        {
-            return;
-        }
-
-        OnSwipeDetected?.Invoke(direction2D.y * speed, duration);
-
-        // we don't use horizontal gestures
-        // else if (Vector2.Dot(Vector2.left, direction) > directionThreshold)
-        // {
-        //     Debug.Log("Swipe Left");
-        // }
-        // else if (Vector2.Dot(Vector2.right, direction) > directionThreshold)
-        // {
-        //     Debug.Log("Swipe Right");
-        //}
-    }
-
-
-    #region Enabel / Disable
+#region Enabel / Disable
 
     private void OnEnable()
     {
@@ -162,5 +148,5 @@ public class InputManager : Singleton<InputManager>
         _input.Disable();
     }
 
-    #endregion
+#endregion
 }
