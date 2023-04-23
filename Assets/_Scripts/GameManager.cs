@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(GameStateMachine))]
+[RequireComponent(typeof(GameStateManager))]
 public class GameManager : Singleton<GameManager>
 {
     public event Action OnDifficultySelected; 

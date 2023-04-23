@@ -61,13 +61,13 @@ public class Board : Singleton<Board>
     }
 
 
-    public Color GetShape(int index)
+    public Sprite GetShape(int index)
     {
         if (index < 0 ||
             index >= shapePallet.Length)
             throw new IndexOutOfRangeException($"{nameof(GetShape)}Index is out of range");
 
-        return colorPallet[index];
+        return shapePallet[index];
     }
 
 

@@ -4,16 +4,16 @@ public class PauseGameState :  IState
 {
     public void Enter(IStateContext context)
     {
-        if (context is not GameStateMachine state) return;
+        if (context is not GameStateManager state) return;
 
-        Debug.Log("Pause game state entered ");
+        Debug.Log("Pause game stateEnum entered ");
     }
 
 
     public void Exit(IStateContext context)
     {
-        if (context is not GameStateMachine state) return;
+        if (context is not GameStateManager state) return;
 
-        Debug.Log("Pause game state exit ");
+        Debug.Log("Pause game stateEnum exit ");
     }
 }

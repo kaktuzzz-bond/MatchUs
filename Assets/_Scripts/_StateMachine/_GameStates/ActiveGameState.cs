@@ -5,9 +5,9 @@ public class ActiveGameState : IState
 {
     public void Enter(IStateContext context)
     {
-        if (context is not GameStateMachine state) return;
+        if (context is not GameStateManager state) return;
 
-        Debug.Log("Active game state entered ");
+        Debug.Log("Active game stateEnum entered ");
 
         Debug.LogWarning(
                 $"Difficulty: ({GameManager.Instance.Difficulty}) | " +
@@ -19,8 +19,8 @@ public class ActiveGameState : IState
 
     public void Exit(IStateContext context)
     {
-        if (context is not GameStateMachine state) return;
+        if (context is not GameStateManager state) return;
 
-        Debug.Log("Active game state exit ");
+        Debug.Log("Active game stateEnum exit ");
     }
 }

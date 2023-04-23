@@ -7,12 +7,12 @@ public class Loader : MonoBehaviour
 {
     private readonly WaitForSeconds _wait = new(2f);
 
-    private GameStateMachine _gameStateMachine;
+    private GameStateManager gameStateManager;
 
 
     private void Awake()
     {
-        _gameStateMachine = GameStateMachine.Instance;
+        gameStateManager = GameStateManager.Instance;
     }
 
 
@@ -30,7 +30,7 @@ public class Loader : MonoBehaviour
 
         Debug.Log(" ...COMPLETED <<<");
 
-        _gameStateMachine.Active();
+        gameStateManager.Active();
     }
 
 
@@ -42,6 +42,6 @@ public class Loader : MonoBehaviour
     //
     //     Debug.Log(" ...COMPLETED <<<");
     //
-    //     _gameStateMachine.Prepare();
+    //     gameStateManager.Prepare();
     // }
 }

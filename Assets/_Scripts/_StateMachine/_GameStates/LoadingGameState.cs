@@ -5,9 +5,9 @@ public class LoadingGameState : IState
 {
     public void Enter(IStateContext context)
     {
-        if (context is not GameStateMachine state) return;
+        if (context is not GameStateManager state) return;
 
-        Debug.Log("loading game state entered ");
+        Debug.Log("loading game stateEnum entered ");
 
         SceneManager.LoadScene(1);
     }
@@ -15,8 +15,8 @@ public class LoadingGameState : IState
 
     public void Exit(IStateContext context)
     {
-        if (context is not GameStateMachine state) return;
+        if (context is not GameStateManager state) return;
 
-        Debug.Log("Loading game state exit ");
+        Debug.Log("Loading game stateEnum exit ");
     }
 }
