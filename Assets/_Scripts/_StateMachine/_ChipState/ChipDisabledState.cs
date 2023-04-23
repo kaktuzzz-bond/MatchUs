@@ -10,11 +10,11 @@ public class ChipDisabledState : IChip
         Vector3 targetPos = new(initPos.x, initPos.y + 0.5f, initPos.z);
 
         chip.Renderer
-                .DOFade(0f, chip.fadeTime)
+                .DOFade(0f, ChipStateManager.FadeTime)
                 .SetEase(Ease.Linear);
 
         chip.transform
-                .DOMoveY(targetPos.y, chip.fadeTime)
+                .DOMoveY(targetPos.y, ChipStateManager.FadeTime)
                 .SetEase(Ease.Linear)
                 .onComplete += () => chip.gameObject.SetActive(false);
     }

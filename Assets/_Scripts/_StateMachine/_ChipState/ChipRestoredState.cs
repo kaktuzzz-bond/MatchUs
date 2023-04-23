@@ -17,7 +17,7 @@ public class ChipRestoredState : IChip
         chip.gameObject.SetActive(true);
 
         chip.transform
-                .DOMoveY(targetPos.y, chip.fadeTime)
+                .DOMoveY(targetPos.y, ChipStateManager.FadeTime)
                 .SetEase(Ease.Linear);
         
         // ???

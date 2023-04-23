@@ -17,18 +17,20 @@ public class ChipStateManager : MonoBehaviour
     private readonly ChipFadedInState fadedInState = new();
     
     private readonly ChipDisabledState disabledState = new();
-
-    [ShowInInspector]
+    
     public SpriteRenderer Renderer => spriteRenderer;
 
-    public readonly float fadeTime = 0.3f;
+    public const float FadeTime = 0.3f;
 
-    [ShowInInspector]
+    [HorizontalGroup("Appearance", Title = "Chip Settings")]
+    [ShowInInspector, BoxGroup("Appearance/Shape"), HideLabel]
     public int ShapeIndex { get; private set; }
 
-    [ShowInInspector]
+    [ShowInInspector, BoxGroup("Appearance/Color"), HideLabel]
     public int ColorIndex { get; private set; }
 
+    [HorizontalGroup("Appearance", 0.5f)]
+    [ShowInInspector, BoxGroup("Appearance/Position"), HideLabel]
     public Vector2Int BoardPosition { get; private set; }
 
     private Board _board;
