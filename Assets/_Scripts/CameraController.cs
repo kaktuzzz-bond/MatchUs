@@ -53,6 +53,24 @@ public class CameraController : Singleton<CameraController>
     }
 
 
+    private void Update()
+    {
+        if (_camera.transform.position.y > _topBoundPoint.y)
+        {
+            _camera.transform
+                    .DOMoveY(_topBoundPoint.y, onHoldMoveDuration)
+                    .SetEase(Ease.Linear);
+        }
+
+        if (_camera.transform.position.y < _bottomBoundPoint.y)
+        {
+            _camera.transform
+                    .DOMoveY(_bottomBoundPoint.y, onHoldMoveDuration)
+                    .SetEase(Ease.Linear);
+        }
+    }
+
+
     private void DoOnStartTouch(Vector3 position)
     {
         Debug.Log("DoOnStartTouch");
@@ -138,7 +156,7 @@ public class CameraController : Singleton<CameraController>
                 y: headerHeight - _camera.orthographicSize + 0.5f,
                 z: _camera.transform.position.z);
 
-        _bottomBoundPoint = _topBoundPoint;
+        _bottomBoundPoint = _topBoundPoint - new Vector3(0, 25f, 0);
     }
 
 
