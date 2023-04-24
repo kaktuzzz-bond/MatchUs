@@ -9,7 +9,8 @@ using Random = UnityEngine.Random;
 
 public class ChipHandler : Singleton<ChipHandler>
 {
-    public Vector2Int NextBoardPosition => new(_chipCounter % _board.Width, _chipCounter / _board.Width);
+    public Vector2Int NextBoardPosition => 
+            new(_chipCounter % _board.Width, _chipCounter / _board.Width);
 
     private ChipController _chipController;
 
@@ -74,8 +75,8 @@ public class ChipHandler : Singleton<ChipHandler>
 
     private ChipData GetClearedChipData()
     {
-        var shapeIndexes = GetIndexes(_board.ShapePalletLength);
-        var colorIndexes = GetIndexes(_board.ColorPalletLength);
+        var shapeIndexes = Utils.GetIndexes(_board.ShapePalletLength);
+        var colorIndexes = Utils.GetIndexes(_board.ColorPalletLength);
 
         if (_chipCounter > 0)
         {
@@ -93,19 +94,6 @@ public class ChipHandler : Singleton<ChipHandler>
         int colorIndex = colorIndexes[Random.Range(0, colorIndexes.Count)];
 
         return new ChipData(shapeIndex, colorIndex);
-    }
-
-
-    private List<int> GetIndexes(int listCount)
-    {
-        List<int> list = new();
-
-        for (int i = 0; i < listCount; i++)
-        {
-            list.Add(i);
-        }
-
-        return list;
     }
 
 

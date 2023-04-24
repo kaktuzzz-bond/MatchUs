@@ -69,4 +69,37 @@ public class Chip : MonoBehaviour
 
         spriteRenderer.color = color;
     }
+
+
+    public bool CompareShape(Chip other)
+    {
+        return ShapeIndex == other.ShapeIndex;
+    }
+
+
+    public bool CompareColor(Chip other)
+    {
+        return ColorIndex == other.ColorIndex;
+    }
+
+
+    public bool CompareHorizontalPosition(Chip other)
+    {
+        return BoardPosition.y == other.BoardPosition.y;
+    }
+
+
+    public bool CompareVerticalPosition(Chip other)
+    {
+        return BoardPosition.x == other.BoardPosition.x;
+    }
+
+
+    public bool CompareMultilinePosition(Chip other)
+    {
+        int topLine = Mathf.Min(BoardPosition.y, other.BoardPosition.y);
+        int bottomLine = Mathf.Max(BoardPosition.y, other.BoardPosition.y);
+
+        return bottomLine - topLine == 1;
+    }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Utils : MonoBehaviour
@@ -30,5 +31,17 @@ public class Utils : MonoBehaviour
         int boardY = Mathf.Abs(Mathf.RoundToInt(worldPosition.y));
 
         return new Vector2Int(boardX, boardY);
+    }
+    
+    public static List<int> GetIndexes(int listCount)
+    {
+        List<int> list = new();
+
+        for (int i = 0; i < listCount; i++)
+        {
+            list.Add(i);
+        }
+
+        return list;
     }
 }
