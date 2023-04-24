@@ -1,0 +1,122 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+using Sirenix.OdinInspector;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+public class ChipHandler : Singleton<ChipHandler>
+{
+    public Vector2Int NextBoardPosition => new(_chipCounter % _board.Width, _chipCounter / _board.Width);
+
+    private ChipController _chipController;
+
+    private Board _board;
+
+    private int _chipCounter;
+
+    [ShowInInspector]
+    private List<Chip> _inGameChips = new();
+
+
+    private void Awake()
+    {
+        _board = Board.Instance;
+
+        _chipController = ChipController.Instance;
+    }
+
+
+    private void Register(Chip chip)
+    {
+        _inGameChips.Add(chip);
+
+        _chipCounter++;
+    }
+
+
+    public ChipData GetNewChipData()
+    {
+        return GameManager.Instance.Difficulty switch
+        {
+                DifficultyLevel.Test => GetRandomChipData(1f),
+                DifficultyLevel.Easy => GetRandomChipData(0.9f),
+                DifficultyLevel.Normal => GetRandomChipData(0.6f),
+                DifficultyLevel.Hard => GetRandomChipData(0.2f),
+                _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+
+    private ChipData GetRandomChipData(float chanceForRandomData)
+    {
+        return Random.value <= chanceForRandomData
+                ? GetRandomChipData()
+                : GetClearedChipData();
+    }
+
+
+    private ChipData GetRandomChipData()
+    {
+        int shapeIndex = Random.Range(0, _board.ShapePalletLength);
+
+        int colorIndex = Random.Range(0, _board.ColorPalletLength);
+
+        return new ChipData(shapeIndex, colorIndex);
+    }
+
+
+    private ChipData GetClearedChipData()
+    {
+        var shapeIndexes = GetIndexes(_board.ShapePalletLength);
+        var colorIndexes = GetIndexes(_board.ColorPalletLength);
+
+        if (_chipCounter > 0)
+        {
+            shapeIndexes.Remove(_inGameChips.Last().ShapeIndex);
+            colorIndexes.Remove(_inGameChips.Last().ColorIndex);
+
+            if (_chipCounter >= _board.Width)
+            {
+                shapeIndexes.Remove(_inGameChips[^_board.Width].ShapeIndex);
+                colorIndexes.Remove(_inGameChips[^_board.Width].ColorIndex);
+            }
+        }
+
+        int shapeIndex = shapeIndexes[Random.Range(0, shapeIndexes.Count)];
+        int colorIndex = colorIndexes[Random.Range(0, colorIndexes.Count)];
+
+        return new ChipData(shapeIndex, colorIndex);
+    }
+
+
+    private List<int> GetIndexes(int listCount)
+    {
+        List<int> list = new();
+
+        for (int i = 0; i < listCount; i++)
+        {
+            list.Add(i);
+        }
+
+        return list;
+    }
+
+
+#region Enable / Disable
+
+    private void OnEnable()
+    {
+        _chipController.OnChipCreated += Register;
+    }
+
+
+    private void OnDisable()
+    {
+        _chipController.OnChipCreated -= Register;
+    }
+
+#endregion
+}

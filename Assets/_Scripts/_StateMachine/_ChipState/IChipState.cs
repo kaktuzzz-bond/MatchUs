@@ -1,4 +1,4 @@
-public interface IChip
+public interface IChipState
 {
     void Enter(Chip chip);
 }

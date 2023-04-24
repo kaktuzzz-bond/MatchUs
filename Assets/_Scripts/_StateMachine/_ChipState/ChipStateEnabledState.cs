@@ -1,7 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class ChipEnabledState : IChip
+public class ChipStateEnabledState : IChipState
 {
     public void Enter(Chip chip)
     {

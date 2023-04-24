@@ -6,15 +6,15 @@ using UnityEngine;
 public class ChipStateManager : MonoBehaviour
 {
     [ShowInInspector]
-    private IChip _currentState = new ChipEnabledState();
+    private IChipState _currentState = new ChipStateEnabledState();
 
-    private readonly ChipEnabledState enabledState = new();
+    private readonly ChipStateEnabledState stateEnabledState = new();
 
-    private readonly ChipFadedOutState fadedOutState = new();
+    private readonly ChipStateFadedOutState stateFadedOutState = new();
 
-    private readonly ChipFadedInState fadedInState = new();
+    private readonly ChipStateFadedInState stateFadedInState = new();
 
-    private readonly ChipDisabledState disabledState = new();
+    private readonly ChipStateDisabledState stateDisabledState = new();
 
     private Chip _chip;
 
@@ -29,7 +29,7 @@ public class ChipStateManager : MonoBehaviour
     {
         gameObject.SetActive(false);
         
-        _currentState = enabledState;
+        _currentState = stateEnabledState;
 
         _currentState.Enter(_chip);
         
@@ -38,22 +38,22 @@ public class ChipStateManager : MonoBehaviour
 
 
     [Button("Set Enabled State")]
-    public void SetEnabledState() => SetState(enabledState);
+    public void SetEnabledState() => SetState(stateEnabledState);
 
 
     [Button("Set Faded Out State")]
-    public void SetFadedOutState() => SetState(fadedOutState);
+    public void SetFadedOutState() => SetState(stateFadedOutState);
 
 
     [Button("Set Faded In State")]
-    public void SetFadedInState() => SetState(fadedInState);
+    public void SetFadedInState() => SetState(stateFadedInState);
 
 
     [Button("Set Disabled State")]
-    public void SetDisabledState() => SetState(disabledState);
+    public void SetDisabledState() => SetState(stateDisabledState);
 
 
-    private void SetState(IChip newState)
+    private void SetState(IChipState newState)
     {
         _currentState = newState;
         _currentState.Enter(_chip);

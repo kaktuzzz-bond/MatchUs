@@ -2,51 +2,56 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+[RequireComponent(typeof(ChipStateManager))]
 public class Chip : MonoBehaviour
 {
     public event Action OnInitialized;
+
     [SerializeField]
     private SpriteRenderer spriteRenderer;
-    
+
     public SpriteRenderer Renderer => spriteRenderer;
     
     public const float FadeTime = 0.3f;
 
     [HorizontalGroup("Appearance", Title = "Chip Settings")]
     [ShowInInspector, BoxGroup("Appearance/Shape"), HideLabel]
-    public int ShapeIndex { get; private set; }
 
-    [ShowInInspector, BoxGroup("Appearance/Color"), HideLabel]
-    public int ColorIndex { get; private set; }
+    private ChipData _chipData;
 
-    [HorizontalGroup("Appearance", 0.5f)]
-    [ShowInInspector, BoxGroup("Appearance/Position"), HideLabel]
+    public int ShapeIndex => _chipData.shapeIndex;
+
+    public int ColorIndex => _chipData.colorIndex;
+    
+    [VerticalGroup("Position")]
+    [ShowInInspector, BoxGroup("Position/Board Position"), HideLabel ]
     public Vector2Int BoardPosition { get; private set; }
-    
+
     private Board _board;
-    
+
+    private ChipStateManager _stateManager;
+
+
     private void Awake()
     {
         _board = Board.Instance;
+        _stateManager = GetComponent<ChipStateManager>();
     }
-
-    [Button("Init Chip")]
-    private void Init(int shapeIndex, int colorIndex, Vector2Int boardPosition)
+    
+    public void Init(int shapeIndex, int colorIndex, Vector2Int boardPosition)
     {
-        SetAppearance(shapeIndex, colorIndex);
+        _chipData = new ChipData(shapeIndex, colorIndex);
         
+        SetAppearance();
+
         BoardPosition = boardPosition;
-        
+
         OnInitialized?.Invoke();
     }
 
 
-    private void SetAppearance(int shapeIndex, int colorIndex)
+    private void SetAppearance()
     {
-        ShapeIndex = shapeIndex;
-
-        ColorIndex = colorIndex;
-
         spriteRenderer.sprite = _board.GetShape(ShapeIndex);
 
         spriteRenderer.color = _board.GetColor(ColorIndex);

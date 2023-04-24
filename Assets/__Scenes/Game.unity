@@ -2278,6 +2278,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chip
       objectReference: {fileID: 0}
+    - target: {fileID: 1431553280553932605, guid: 558fbdc173c62400d9c7d1c0d7d31dc0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6589025527896620549, guid: 558fbdc173c62400d9c7d1c0d7d31dc0, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -2335,6 +2339,7 @@ GameObject:
   - component: {fileID: 1936172045}
   - component: {fileID: 1936172049}
   - component: {fileID: 1936172051}
+  - component: {fileID: 1936172052}
   - component: {fileID: 1936172050}
   - component: {fileID: 1936172048}
   - component: {fileID: 1936172047}
@@ -2410,6 +2415,8 @@ MonoBehaviour:
   tilePrefab: {fileID: 8430510590976786998, guid: f07d43acd692a49438a9868d9d2335ba, type: 3}
   dotPrefab: {fileID: 1925143991089153941, guid: 35692112f480e4166b55737c8da273bc, type: 3}
   tileParent: {fileID: 1614722357}
+  chipParent: {fileID: 878422263}
+  pointerParent: {fileID: 810350666}
   colorPallet:
   - {r: 1, g: 0.3529412, b: 0.34117648, a: 1}
   - {r: 0.2509804, g: 0.9960785, b: 1, a: 1}
@@ -2463,6 +2470,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0189b50f39ed14b0e80ace4996bd1fef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chipPrefab: {fileID: 6589025527896620549, guid: 558fbdc173c62400d9c7d1c0d7d31dc0, type: 3}
+--- !u!114 &1936172052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936172043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72ee2d509cb3e47dabd892079b4b00dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1992551929

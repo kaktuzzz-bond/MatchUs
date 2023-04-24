@@ -24,11 +24,11 @@ public class Board : Singleton<Board>
     [SerializeField, FoldoutGroup("Parents")]
     private Transform tileParent;
 
-    [ShowInInspector, FoldoutGroup("Parents")]
-    public Transform ChipParent { get; private set; }
+    [SerializeField, FoldoutGroup("Parents")]
+    public Transform chipParent;
 
-    [ShowInInspector, FoldoutGroup("Parents")]
-    public Transform PointerParent { get; private set; }
+    [SerializeField, FoldoutGroup("Parents")]
+    private Transform pointerParent;
 
     [SerializeField, FoldoutGroup("Chips"), ColorPalette]
     private Color[] colorPallet;
@@ -40,6 +40,10 @@ public class Board : Singleton<Board>
 
     public int Height => height;
 
+    public int ColorPalletLength => colorPallet.Length;
+    
+    public int ShapePalletLength => shapePallet.Length;
+    
     private Transform[,] _tiles;
 
     public Transform this[int x, int y] => _tiles[x, y];
