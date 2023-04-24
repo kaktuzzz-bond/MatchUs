@@ -1,4 +1,4 @@
-public abstract class IChip
+public interface IChip
 {
-    public abstract void Enter(ChipStateManager chip);
+    void Enter(Chip chip);
 }

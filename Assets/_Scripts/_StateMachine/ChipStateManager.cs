@@ -2,67 +2,53 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+[RequireComponent(typeof(Chip))]
 public class ChipStateManager : MonoBehaviour
 {
-    [SerializeField]
-    private SpriteRenderer spriteRenderer;
-
     [ShowInInspector]
-    private IChip _currentState = new ChipRestoredState();
+    private IChip _currentState = new ChipEnabledState();
 
-    private readonly ChipRestoredState restoredState = new();
+    private readonly ChipEnabledState enabledState = new();
 
     private readonly ChipFadedOutState fadedOutState = new();
 
     private readonly ChipFadedInState fadedInState = new();
-    
+
     private readonly ChipDisabledState disabledState = new();
-    
-    public SpriteRenderer Renderer => spriteRenderer;
 
-    public const float FadeTime = 0.3f;
-
-    [HorizontalGroup("Appearance", Title = "Chip Settings")]
-    [ShowInInspector, BoxGroup("Appearance/Shape"), HideLabel]
-    public int ShapeIndex { get; private set; }
-
-    [ShowInInspector, BoxGroup("Appearance/Color"), HideLabel]
-    public int ColorIndex { get; private set; }
-
-    [HorizontalGroup("Appearance", 0.5f)]
-    [ShowInInspector, BoxGroup("Appearance/Position"), HideLabel]
-    public Vector2Int BoardPosition { get; private set; }
-
-    private Board _board;
+    private Chip _chip;
 
 
     private void Awake()
     {
-        _board = Board.Instance;
+        _chip = GetComponent<Chip>();
     }
 
-    [Button("Init")]
-    private void Init(int shapeIndex, int colorIndex, Vector2Int boardPosition)
+
+    private void Launch()
     {
         gameObject.SetActive(false);
+        
+        _currentState = enabledState;
 
-        SetAppearance(shapeIndex, colorIndex);
-
-        _currentState = restoredState;
-
-        _currentState.Enter(this);
+        _currentState.Enter(_chip);
+        
+        SetFadedInState();
     }
 
 
-    [Button("Set Restored State")]
-    public void SetRestoredState() => SetState(restoredState);
+    [Button("Set Enabled State")]
+    public void SetEnabledState() => SetState(enabledState);
+
 
     [Button("Set Faded Out State")]
     public void SetFadedOutState() => SetState(fadedOutState);
 
+
     [Button("Set Faded In State")]
     public void SetFadedInState() => SetState(fadedInState);
-    
+
+
     [Button("Set Disabled State")]
     public void SetDisabledState() => SetState(disabledState);
 
@@ -70,18 +56,22 @@ public class ChipStateManager : MonoBehaviour
     private void SetState(IChip newState)
     {
         _currentState = newState;
-        _currentState.Enter(this);
+        _currentState.Enter(_chip);
     }
 
 
-    private void SetAppearance(int shapeIndex, int colorIndex)
+#region Enable / Disable
+
+    private void OnEnable()
     {
-        ShapeIndex = shapeIndex;
-
-        ColorIndex = colorIndex;
-
-        spriteRenderer.sprite = _board.GetShape(ShapeIndex);
-
-        spriteRenderer.color = _board.GetColor(ColorIndex);
+        _chip.OnInitialized += Launch;
     }
+
+
+    private void OnDisable()
+    {
+        _chip.OnInitialized -= Launch;
+    }
+
+#endregion
 }

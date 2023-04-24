@@ -2,10 +2,10 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class GameStateManager : Singleton<GameStateManager>, IStateContext
+public class GameStateManager : Singleton<GameStateManager>
 {
     [ShowInInspector]
-    public IState CurrentState { get; private set; } = new InitialGameState();
+    public IGameState CurrentGameState { get; private set; }
 
     private GameManager _gameManager;
 
@@ -18,7 +18,8 @@ public class GameStateManager : Singleton<GameStateManager>, IStateContext
 
     private void Start()
     {
-        CurrentState.Enter(this);
+        CurrentGameState = new InitialGameState();
+        CurrentGameState.Enter(this);
     }
 
 
@@ -37,17 +38,15 @@ public class GameStateManager : Singleton<GameStateManager>, IStateContext
     public void Exit() => SetState(new ExitGameState());
 
 
-    public void SetState(IState newState)
+    public void SetState(IGameState newGameState)
     {
-        CurrentState.Exit(this);
+        CurrentGameState = newGameState;
 
-        CurrentState = newState;
-
-        CurrentState.Enter(this);
+        CurrentGameState.Enter(this);
     }
 
 
-    #region Enable / Disable
+#region Enable / Disable
 
     private void OnEnable()
     {
@@ -60,5 +59,5 @@ public class GameStateManager : Singleton<GameStateManager>, IStateContext
         _gameManager.OnDifficultySelected -= Loading;
     }
 
-    #endregion
+#endregion
 }

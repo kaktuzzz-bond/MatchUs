@@ -1,22 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ExitGameState : IState
+public class ExitGameState : IGameState
 {
-    public void Enter(IStateContext context)
+    public void Enter(GameStateManager context)
     {
-        if (context is not GameStateManager state) return;
-
-        Debug.Log("Exit game stateEnum entered ");
-    }
-
-
-    public void Exit(IStateContext context)
-    {
-        if (context is not GameStateManager state) return;
-
-        //Save data here
-        Debug.Log("Exit game stateEnum exit ");
+        Debug.Log("Exit Game State (Save data) entered ");
+        
         SceneManager.LoadScene(0);
     }
 }

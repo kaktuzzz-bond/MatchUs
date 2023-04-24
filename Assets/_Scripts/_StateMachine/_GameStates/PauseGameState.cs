@@ -1,19 +1,9 @@
 using UnityEngine;
 
-public class PauseGameState :  IState
+public class PauseGameState : IGameState
 {
-    public void Enter(IStateContext context)
+    public void Enter(GameStateManager context)
     {
-        if (context is not GameStateManager state) return;
-
-        Debug.Log("Pause game stateEnum entered ");
-    }
-
-
-    public void Exit(IStateContext context)
-    {
-        if (context is not GameStateManager state) return;
-
-        Debug.Log("Pause game stateEnum exit ");
+        Debug.Log("Pause Game State Entered ");
     }
 }

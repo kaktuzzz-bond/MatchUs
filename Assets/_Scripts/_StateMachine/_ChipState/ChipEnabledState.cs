@@ -1,9 +1,9 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class ChipRestoredState : IChip
+public class ChipEnabledState : IChip
 {
-    public override void Enter(ChipStateManager chip)
+    public void Enter(Chip chip)
     {
         Vector3 targetPos = Board.Instance[chip.BoardPosition.x, chip.BoardPosition.y].position;
 
@@ -17,10 +17,7 @@ public class ChipRestoredState : IChip
         chip.gameObject.SetActive(true);
 
         chip.transform
-                .DOMoveY(targetPos.y, ChipStateManager.FadeTime)
+                .DOMoveY(targetPos.y, Chip.FadeTime)
                 .SetEase(Ease.Linear);
-        
-        // ???
-        chip.SetFadedInState();
     }
 }

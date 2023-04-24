@@ -1,26 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ActiveGameState : IState
+public class ActiveGameState : IGameState
 {
-    public void Enter(IStateContext context)
+    public void Enter(GameStateManager context)
     {
-        if (context is not GameStateManager state) return;
-
-        Debug.Log("Active game stateEnum entered ");
-
-        Debug.LogWarning(
-                $"Difficulty: ({GameManager.Instance.Difficulty}) | " +
-                $"Chips number ({(int)GameManager.Instance.Difficulty}) ");
+        Debug.Log("Active Game State entered ");
 
         SceneManager.LoadScene(2);
-    }
-
-
-    public void Exit(IStateContext context)
-    {
-        if (context is not GameStateManager state) return;
-
-        Debug.Log("Active game stateEnum exit ");
     }
 }
