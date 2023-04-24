@@ -8,6 +8,8 @@ public class CameraController : Singleton<CameraController>
 {
     public event Action OnCameraSetup;
 
+    public event Action<Chip> OnChipTapped;
+
     [HorizontalGroup("Split", Title = "On Hold Properties")]
     [SerializeField, PropertyRange(0f, 2f), BoxGroup("Split/Velocity Threshold"), HideLabel]
     private float cameraVelocityThreshold = 1f;
@@ -71,12 +73,16 @@ public class CameraController : Singleton<CameraController>
     {
         if (_isStopMovement) return;
 
-        if (_gameSceneGUI.IsGameAreaPosition(position))
-        {
-            Vector2Int boardCoords = Utils.ConvertWorldToBoardCoordinates(position);
+        if (!_gameSceneGUI.IsGameAreaPosition(position)) return;
 
-            Debug.LogWarning($"TAP in world point {boardCoords}");
-        }
+        RaycastHit2D hit = Physics2D.Raycast(position, -Vector2.up);
+
+        if (hit.collider == null) return;
+            
+        if (!hit.collider.TryGetComponent(out Chip chip)) return;
+                
+        OnChipTapped?.Invoke(chip);
+        
     }
 
 

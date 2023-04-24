@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -17,6 +18,8 @@ public class ChipController : Singleton<ChipController>
     private ChipHandler _handler;
 
     private GameController _gameController;
+    
+    private CameraController _cameraController;
 
     private readonly WaitForSeconds _wait01 = new(0.05f);
 
@@ -26,9 +29,27 @@ public class ChipController : Singleton<ChipController>
         _board = Board.Instance;
         _handler = ChipHandler.Instance;
         _gameController = GameController.Instance;
+        _cameraController = CameraController.Instance;
     }
 
 
+    
+    private void ProcessChip(Chip chip)
+    {
+        if (chip.ChipState.GetType() == typeof(FadedInChipState))
+        {
+            chip.Shake();
+        }
+        else
+        {
+            Debug.Log("Not active chip");
+        }
+        
+    }
+
+    
+    
+    
     private void DrawStartChips()
     {
         StartCoroutine(DrawStartChipsRoutine());
@@ -78,12 +99,16 @@ public class ChipController : Singleton<ChipController>
     private void OnEnable()
     {
         _gameController.OnGameStarted += DrawStartChips;
+        _cameraController.OnChipTapped += ProcessChip;
     }
 
+
+  
 
     private void OnDisable()
     {
         _gameController.OnGameStarted -= DrawStartChips;
+        _cameraController.OnChipTapped -= ProcessChip;
     }
 
 #endregion

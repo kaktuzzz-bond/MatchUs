@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -12,19 +13,22 @@ public class Chip : MonoBehaviour
 
     public SpriteRenderer Renderer => spriteRenderer;
 
-    public const float FadeTime = 0.1f;
-
-    [HorizontalGroup("Appearance", Title = "Chip Settings")]
-    [ShowInInspector, BoxGroup("Appearance/Shape"), HideLabel]
-    private ChipData _chipData;
-
     public int ShapeIndex => _chipData.shapeIndex;
 
     public int ColorIndex => _chipData.colorIndex;
 
+    public const float FadeTime = 0.1f;
+
+    [ShowInInspector]
+    public IChipState ChipState => _stateManager.CurrentState;
+
+    [HorizontalGroup("Appearance", Title = "Chip Settings")]
+    [ShowInInspector, BoxGroup("Appearance/Chip data"), HideLabel, ReadOnly]
+    private ChipData _chipData;
+
     [VerticalGroup("Position")]
-    [ShowInInspector, BoxGroup("Position/Board Position"), HideLabel]
-    public Vector2Int BoardPosition { get; private set; }
+    [ShowInInspector, BoxGroup("Position/Board Position"), HideLabel, ReadOnly]
+    public Vector2Int BoardPosition => Utils.ConvertWorldToBoardCoordinates(transform.position);
 
     private Board _board;
 
@@ -44,9 +48,14 @@ public class Chip : MonoBehaviour
 
         SetAppearance();
 
-        BoardPosition = boardPosition;
-
         OnInitialized?.Invoke();
+    }
+
+
+    public void Shake()
+    {
+        Vector3 shakeStrength = new Vector3(0.2f, 0.2f, 0f);
+        transform.DOShakePosition(1f, shakeStrength, 20);
     }
 
 
@@ -57,7 +66,7 @@ public class Chip : MonoBehaviour
         Color color = _board.GetColor(ColorIndex);
 
         color.a = 0f;
-        
+
         spriteRenderer.color = color;
     }
 }

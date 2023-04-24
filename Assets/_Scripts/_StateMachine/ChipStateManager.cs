@@ -6,17 +6,17 @@ using UnityEngine;
 public class ChipStateManager : MonoBehaviour
 {
     [ShowInInspector]
-    private IChipState _currentState = new EnabledChipState();
+    public IChipState CurrentState { get; private set; } = new EnabledChipState();
 
     //private readonly InitializedChipState initializedChipState = new();
     
-    private readonly EnabledChipState enabledChipState = new();
+    private readonly EnabledChipState _enabledChipState = new();
 
-    private readonly FadedOutChipState fadedOutChipState = new();
+    private readonly FadedOutChipState _fadedOutChipState = new();
 
-    private readonly FadedInChipState fadedInChipState = new();
+    private readonly FadedInChipState _fadedInChipState = new();
 
-    private readonly DisabledChipState disabledChipState = new();
+    private readonly DisabledChipState _disabledChipState = new();
 
     private Chip _chip;
 
@@ -31,34 +31,46 @@ public class ChipStateManager : MonoBehaviour
     {
         gameObject.SetActive(false);
         
-        _currentState = enabledChipState;
+        CurrentState = _enabledChipState;
 
-        _currentState.Enter(_chip);
+        CurrentState.Enter(_chip);
         
         SetFadedInState();
     }
 
 
     [Button("Set Enabled State")]
-    public void SetEnabledState() => SetState(enabledChipState);
+    public void SetEnabledState()
+    {
+        SetState(_enabledChipState);
+    }
 
 
     [Button("Set Faded Out State")]
-    public void SetFadedOutState() => SetState(fadedOutChipState);
+    public void SetFadedOutState()
+    {
+        SetState(_fadedOutChipState);
+    }
 
 
     [Button("Set Faded In State")]
-    public void SetFadedInState() => SetState(fadedInChipState);
+    public void SetFadedInState()
+    {
+        SetState(_fadedInChipState);
+    }
 
 
     [Button("Set Disabled State")]
-    public void SetDisabledState() => SetState(disabledChipState);
+    public void SetDisabledState()
+    {
+        SetState(_disabledChipState);
+    }
 
 
     private void SetState(IChipState newState)
     {
-        _currentState = newState;
-        _currentState.Enter(_chip);
+        CurrentState = newState;
+        CurrentState.Enter(_chip);
     }
 
 
