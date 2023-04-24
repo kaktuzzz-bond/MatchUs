@@ -5,7 +5,7 @@ public class EnabledChipState : IChipState
 {
     public void Enter(Chip chip)
     {
-        Debug.LogWarning("Enabled state Enter");
+        //Debug.Log("Enabled state Enter");
         
         Vector3 targetPos = Board.Instance[chip.BoardPosition.x, chip.BoardPosition.y].position;
 

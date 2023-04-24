@@ -5,7 +5,7 @@ public class DisabledChipState : IChipState
 {
     public void Enter(Chip chip)
     {
-        Debug.LogWarning("Disabled state Enter");
+        //Debug.Log("Disabled state Enter");
         
         Vector3 initPos = chip.transform.position;
 

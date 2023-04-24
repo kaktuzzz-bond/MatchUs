@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 
 public class CameraController : Singleton<CameraController>
 {
-    public event Action OnCameraSetup; 
+    public event Action OnCameraSetup;
 
     [HorizontalGroup("Split", Title = "On Hold Properties")]
     [SerializeField, PropertyRange(0f, 2f), BoxGroup("Split/Velocity Threshold"), HideLabel]
@@ -26,7 +26,7 @@ public class CameraController : Singleton<CameraController>
 
     private InputManager _inputManager;
 
-    private GameSceneGUI gameSceneGUI;
+    private GameSceneGUI _gameSceneGUI;
 
 #endregion
 
@@ -49,11 +49,11 @@ public class CameraController : Singleton<CameraController>
 
         _inputManager = InputManager.Instance;
 
-        gameSceneGUI = GameSceneGUI.Instance;
+        _gameSceneGUI = GameSceneGUI.Instance;
 
         _camera = Camera.main;
     }
-    
+
 
     private void DoOnStartTouch(Vector3 position)
     {
@@ -71,9 +71,12 @@ public class CameraController : Singleton<CameraController>
     {
         if (_isStopMovement) return;
 
-        Vector2Int boardCoords = Utils.ConvertWorldToBoardCoordinates(position);
+        if (_gameSceneGUI.IsGameAreaPosition(position))
+        {
+            Vector2Int boardCoords = Utils.ConvertWorldToBoardCoordinates(position);
 
-        Debug.LogWarning($"TAP in world point {boardCoords}");
+            Debug.LogWarning($"TAP in world point {boardCoords}");
+        }
     }
 
 
@@ -139,7 +142,7 @@ public class CameraController : Singleton<CameraController>
         SetBounds();
 
         SetInitialPosition();
-        
+
         OnCameraSetup?.Invoke();
     }
 
@@ -154,7 +157,7 @@ public class CameraController : Singleton<CameraController>
 
     private void SetBounds()
     {
-        var rectHeader = gameSceneGUI.GetHeaderCorners();
+        var rectHeader = _gameSceneGUI.GetHeaderCorners();
 
         float headerHeight = rectHeader[1].y - rectHeader[0].y;
 

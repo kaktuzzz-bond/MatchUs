@@ -12,21 +12,39 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     private RectTransform header;
 
     [SerializeField]
+    private RectTransform footer;
+    
+    [SerializeField]
     private Image fader;
-
-
-    public Vector3[] GetHeaderCorners() => Utils.GetRectWorldCorners(header);
-
-
+    
     private CameraController _cameraController;
+
+    private Board _board;
+  
 
 
     private void Awake()
     {
         _cameraController = CameraController.Instance;
+        _board = Board.Instance;
     }
 
+    public Vector3[] GetHeaderCorners() => Utils.GetRectWorldCorners(header);
 
+    public Vector3[] GetFooterCorners()=> Utils.GetRectWorldCorners(footer);
+
+
+    public bool IsGameAreaPosition(Vector3 position)
+    {
+        bool checkX = position.x > -0.5f && 
+                      position.x < _board.Width + 0.5f;
+
+        bool checkY = position.y < GetHeaderCorners()[0].y &&
+                      position.y > GetFooterCorners()[1].y;
+
+        return checkX && checkY;
+    }
+    
     private void FadeIn()
     {
         fader

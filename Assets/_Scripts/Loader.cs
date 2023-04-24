@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class Loader : MonoBehaviour
 {
-    private readonly WaitForSeconds _wait = new(2f);
+    private readonly WaitForSeconds _wait = new(0f);
 
-    private GameStateManager gameStateManager;
+    private GameStateManager _gameStateManager;
 
 
     private void Awake()
     {
-        gameStateManager = GameStateManager.Instance;
+        _gameStateManager = GameStateManager.Instance;
     }
 
 
@@ -30,7 +30,7 @@ public class Loader : MonoBehaviour
 
         Debug.Log(" ...COMPLETED <<<");
 
-        gameStateManager.Active();
+        _gameStateManager.Active();
     }
 
 
@@ -42,6 +42,6 @@ public class Loader : MonoBehaviour
     //
     //     Debug.Log(" ...COMPLETED <<<");
     //
-    //     gameStateManager.Prepare();
+    //     _gameStateManager.Prepare();
     // }
 }
