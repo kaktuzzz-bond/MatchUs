@@ -13,7 +13,7 @@ public class ChipController : Singleton<ChipController>
     [SerializeField]
     private Transform chipPrefab;
 
-    private readonly WaitForSeconds _wait01 = new(0.05f);
+    private readonly WaitForSeconds _wait01 = new(0.02f);
 
     [ShowInInspector]
     private Chip _storage;
@@ -87,7 +87,7 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    private void DrawStartChips()
+    private void DrawStartArray()
     {
         StartCoroutine(DrawStartChipsRoutine());
     }
@@ -134,14 +134,14 @@ public class ChipController : Singleton<ChipController>
 
     private void OnEnable()
     {
-        _gameController.OnGameStarted += DrawStartChips;
+        _gameController.OnGameStarted += DrawStartArray;
         _cameraController.OnChipTapped += ProcessChip;
     }
 
 
     private void OnDisable()
     {
-        _gameController.OnGameStarted -= DrawStartChips;
+        _gameController.OnGameStarted -= DrawStartArray;
         _cameraController.OnChipTapped -= ProcessChip;
     }
 
