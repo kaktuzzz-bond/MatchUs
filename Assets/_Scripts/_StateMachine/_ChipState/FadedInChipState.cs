@@ -1,11 +1,13 @@
 using UnityEngine;
 using DG.Tweening;
-public class ChipStateFadedOutState : IChipState
+public class FadedInChipState : IChipState
 {
     public void Enter(Chip chip)
     {
+        Debug.LogWarning("Fade In Enter");
+        
         chip.Renderer
-                .DOFade(0.15f, Chip.FadeTime)
+                .DOFade(1f, Chip.FadeTime)
                 .SetEase(Ease.Linear);
         
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine;
@@ -5,6 +6,8 @@ using Sirenix.OdinInspector;
 
 public class CameraController : Singleton<CameraController>
 {
+    public event Action OnCameraSetup; 
+
     [HorizontalGroup("Split", Title = "On Hold Properties")]
     [SerializeField, PropertyRange(0f, 2f), BoxGroup("Split/Velocity Threshold"), HideLabel]
     private float cameraVelocityThreshold = 1f;
@@ -23,7 +26,7 @@ public class CameraController : Singleton<CameraController>
 
     private InputManager _inputManager;
 
-    private GameUIController _gameUIController;
+    private GameSceneGUI gameSceneGUI;
 
 #endregion
 
@@ -46,7 +49,7 @@ public class CameraController : Singleton<CameraController>
 
         _inputManager = InputManager.Instance;
 
-        _gameUIController = GameUIController.Instance;
+        gameSceneGUI = GameSceneGUI.Instance;
 
         _camera = Camera.main;
     }
@@ -136,6 +139,8 @@ public class CameraController : Singleton<CameraController>
         SetBounds();
 
         SetInitialPosition();
+        
+        OnCameraSetup?.Invoke();
     }
 
 
@@ -149,7 +154,7 @@ public class CameraController : Singleton<CameraController>
 
     private void SetBounds()
     {
-        var rectHeader = _gameUIController.GetHeaderCorners();
+        var rectHeader = gameSceneGUI.GetHeaderCorners();
 
         float headerHeight = rectHeader[1].y - rectHeader[0].y;
 

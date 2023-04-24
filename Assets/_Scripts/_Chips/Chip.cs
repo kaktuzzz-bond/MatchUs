@@ -11,20 +11,19 @@ public class Chip : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     public SpriteRenderer Renderer => spriteRenderer;
-    
-    public const float FadeTime = 0.3f;
+
+    public const float FadeTime = 0.1f;
 
     [HorizontalGroup("Appearance", Title = "Chip Settings")]
     [ShowInInspector, BoxGroup("Appearance/Shape"), HideLabel]
-
     private ChipData _chipData;
 
     public int ShapeIndex => _chipData.shapeIndex;
 
     public int ColorIndex => _chipData.colorIndex;
-    
+
     [VerticalGroup("Position")]
-    [ShowInInspector, BoxGroup("Position/Board Position"), HideLabel ]
+    [ShowInInspector, BoxGroup("Position/Board Position"), HideLabel]
     public Vector2Int BoardPosition { get; private set; }
 
     private Board _board;
@@ -37,11 +36,12 @@ public class Chip : MonoBehaviour
         _board = Board.Instance;
         _stateManager = GetComponent<ChipStateManager>();
     }
-    
+
+
     public void Init(int shapeIndex, int colorIndex, Vector2Int boardPosition)
     {
         _chipData = new ChipData(shapeIndex, colorIndex);
-        
+
         SetAppearance();
 
         BoardPosition = boardPosition;
@@ -54,6 +54,10 @@ public class Chip : MonoBehaviour
     {
         spriteRenderer.sprite = _board.GetShape(ShapeIndex);
 
-        spriteRenderer.color = _board.GetColor(ColorIndex);
+        Color color = _board.GetColor(ColorIndex);
+
+        color.a = 0f;
+        
+        spriteRenderer.color = color;
     }
 }

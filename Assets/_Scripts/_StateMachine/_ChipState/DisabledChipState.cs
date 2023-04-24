@@ -1,10 +1,12 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class ChipStateDisabledState : IChipState
+public class DisabledChipState : IChipState
 {
     public void Enter(Chip chip)
     {
+        Debug.LogWarning("Disabled state Enter");
+        
         Vector3 initPos = chip.transform.position;
 
         Vector3 targetPos = new(initPos.x, initPos.y + 0.5f, initPos.z);

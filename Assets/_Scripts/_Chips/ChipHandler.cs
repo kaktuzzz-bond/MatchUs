@@ -13,6 +13,8 @@ public class ChipHandler : Singleton<ChipHandler>
 
     private ChipController _chipController;
 
+    private GameController _gameController;
+
     private Board _board;
 
     private int _chipCounter;
@@ -26,6 +28,8 @@ public class ChipHandler : Singleton<ChipHandler>
         _board = Board.Instance;
 
         _chipController = ChipController.Instance;
+
+        _gameController = GameController.Instance;
     }
 
 
@@ -39,13 +43,13 @@ public class ChipHandler : Singleton<ChipHandler>
 
     public ChipData GetNewChipData()
     {
-        return GameManager.Instance.Difficulty switch
+        return _gameController.DifficultyLevel switch
         {
                 DifficultyLevel.Test => GetRandomChipData(1f),
                 DifficultyLevel.Easy => GetRandomChipData(0.9f),
                 DifficultyLevel.Normal => GetRandomChipData(0.6f),
-                DifficultyLevel.Hard => GetRandomChipData(0.2f),
-                _ => throw new ArgumentOutOfRangeException()
+                DifficultyLevel.Hard => GetRandomChipData(0.0f),
+                _ => throw new ArgumentOutOfRangeException($"ERROR!")
         };
     }
 
