@@ -46,20 +46,20 @@ public class ChipHandler : Singleton<ChipHandler>
     {
         return _gameController.DifficultyLevel switch
         {
-                DifficultyLevel.Test => GetRandomChipData(1f),
-                DifficultyLevel.Easy => GetRandomChipData(0.9f),
-                DifficultyLevel.Normal => GetRandomChipData(0.6f),
-                DifficultyLevel.Hard => GetRandomChipData(0.0f),
+                DifficultyLevel.Test => GetChipDataByChance(1f),
+                DifficultyLevel.Easy => GetChipDataByChance(0.9f),
+                DifficultyLevel.Normal => GetChipDataByChance(0.6f),
+                DifficultyLevel.Hard => GetChipDataByChance(0.0f),
                 _ => throw new ArgumentOutOfRangeException($"ERROR!")
         };
     }
 
 
-    private ChipData GetRandomChipData(float chanceForRandomData)
+    private ChipData GetChipDataByChance(float chanceForRandomData)
     {
         return Random.value <= chanceForRandomData
                 ? GetRandomChipData()
-                : GetClearedChipData();
+                : GetChipDataForHardLevel();
     }
 
 
@@ -73,7 +73,7 @@ public class ChipHandler : Singleton<ChipHandler>
     }
 
 
-    private ChipData GetClearedChipData()
+    private ChipData GetChipDataForHardLevel()
     {
         var shapeIndexes = Utils.GetIndexes(_board.ShapePalletLength);
         var colorIndexes = Utils.GetIndexes(_board.ColorPalletLength);

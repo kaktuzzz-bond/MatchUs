@@ -55,7 +55,7 @@ public class ChipController : Singleton<ChipController>
 
         Debug.Log($"Vertical: {chip.CompareVerticalPosition(_storage)}");
 
-        Debug.Log($"Horizontal: {chip.CompareHorizontalPosition(_storage)}");
+        Debug.LogError($"Horizontal: {chip.CompareHorizontalPosition(_storage)}");
 
         Debug.Log($"Multiline: {chip.CompareMultilinePosition(_storage)}");
     }

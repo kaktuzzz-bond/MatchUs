@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(ChipStateManager))]
 public class Chip : MonoBehaviour
 {
@@ -19,7 +22,6 @@ public class Chip : MonoBehaviour
 
     public const float FadeTime = 0.1f;
 
-    [ShowInInspector]
     public IChipState ChipState => _stateManager.CurrentState;
 
     [HorizontalGroup("Appearance", Title = "Chip Settings")]
@@ -34,11 +36,14 @@ public class Chip : MonoBehaviour
 
     private ChipStateManager _stateManager;
 
+    private Collider2D _collider;
+
 
     private void Awake()
     {
         _board = Board.Instance;
         _stateManager = GetComponent<ChipStateManager>();
+        _collider = GetComponent<Collider2D>();
     }
 
 
@@ -85,12 +90,20 @@ public class Chip : MonoBehaviour
 
     public bool CompareHorizontalPosition(Chip other)
     {
-        return BoardPosition.y == other.BoardPosition.y;
+        if (BoardPosition.y != other.BoardPosition.y) return false;
+
+        Vector2 direction = other.BoardPosition - BoardPosition;
+
+        float distance = Mathf.Abs(direction.x);
+
+        return IsPathClear(direction, distance, other);
     }
 
 
     public bool CompareVerticalPosition(Chip other)
     {
+        if (BoardPosition.x != other.BoardPosition.x) return false;
+
         return BoardPosition.x == other.BoardPosition.x;
     }
 
@@ -101,5 +114,29 @@ public class Chip : MonoBehaviour
         int bottomLine = Mathf.Max(BoardPosition.y, other.BoardPosition.y);
 
         return bottomLine - topLine == 1;
+    }
+
+
+    private bool IsPathClear(Vector2 direction, float distance, Chip other)
+    {
+        ContactFilter2D filter = new();
+
+        List<RaycastHit2D> hits = new();
+
+        int count = _collider.Raycast(direction, filter, hits, distance);
+
+        foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
+        {
+            if (!hit.collider.TryGetComponent(out Chip chip)) continue;
+
+            if (chip.Equals(other)) continue;
+
+            if (chip.ChipState.GetType() == typeof(FadedInChipState))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
