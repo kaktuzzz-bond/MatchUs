@@ -22,7 +22,7 @@ public class Chip : MonoBehaviour
 
     public const float FadeTime = 0.1f;
 
-    public IChipState ChipState => _stateManager.CurrentState;
+    public ChipStateManager StateManager { get; private set; }
 
     [HorizontalGroup("Appearance", Title = "Chip Settings")]
     [ShowInInspector, BoxGroup("Appearance/Chip data"), HideLabel, ReadOnly]
@@ -34,15 +34,13 @@ public class Chip : MonoBehaviour
 
     private Board _board;
 
-    private ChipStateManager _stateManager;
-
     private Collider2D _collider;
 
 
     private void Awake()
     {
         _board = Board.Instance;
-        _stateManager = GetComponent<ChipStateManager>();
+        StateManager = GetComponent<ChipStateManager>();
         _collider = GetComponent<Collider2D>();
     }
 
@@ -104,20 +102,39 @@ public class Chip : MonoBehaviour
     {
         if (BoardPosition.x != other.BoardPosition.x) return false;
 
-        return BoardPosition.x == other.BoardPosition.x;
+        Vector2 direction = other.BoardPosition - BoardPosition;
+
+        float distance = Mathf.Abs(direction.y);
+
+        return IsPathClear(-direction, distance, other);
     }
 
 
     public bool CompareMultilinePosition(Chip other)
     {
-        int topLine = Mathf.Min(BoardPosition.y, other.BoardPosition.y);
-        int bottomLine = Mathf.Max(BoardPosition.y, other.BoardPosition.y);
+        if (Mathf.Abs(BoardPosition.y - other.BoardPosition.y) != 1) return false;
 
-        return bottomLine - topLine == 1;
+        var chips = new Chip[2];
+
+        if (BoardPosition.y > other.BoardPosition.y)
+        {
+            chips[0] = other;
+            chips[1] = this;
+        }
+        else
+        {
+            chips[0] = this;
+            chips[1] = other;
+        }
+
+        bool isTopClear = chips[0].IsPathClear(Vector2.right, _board.Width - chips[0].BoardPosition.x, chips[1]);
+        bool isBottomClear = chips[1].IsPathClear(Vector2.left,  chips[1].BoardPosition.x, chips[0]);
+        
+        return isTopClear && isBottomClear;
     }
 
 
-    private bool IsPathClear(Vector2 direction, float distance, Chip other)
+    public bool IsPathClear(Vector2 direction, float distance, Chip other)
     {
         ContactFilter2D filter = new();
 
@@ -130,13 +147,15 @@ public class Chip : MonoBehaviour
             if (!hit.collider.TryGetComponent(out Chip chip)) continue;
 
             if (chip.Equals(other)) continue;
-
-            if (chip.ChipState.GetType() == typeof(FadedInChipState))
+            
+            if (chip.StateManager.CurrentState.GetType() == typeof(FadedInChipState))
             {
                 return false;
             }
         }
 
+        Debug.DrawRay(transform.position, direction, Color.red, 5f);
+        
         return true;
     }
 }

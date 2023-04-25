@@ -46,10 +46,10 @@ public class ChipHandler : Singleton<ChipHandler>
     {
         return _gameController.DifficultyLevel switch
         {
-                DifficultyLevel.Test => GetChipDataByChance(1f),
+                DifficultyLevel.Test => GetChipDataByChance(1.0f),
                 DifficultyLevel.Easy => GetChipDataByChance(0.9f),
                 DifficultyLevel.Normal => GetChipDataByChance(0.6f),
-                DifficultyLevel.Hard => GetChipDataByChance(0.0f),
+                DifficultyLevel.Hard => GetChipDataByChance(1.0f),
                 _ => throw new ArgumentOutOfRangeException($"ERROR!")
         };
     }

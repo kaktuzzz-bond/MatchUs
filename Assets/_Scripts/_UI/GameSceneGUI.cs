@@ -13,14 +13,13 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
 
     [SerializeField]
     private RectTransform footer;
-    
+
     [SerializeField]
     private Image fader;
-    
+
     private CameraController _cameraController;
 
     private Board _board;
-  
 
 
     private void Awake()
@@ -29,14 +28,16 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
         _board = Board.Instance;
     }
 
+
     public Vector3[] GetHeaderCorners() => Utils.GetRectWorldCorners(header);
 
-    public Vector3[] GetFooterCorners()=> Utils.GetRectWorldCorners(footer);
+
+    public Vector3[] GetFooterCorners() => Utils.GetRectWorldCorners(footer);
 
 
     public bool IsGameAreaPosition(Vector3 position)
     {
-        bool checkX = position.x > -0.5f && 
+        bool checkX = position.x > -0.5f &&
                       position.x < _board.Width + 0.5f;
 
         bool checkY = position.y < GetHeaderCorners()[0].y &&
@@ -44,13 +45,15 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
 
         return checkX && checkY;
     }
-    
+
+
     private void FadeIn()
     {
         fader
                 .DOFade(0, 0.5f)
-                .SetEase(Ease.InSine)
-                .onComplete += () => OnFadedIn?.Invoke();
+                .SetEase(Ease.InSine);
+
+        OnFadedIn?.Invoke();
     }
 
 

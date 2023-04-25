@@ -15,7 +15,7 @@ public class ChipController : Singleton<ChipController>
 
     private readonly WaitForSeconds _wait01 = new(0.02f);
 
-    [ShowInInspector]
+    [SerializeField]
     private Chip _storage;
 
 #region Component Links
@@ -49,21 +49,51 @@ public class ChipController : Singleton<ChipController>
 
     private void CompareStorage(Chip chip)
     {
-        Debug.Log($"Shape: {chip.CompareShape(_storage)}");
+        if (chip.Equals(_storage))
+        {
+            Debug.LogWarning("The same chip");
 
-        Debug.Log($"Color: {chip.CompareColor(_storage)}");
+            _storage = null;
 
-        Debug.Log($"Vertical: {chip.CompareVerticalPosition(_storage)}");
+            return;
+        }
 
-        Debug.LogError($"Horizontal: {chip.CompareHorizontalPosition(_storage)}");
+        // Debug.Log($"Shape: {chip.CompareShape(_storage)}");
+        //
+        // Debug.Log($"Color: {chip.CompareColor(_storage)}");
+        //
+        // Debug.Log($"Horizontal: {chip.CompareHorizontalPosition(_storage)}");
+        //
+        // Debug.Log($"Vertical: {chip.CompareVerticalPosition(_storage)}");
+        //
+        // Debug.LogError($"Multiline: {chip.CompareMultilinePosition(_storage)}");
 
-        Debug.Log($"Multiline: {chip.CompareMultilinePosition(_storage)}");
+        bool isInPosition = chip.CompareHorizontalPosition(_storage) ||
+                            chip.CompareVerticalPosition(_storage) ||
+                            chip.CompareMultilinePosition(_storage);
+
+        bool isComparing = chip.CompareShape(_storage) || chip.CompareColor(_storage);
+
+        if (isInPosition && isComparing)
+        {
+            chip.StateManager.SetFadedOutState();
+
+            _storage.StateManager.SetFadedOutState();
+
+            _storage = null;
+
+            return;
+        }
+        else
+        {
+            _storage = chip;
+        }
     }
 
 
     private void ProcessChip(Chip chip)
     {
-        if (chip.ChipState.GetType() == typeof(FadedInChipState))
+        if (chip.StateManager.CurrentState.GetType() == typeof(FadedInChipState))
         {
             if (_storage == null)
             {
@@ -73,10 +103,6 @@ public class ChipController : Singleton<ChipController>
             {
                 CompareStorage(chip);
             }
-
-            Debug.LogWarning(
-                    $"Data ({chip.ShapeIndex}, {chip.ColorIndex}); " +
-                    $"Pos {chip.BoardPosition}");
 
             chip.Shake();
         }

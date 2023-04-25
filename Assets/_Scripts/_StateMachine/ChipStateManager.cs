@@ -8,8 +8,6 @@ public class ChipStateManager : MonoBehaviour
     [ShowInInspector]
     public IChipState CurrentState { get; private set; } = new EnabledChipState();
 
-    //private readonly InitializedChipState initializedChipState = new();
-    
     private readonly EnabledChipState _enabledChipState = new();
 
     private readonly FadedOutChipState _fadedOutChipState = new();
