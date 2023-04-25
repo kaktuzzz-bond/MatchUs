@@ -28,14 +28,9 @@ public class ChipController : Singleton<ChipController>
 
     private CameraController _cameraController;
 
+    private PointerController _pointerController;
+
 #endregion
-
-
-    [Button("Clear Storage")]
-    private void ClearStorage()
-    {
-        _storage = null;
-    }
 
 
     private void Awake()
@@ -44,35 +39,20 @@ public class ChipController : Singleton<ChipController>
         _handler = ChipHandler.Instance;
         _gameController = GameController.Instance;
         _cameraController = CameraController.Instance;
+        _pointerController = PointerController.Instance;
     }
 
 
     private void CompareStorage(Chip chip)
     {
-        if (chip.Equals(_storage))
-        {
-            Debug.LogWarning("The same chip");
-
-            _storage = null;
-
-            return;
-        }
-
-        // Debug.Log($"Shape: {chip.CompareShape(_storage)}");
-        //
-        // Debug.Log($"Color: {chip.CompareColor(_storage)}");
-        //
-        // Debug.Log($"Horizontal: {chip.CompareHorizontalPosition(_storage)}");
-        //
-        // Debug.Log($"Vertical: {chip.CompareVerticalPosition(_storage)}");
-        //
-        // Debug.LogError($"Multiline: {chip.CompareMultilinePosition(_storage)}");
-
+        
+        
         bool isInPosition = chip.CompareHorizontalPosition(_storage) ||
                             chip.CompareVerticalPosition(_storage) ||
                             chip.CompareMultilinePosition(_storage);
 
-        bool isComparing = chip.CompareShape(_storage) || chip.CompareColor(_storage);
+        bool isComparing = chip.CompareShape(_storage) || 
+                           chip.CompareColor(_storage);
 
         if (isInPosition && isComparing)
         {
@@ -82,10 +62,14 @@ public class ChipController : Singleton<ChipController>
 
             _storage = null;
 
-            return;
+            _pointerController.HidePointers();
         }
         else
         {
+            _pointerController.HidePointers();
+            
+            _pointerController.GetPointer(PointerController.Selector, chip.BoardPosition);
+            
             _storage = chip;
         }
     }
@@ -93,23 +77,30 @@ public class ChipController : Singleton<ChipController>
 
     private void ProcessChip(Chip chip)
     {
-        if (chip.StateManager.CurrentState.GetType() == typeof(FadedInChipState))
+        //case: Storage is empty
+        if (_storage == null)
         {
-            if (_storage == null)
-            {
-                _storage = chip;
-            }
-            else
-            {
-                CompareStorage(chip);
-            }
+            _pointerController.GetPointer(PointerController.Selector, chip.BoardPosition);
 
-            chip.Shake();
+            _storage = chip;
+
+            return;
         }
-        else
+
+        //case: Tap the same
+        if (chip.Equals(_storage))
         {
-            Debug.Log("Not active chip");
+            Debug.LogWarning("The same chip");
+
+            _storage = null;
+
+            _pointerController.HidePointers();
+
+            return;
         }
+
+        // case: Compare chips
+        CompareStorage(chip);
     }
 
 

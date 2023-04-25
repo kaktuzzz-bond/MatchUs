@@ -78,11 +78,19 @@ public class CameraController : Singleton<CameraController>
         RaycastHit2D hit = Physics2D.Raycast(position, -Vector2.up);
 
         if (hit.collider == null) return;
-            
+
         if (!hit.collider.TryGetComponent(out Chip chip)) return;
-                
-        OnChipTapped?.Invoke(chip);
-        
+
+        bool isChipFadedIn = chip.StateManager.CurrentState.GetType() == typeof(FadedInChipState);
+
+        if (isChipFadedIn)
+        {
+            OnChipTapped?.Invoke(chip);
+        }
+        else
+        {
+            Debug.Log("Tapped chip is NOT ACTIVE");
+        }
     }
 
 

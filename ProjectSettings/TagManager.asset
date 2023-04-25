@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Chip
   - Tile
+  - Hint
+  - Selector
   - Pointer
   layers:
   - Default

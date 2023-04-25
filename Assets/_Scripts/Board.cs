@@ -7,28 +7,27 @@ public class Board : Singleton<Board>
 {
     public event Action OnTilesGenerated;
 
-    [HorizontalGroup("Size", Title = "Board Settings", Width = 0.5f)]
+    [HorizontalGroup("Size", Title = "Board Settings")]
     [SerializeField, BoxGroup("Size/Width"), HideLabel, ReadOnly]
-    private int width = 10;
+    private int width = 9;
 
     [SerializeField, BoxGroup("Size/Height"), HideLabel]
     private int height = 50;
 
-    [HorizontalGroup("Prefabs", Width = 0.5f)]
-    [SerializeField, BoxGroup("Prefabs/Tile Prefab"), HideLabel]
+    [SerializeField, FoldoutGroup("Prefabs")]
     private Transform tilePrefab;
 
-    [SerializeField, BoxGroup("Prefabs/Dot Prefab"), HideLabel]
+    [SerializeField, FoldoutGroup("Prefabs")]
     private Transform dotPrefab;
 
     [SerializeField, FoldoutGroup("Parents")]
     private Transform tileParent;
 
-    [SerializeField, FoldoutGroup("Parents")]
+    [FoldoutGroup("Parents")]
     public Transform chipParent;
 
-    [SerializeField, FoldoutGroup("Parents")]
-    private Transform pointerParent;
+    [FoldoutGroup("Parents")]
+    public Transform pointerParent;
 
     [SerializeField, FoldoutGroup("Chips"), ColorPalette]
     private Color[] colorPallet;
@@ -41,9 +40,9 @@ public class Board : Singleton<Board>
     public int Height => height;
 
     public int ColorPalletLength => colorPallet.Length;
-    
+
     public int ShapePalletLength => shapePallet.Length;
-    
+
     private Transform[,] _tiles;
 
     public Transform this[int x, int y] => _tiles[x, y];
