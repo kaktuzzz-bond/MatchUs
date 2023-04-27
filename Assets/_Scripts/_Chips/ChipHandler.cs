@@ -23,7 +23,11 @@ public class ChipHandler : Singleton<ChipHandler>
     [ShowInInspector]
     private List<Chip> _inGameChips = new();
 
-
+    [ShowInInspector]
+    private List<Chip> _outOfGameChips = new();
+    
+    
+    
     private void Awake()
     {
         _board = Board.Instance;
@@ -42,6 +46,7 @@ public class ChipHandler : Singleton<ChipHandler>
     }
 
 
+    
     public ChipData GetNewChipData()
     {
         return _gameController.DifficultyLevel switch

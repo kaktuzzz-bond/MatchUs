@@ -22,6 +22,8 @@ public class Chip : MonoBehaviour
 
     public const float FadeTime = 0.1f;
 
+    public const float MoveTime = 0.2f;
+
     public ChipStateManager StateManager { get; private set; }
 
     [HorizontalGroup("Appearance", Title = "Chip Settings")]
@@ -36,10 +38,16 @@ public class Chip : MonoBehaviour
 
     private Collider2D _collider;
 
+    private ChipController _chipController;
+
+    private Tween _tween;
+
 
     private void Awake()
     {
         _board = Board.Instance;
+        _chipController = ChipController.Instance;
+
         StateManager = GetComponent<ChipStateManager>();
         _collider = GetComponent<Collider2D>();
     }
@@ -55,11 +63,11 @@ public class Chip : MonoBehaviour
     }
 
 
-    public void Shake()
-    {
-        Vector3 shakeStrength = new Vector3(0.2f, 0.2f, 0f);
-        transform.DOShakePosition(1f, shakeStrength, 20);
-    }
+    // public void Shake()
+    // {
+    //     Vector3 shakeStrength = new Vector3(0.2f, 0.2f, 0f);
+    //     transform.DOShakePosition(1f, shakeStrength, 20);
+    // }
 
 
     private void SetAppearance()
@@ -83,6 +91,26 @@ public class Chip : MonoBehaviour
     public bool CompareColor(Chip other)
     {
         return ColorIndex == other.ColorIndex;
+    }
+
+
+    private void MoveUp(int boardLine)
+    {
+        if (BoardPosition.y <= boardLine) return;
+
+        if (_tween.IsActive())
+        {
+            _tween.onComplete += () =>
+            {
+                _tween = transform
+                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].position.y, FadeTime);
+            };
+
+            return;
+        }
+
+        _tween = transform
+                .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].position.y, MoveTime);
     }
 
 
@@ -128,8 +156,8 @@ public class Chip : MonoBehaviour
         }
 
         bool isTopClear = chips[0].IsPathClear(Vector2.right, _board.Width - chips[0].BoardPosition.x, chips[1]);
-        bool isBottomClear = chips[1].IsPathClear(Vector2.left,  chips[1].BoardPosition.x, chips[0]);
-        
+        bool isBottomClear = chips[1].IsPathClear(Vector2.left, chips[1].BoardPosition.x, chips[0]);
+
         return isTopClear && isBottomClear;
     }
 
@@ -146,8 +174,9 @@ public class Chip : MonoBehaviour
         {
             if (!hit.collider.TryGetComponent(out Chip chip)) continue;
 
-            if (chip.Equals(other)) continue;
-            
+            if (other != null &&
+                chip.Equals(other)) continue;
+
             if (chip.StateManager.CurrentState.GetType() == typeof(FadedInChipState))
             {
                 return false;
@@ -155,7 +184,23 @@ public class Chip : MonoBehaviour
         }
 
         Debug.DrawRay(transform.position, direction, Color.red, 5f);
-        
+
         return true;
     }
+
+
+#region Enable / Disable
+
+    private void OnEnable()
+    {
+        _chipController.OnLineRemoved += MoveUp;
+    }
+
+
+    private void OnDisable()
+    {
+        _chipController.OnLineRemoved -= MoveUp;
+    }
+
+#endregion
 }
