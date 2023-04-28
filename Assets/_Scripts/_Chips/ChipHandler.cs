@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 public class ChipHandler : Singleton<ChipHandler>
 {
-    public Vector2Int NextBoardPosition => 
+    public Vector2Int NextBoardPosition =>
             new(_chipCounter % _board.Width, _chipCounter / _board.Width);
 
     private ChipController _chipController;
@@ -23,11 +23,14 @@ public class ChipHandler : Singleton<ChipHandler>
     [ShowInInspector]
     private List<Chip> _inGameChips = new();
 
+    public List<Chip> InGameChips => _inGameChips;
+
     [ShowInInspector]
     private List<Chip> _outOfGameChips = new();
-    
-    
-    
+
+    private readonly Stack<ICommand> _log = new();
+
+
     private void Awake()
     {
         _board = Board.Instance;
@@ -38,15 +41,41 @@ public class ChipHandler : Singleton<ChipHandler>
     }
 
 
-    private void Register(Chip chip)
+    public void Execute(ICommand command)
+    {
+        command.Execute();
+
+        _log.Push(command);
+    }
+
+
+    public void Undo()
+    {
+        ICommand command = _log.Pop();
+        command.Undo();
+    }
+
+
+    public void Register(Chip chip)
     {
         _inGameChips.Add(chip);
+
+        _outOfGameChips.Remove(chip);
 
         _chipCounter++;
     }
 
 
-    
+    public void Unregister(Chip chip)
+    {
+        _outOfGameChips.Add(chip);
+
+        _inGameChips.Remove(chip);
+
+        _chipCounter--;
+    }
+
+
     public ChipData GetNewChipData()
     {
         return _gameController.DifficultyLevel switch
@@ -90,8 +119,10 @@ public class ChipHandler : Singleton<ChipHandler>
 
             if (_chipCounter >= _board.Width)
             {
-                shapeIndexes.Remove(_inGameChips[^_board.Width].ShapeIndex);
-                colorIndexes.Remove(_inGameChips[^_board.Width].ColorIndex);
+                Chip chip = _inGameChips[^_board.Width];
+
+                shapeIndexes.Remove(chip.ShapeIndex);
+                colorIndexes.Remove(chip.ColorIndex);
             }
         }
 
@@ -100,20 +131,4 @@ public class ChipHandler : Singleton<ChipHandler>
 
         return new ChipData(shapeIndex, colorIndex);
     }
-
-
-#region Enable / Disable
-
-    private void OnEnable()
-    {
-        _chipController.OnChipCreated += Register;
-    }
-
-
-    private void OnDisable()
-    {
-        _chipController.OnChipCreated -= Register;
-    }
-
-#endregion
 }

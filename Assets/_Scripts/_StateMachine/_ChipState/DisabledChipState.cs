@@ -14,10 +14,12 @@ public class DisabledChipState : IChipState
         chip.Renderer
                 .DOFade(0f, Chip.FadeTime)
                 .SetEase(Ease.Linear);
-
+        
         chip.transform
                 .DOMoveY(targetPos.y, Chip.FadeTime)
                 .SetEase(Ease.Linear)
                 .onComplete += () => chip.gameObject.SetActive(false);
+        
+        ChipHandler.Instance.Unregister(chip);
     }
 }

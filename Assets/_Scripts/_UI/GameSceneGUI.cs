@@ -17,15 +17,33 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     [SerializeField]
     private Image fader;
 
+    [SerializeField, FoldoutGroup("Game Buttons")]
+    private Button add;
+
+    [SerializeField, FoldoutGroup("Game Buttons")]
+    private Button special;
+
+    [SerializeField, FoldoutGroup("Game Buttons")]
+    private Button hint;
+
+    [SerializeField, FoldoutGroup("Game Buttons")]
+    private Button undo;
+
     private CameraController _cameraController;
 
     private Board _board;
+
+    private ChipHandler _chipHandler;
 
 
     private void Awake()
     {
         _cameraController = CameraController.Instance;
         _board = Board.Instance;
+        _chipHandler = ChipHandler.Instance;
+
+        add.onClick.AddListener(() => _chipHandler.Execute(new AddChipsCommand()));
+        special.onClick.AddListener(() => _chipHandler.Execute(new SpecialActionCommand()));
     }
 
 

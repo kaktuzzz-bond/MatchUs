@@ -11,10 +11,8 @@ using Unity.VisualScripting;
 
 public class ChipController : Singleton<ChipController>
 {
-    public event Action<Chip> OnChipCreated;
-
     public event Action<int> OnLineRemoved;
-    
+
     [SerializeField]
     private Transform chipPrefab;
 
@@ -51,7 +49,7 @@ public class ChipController : Singleton<ChipController>
     private void RemoveLine(int boardLine)
     {
         Debug.Log($"Remove ({boardLine}) line.");
-        
+
         OnLineRemoved?.Invoke(boardLine);
     }
 
@@ -67,9 +65,8 @@ public class ChipController : Singleton<ChipController>
 
     private void CheckLine(int boardLine)
     {
-        
         Debug.Log($"Checking ({boardLine}) line.");
-        
+
         var hits = new RaycastHit2D[_board.Width];
 
         ContactFilter2D filter = new();
@@ -90,7 +87,7 @@ public class ChipController : Singleton<ChipController>
         if (states == null) return;
 
         DisableChips(states);
-        
+
         RemoveLine(boardLine);
     }
 
@@ -124,11 +121,11 @@ public class ChipController : Singleton<ChipController>
         second.StateManager.SetFadedOutState();
 
         int topLine = Mathf.Min(first.BoardPosition.y, second.BoardPosition.y);
-        
+
         int bottomLine = Mathf.Max(first.BoardPosition.y, second.BoardPosition.y);
-        
+
         CheckLine(bottomLine);
-        
+
         CheckLine(topLine);
     }
 
@@ -141,6 +138,14 @@ public class ChipController : Singleton<ChipController>
 
             yield return _wait01;
         }
+    }
+
+
+    public void CreateChip(int shapeIndex, int colorIndex)
+    {
+        Vector2Int boardPos = _handler.NextBoardPosition;
+
+        CreateNewChip(shapeIndex, colorIndex, boardPos);
     }
 
 
@@ -165,8 +170,6 @@ public class ChipController : Singleton<ChipController>
         chip.Init(shapeIndex, colorIndex, boardPosition);
 
         instance.name = $"Chip ({shapeIndex}, {colorIndex})";
-
-        OnChipCreated?.Invoke(chip);
     }
 
 
