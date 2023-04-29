@@ -7,18 +7,19 @@ using UnityEngine;
 public class PointerController : Singleton<PointerController>
 {
     public event Action OnPointersHidden;
-    
+
     public const string Selector = "Selector";
+
     public const string Hint = "Hint";
-    
-    [SerializeField, FoldoutGroup("Prefabs")]
+
+    [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform selectorPrefab;
 
-    [SerializeField, FoldoutGroup("Prefabs")]
+    [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform hintPrefab;
 
     [ShowInInspector]
-    Dictionary<string, ObjectPool> _pools;
+    private Dictionary<string, ObjectPool> _pools;
 
     private Board _board;
 
@@ -26,7 +27,6 @@ public class PointerController : Singleton<PointerController>
     private void Awake()
     {
         _board = Board.Instance;
-        
     }
 
 
@@ -55,7 +55,7 @@ public class PointerController : Singleton<PointerController>
 
     public void ReleasePointer(GamePointer gamePointer)
     {
-       _pools[gamePointer.transform.tag].Release(gamePointer.transform);
+        _pools[gamePointer.transform.tag].Release(gamePointer.transform);
     }
 
 
@@ -63,13 +63,4 @@ public class PointerController : Singleton<PointerController>
     {
         OnPointersHidden?.Invoke();
     }
-
-    // public void ReleaseAllInPool(string poolKey)
-    // {
-    //     Debug.LogError("ReleaseAllInPool");
-    //     if (_pools.TryGetValue(poolKey, out ObjectPool pool))
-    //     {
-    //        pool.ReleaseAll();
-    //     }
-    // }
 }

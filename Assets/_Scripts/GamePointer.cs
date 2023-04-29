@@ -12,7 +12,7 @@ public class GamePointer : MonoBehaviour
     private PointerController _pointerController;
 
     private const float FadeDuration = 0.1f;
-    
+
 
     private void Awake()
     {
@@ -32,7 +32,7 @@ public class GamePointer : MonoBehaviour
     private void Hide()
     {
         _pointerController.OnPointersHidden -= Hide;
-        
+
         spriteRenderer
                 .DOFade(0f, FadeDuration)
                 .onComplete += () => _pointerController.ReleasePointer(this);
@@ -65,7 +65,7 @@ public class GamePointer : MonoBehaviour
 
     public GamePointer Subscribe()
     {
-      _pointerController.OnPointersHidden += Hide;
+        _pointerController.OnPointersHidden += Hide;
 
         return this;
     }

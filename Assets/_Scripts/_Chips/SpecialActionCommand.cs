@@ -1,4 +1,3 @@
-
 public class SpecialActionCommand : ICommand
 {
     public void Execute()

@@ -27,11 +27,11 @@ public class Chip : MonoBehaviour
     public ChipStateManager StateManager { get; private set; }
 
     [HorizontalGroup("Appearance", Title = "Chip Settings")]
-    [ShowInInspector, BoxGroup("Appearance/Chip data"), HideLabel, ReadOnly]
+    [ShowInInspector] [BoxGroup("Appearance/Chip data")] [HideLabel] [ReadOnly]
     private ChipData _chipData;
 
     [VerticalGroup("Position")]
-    [ShowInInspector, BoxGroup("Position/Board Position"), HideLabel, ReadOnly]
+    [ShowInInspector] [BoxGroup("Position/Board Position")] [HideLabel] [ReadOnly]
     public Vector2Int BoardPosition => Utils.ConvertWorldToBoardCoordinates(transform.position);
 
     private Board _board;
@@ -175,7 +175,10 @@ public class Chip : MonoBehaviour
             if (!hit.collider.TryGetComponent(out Chip chip)) continue;
 
             if (other != null &&
-                chip.Equals(other)) continue;
+                chip.Equals(other))
+            {
+                continue;
+            }
 
             if (chip.StateManager.CurrentState.GetType() == typeof(FadedInChipState))
             {

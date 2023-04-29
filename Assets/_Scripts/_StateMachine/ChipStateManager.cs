@@ -28,11 +28,11 @@ public class ChipStateManager : MonoBehaviour
     private void Launch()
     {
         gameObject.SetActive(false);
-        
+
         CurrentState = _enabledChipState;
 
         CurrentState.Enter(_chip);
-        
+
         SetFadedInState();
     }
 

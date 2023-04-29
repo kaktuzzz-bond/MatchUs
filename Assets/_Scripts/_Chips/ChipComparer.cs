@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-
 public class ChipComparer : Singleton<ChipComparer>
 {
     public event Action<Chip, Chip> OnChipMatched;
-    
+
     [ShowInInspector]
     private Chip _storage;
 
@@ -36,8 +35,6 @@ public class ChipComparer : Singleton<ChipComparer>
         if (isInPosition && isComparing)
         {
             OnChipMatched?.Invoke(chip, _storage);
-            
-          
 
             _storage = null;
 

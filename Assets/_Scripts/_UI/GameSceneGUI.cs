@@ -17,16 +17,16 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     [SerializeField]
     private Image fader;
 
-    [SerializeField, FoldoutGroup("Game Buttons")]
+    [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button add;
 
-    [SerializeField, FoldoutGroup("Game Buttons")]
+    [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button special;
 
-    [SerializeField, FoldoutGroup("Game Buttons")]
+    [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button hint;
 
-    [SerializeField, FoldoutGroup("Game Buttons")]
+    [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button undo;
 
     private CameraController _cameraController;
@@ -47,10 +47,16 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     }
 
 
-    public Vector3[] GetHeaderCorners() => Utils.GetRectWorldCorners(header);
+    public Vector3[] GetHeaderCorners()
+    {
+        return Utils.GetRectWorldCorners(header);
+    }
 
 
-    public Vector3[] GetFooterCorners() => Utils.GetRectWorldCorners(footer);
+    public Vector3[] GetFooterCorners()
+    {
+        return Utils.GetRectWorldCorners(footer);
+    }
 
 
     public bool IsGameAreaPosition(Vector3 position)

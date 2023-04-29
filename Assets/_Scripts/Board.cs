@@ -8,19 +8,19 @@ public class Board : Singleton<Board>
     public event Action OnTilesGenerated;
 
     [HorizontalGroup("Size", Title = "Board Settings")]
-    [SerializeField, BoxGroup("Size/Width"), HideLabel, ReadOnly]
+    [SerializeField] [BoxGroup("Size/Width")] [HideLabel] [ReadOnly]
     private int width = 9;
 
-    [SerializeField, BoxGroup("Size/Height"), HideLabel]
+    [SerializeField] [BoxGroup("Size/Height")] [HideLabel]
     private int height = 50;
 
-    [SerializeField, FoldoutGroup("Prefabs")]
+    [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform tilePrefab;
 
-    [SerializeField, FoldoutGroup("Prefabs")]
+    [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform dotPrefab;
 
-    [SerializeField, FoldoutGroup("Parents")]
+    [SerializeField] [FoldoutGroup("Parents")]
     private Transform tileParent;
 
     [FoldoutGroup("Parents")]
@@ -29,10 +29,10 @@ public class Board : Singleton<Board>
     [FoldoutGroup("Parents")]
     public Transform pointerParent;
 
-    [SerializeField, FoldoutGroup("Chips"), ColorPalette]
+    [SerializeField] [FoldoutGroup("Chips")] [ColorPalette]
     private Color[] colorPallet;
 
-    [SerializeField, FoldoutGroup("Chips")]
+    [SerializeField] [FoldoutGroup("Chips")]
     private Sprite[] shapePallet;
 
     public int Width => width;
@@ -58,7 +58,9 @@ public class Board : Singleton<Board>
     {
         if (index < 0 ||
             index >= colorPallet.Length)
+        {
             throw new IndexOutOfRangeException($"{nameof(GetColor)}Index is out of range");
+        }
 
         return colorPallet[index];
     }
@@ -68,7 +70,9 @@ public class Board : Singleton<Board>
     {
         if (index < 0 ||
             index >= shapePallet.Length)
+        {
             throw new IndexOutOfRangeException($"{nameof(GetShape)}Index is out of range");
+        }
 
         return shapePallet[index];
     }
@@ -79,21 +83,19 @@ public class Board : Singleton<Board>
         _tiles = new Transform[xSize, ySize];
 
         for (int y = 0; y < ySize; y++)
+        for (int x = 0; x < xSize; x++)
         {
-            for (int x = 0; x < xSize; x++)
-            {
-                Transform tile = Instantiate(
-                        original: tilePrefab,
-                        position: new Vector3(x, -y, 0f),
-                        rotation: Quaternion.identity,
-                        parent: tileParent);
+            Transform tile = Instantiate(
+                    tilePrefab,
+                    new Vector3(x, -y, 0f),
+                    Quaternion.identity,
+                    tileParent);
 
-                tile.name = $"Tile({x}, {y})";
+            tile.name = $"Tile({x}, {y})";
 
-                _tiles[x, y] = tile;
+            _tiles[x, y] = tile;
 
-                DrawDot(x, y);
-            }
+            DrawDot(x, y);
         }
 
         OnTilesGenerated?.Invoke();
@@ -104,15 +106,18 @@ public class Board : Singleton<Board>
     {
         if (x == Width - 1 ||
             y == Height - 1 ||
-            Random.value > 0.15f) return;
+            Random.value > 0.15f)
+        {
+            return;
+        }
 
         Vector3 dotPos = new(x + 0.5f, -(y + 0.5f), 0f);
 
         Transform dot = Instantiate(
-                original: dotPrefab,
-                position: dotPos,
-                rotation: Quaternion.identity,
-                parent: tileParent);
+                dotPrefab,
+                dotPos,
+                Quaternion.identity,
+                tileParent);
 
         dot.name = "Dot";
 

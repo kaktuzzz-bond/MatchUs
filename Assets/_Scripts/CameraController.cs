@@ -11,13 +11,13 @@ public class CameraController : Singleton<CameraController>
     public event Action<Chip> OnChipTapped;
 
     [HorizontalGroup("Split", Title = "On Hold Properties")]
-    [SerializeField, PropertyRange(0f, 2f), BoxGroup("Split/Velocity Threshold"), HideLabel]
+    [SerializeField] [PropertyRange(0f, 2f)] [BoxGroup("Split/Velocity Threshold")] [HideLabel]
     private float cameraVelocityThreshold = 1f;
 
-    [SerializeField, MinValue(0), BoxGroup("Split/On Hold Speed"), HideLabel]
+    [SerializeField] [MinValue(0)] [BoxGroup("Split/On Hold Speed")] [HideLabel]
     private float endTouchMoveDuration = 1f;
 
-    [SerializeField, MinValue(0), BoxGroup("Split/On Hold Delay"), HideLabel]
+    [SerializeField] [MinValue(0)] [BoxGroup("Split/On Hold Delay")] [HideLabel]
     private float onHoldMoveDuration = 0.2f;
 
 #region Component Links
@@ -176,9 +176,9 @@ public class CameraController : Singleton<CameraController>
         float headerHeight = rectHeader[1].y - rectHeader[0].y;
 
         _topBoundPoint = new Vector3(
-                x: (_board.Width - 1f) * 0.5f,
-                y: headerHeight - _camera.orthographicSize + 0.5f,
-                z: _camera.transform.position.z);
+                (_board.Width - 1f) * 0.5f,
+                headerHeight - _camera.orthographicSize + 0.5f,
+                _camera.transform.position.z);
 
         _bottomBoundPoint = _topBoundPoint - new Vector3(0, 25f, 0);
     }

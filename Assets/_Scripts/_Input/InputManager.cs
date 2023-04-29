@@ -20,10 +20,10 @@ public class InputManager : Singleton<InputManager>
 #endregion
 
     [HorizontalGroup("Split", Title = "Swipe Properties", Width = 0.5f)]
-    [SerializeField, PropertyRange(0f, 2f), BoxGroup("Split/Min Swipe Distance"), HideLabel]
+    [SerializeField] [PropertyRange(0f, 2f)] [BoxGroup("Split/Min Swipe Distance")] [HideLabel]
     private float minSwipeDistance = 0.5f;
 
-    [SerializeField, PropertyRange(0f, 1f), BoxGroup("Split/Direction Threshold"), HideLabel]
+    [SerializeField] [PropertyRange(0f, 1f)] [BoxGroup("Split/Direction Threshold")] [HideLabel]
     private float minTouchDuration = 0.2f;
 
     private PlayerInput _input;

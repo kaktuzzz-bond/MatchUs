@@ -8,14 +8,16 @@ using Object = UnityEngine.Object;
 public class ObjectPool
 {
     private readonly Transform _prefab;
-    
+
     private readonly Queue<Transform> _queue;
+
 
     public ObjectPool(Transform prefab)
     {
         _prefab = prefab;
         _queue = new Queue<Transform>();
     }
+
 
     public Transform Get()
     {
@@ -26,6 +28,7 @@ public class ObjectPool
 
         return _queue.Dequeue();
     }
+
 
     private void Add(int count = 1)
     {
@@ -39,6 +42,7 @@ public class ObjectPool
         }
     }
 
+
     public void Release(Transform obj)
     {
         obj.gameObject.SetActive(false);
@@ -49,9 +53,6 @@ public class ObjectPool
 
     public void ReleaseAll()
     {
-        foreach (Transform t in _queue)
-        {
-            Release(t);
-        }
+        foreach (Transform t in _queue) Release(t);
     }
 }

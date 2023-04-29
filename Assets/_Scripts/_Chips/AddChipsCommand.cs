@@ -19,15 +19,12 @@ public class AddChipsCommand : ICommand
                 .Where(c => c.StateManager.CurrentState.GetType() == typeof(FadedInChipState))
                 .ToList();
 
-        foreach (Chip chip in inGameChips)
-        {
-            _chipController.CreateChip(chip.ShapeIndex, chip.ColorIndex);
-        }
+        foreach (Chip chip in inGameChips) _chipController.CreateChip(chip.ShapeIndex, chip.ColorIndex);
     }
 
 
     public void Undo()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }

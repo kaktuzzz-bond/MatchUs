@@ -1,23 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
-using Sirenix.OdinInspector;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class ChipHandler : Singleton<ChipHandler>
 {
- 
-
     private ChipController _chipController;
 
     private GameController _gameController;
 
     private Board _board;
 
- 
     private readonly Stack<ICommand> _log = new();
 
 
@@ -44,10 +36,4 @@ public class ChipHandler : Singleton<ChipHandler>
         ICommand command = _log.Pop();
         command.Undo();
     }
-
-
-  
-
-    
- 
 }

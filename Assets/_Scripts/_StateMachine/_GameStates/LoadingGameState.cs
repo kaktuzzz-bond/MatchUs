@@ -7,6 +7,6 @@ public class LoadingGameState : IGameState
     {
         Debug.Log("Loading Game State entered ");
 
-        SceneManager.LoadScene(1);
+        SceneManager.LoadSceneAsync(1);
     }
 }

@@ -16,7 +16,7 @@ public class ChipController : Singleton<ChipController>
     [SerializeField]
     private Transform chipPrefab;
 
-    public Vector2Int NextBoardPosition =>
+    private Vector2Int NextBoardPosition =>
             new(_chipCounter % _board.Width, _chipCounter / _board.Width);
 
     public List<Chip> InGameChips => _inGameChips;
@@ -35,9 +35,9 @@ public class ChipController : Singleton<ChipController>
 
     private Board _board;
 
-    private ChipHandler _handler;
-
     private GameController _gameController;
+
+    private CameraController _cameraController;
 
     private ChipComparer _chipComparer;
 
@@ -47,9 +47,9 @@ public class ChipController : Singleton<ChipController>
     private void Awake()
     {
         _board = Board.Instance;
-        _handler = ChipHandler.Instance;
         _gameController = GameController.Instance;
         _chipComparer = ChipComparer.Instance;
+        _cameraController = CameraController.Instance;
     }
 
 
@@ -89,17 +89,26 @@ public class ChipController : Singleton<ChipController>
 
     private void DisableChips(List<ChipStateManager> states)
     {
-        foreach (ChipStateManager state in states)
-        {
-            state.SetDisabledState();
-        }
+        foreach (ChipStateManager state in states) state.SetDisabledState();
     }
 
 
     private void CheckLine(int boardLine)
     {
-        Debug.Log($"Checking ({boardLine}) line.");
+        var hits = GetRaycastHits(boardLine);
 
+        var states = AreAllFadedOut(hits);
+
+        if (states == null) return;
+
+        DisableChips(states);
+
+        RemoveLine(boardLine);
+    }
+
+
+    private RaycastHit2D[] GetRaycastHits(int boardLine)
+    {
         var hits = new RaycastHit2D[_board.Width];
 
         ContactFilter2D filter = new();
@@ -111,17 +120,9 @@ public class ChipController : Singleton<ChipController>
         if (result == 0)
         {
             Debug.LogError("CheckLine() caught the empty line!");
-
-            return;
         }
 
-        var states = AreAllFadedOut(hits);
-
-        if (states == null) return;
-
-        DisableChips(states);
-
-        RemoveLine(boardLine);
+        return hits;
     }
 
 
@@ -265,14 +266,14 @@ public class ChipController : Singleton<ChipController>
 
     private void OnEnable()
     {
-        _gameController.OnGameStarted += DrawStartArray;
+        _cameraController.OnCameraSetup += DrawStartArray;
         _chipComparer.OnChipMatched += FadeOutChips;
     }
 
 
     private void OnDisable()
     {
-        _gameController.OnGameStarted -= DrawStartArray;
+        _cameraController.OnCameraSetup -= DrawStartArray;
         _chipComparer.OnChipMatched -= FadeOutChips;
     }
 

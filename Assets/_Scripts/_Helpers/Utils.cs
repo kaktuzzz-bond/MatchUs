@@ -32,15 +32,13 @@ public class Utils : MonoBehaviour
 
         return new Vector2Int(boardX, boardY);
     }
-    
+
+
     public static List<int> GetIndexes(int listCount)
     {
         List<int> list = new();
 
-        for (int i = 0; i < listCount; i++)
-        {
-            list.Add(i);
-        }
+        for (int i = 0; i < listCount; i++) list.Add(i);
 
         return list;
     }

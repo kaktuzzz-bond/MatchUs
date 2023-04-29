@@ -7,17 +7,6 @@ public class GameStateManager : Singleton<GameStateManager>
     [ShowInInspector]
     public IGameState CurrentGameState { get; private set; }
 
-    [ShowInInspector]
-    public DifficultyLevel CurrentDifficultyLevel { get; private set; }
-
-    private MainSceneGUI _mainSceneGUI;
-
-
-    private void Awake()
-    {
-        _mainSceneGUI = MainSceneGUI.Instance;
-    }
-
 
     private void Start()
     {
@@ -26,45 +15,40 @@ public class GameStateManager : Singleton<GameStateManager>
     }
 
 
-    public void Initial() => SetState(new InitialGameState());
-
-
-    public void Loading(DifficultyLevel difficultyLevel)
+    public void Initial()
     {
-        CurrentDifficultyLevel = difficultyLevel;
+        SetState(new InitialGameState());
+    }
+
+
+    public void Loading()
+    {
         SetState(new LoadingGameState());
     }
 
 
-    public void Active() => SetState(new ActiveGameState());
+    public void Active()
+    {
+        SetState(new ActiveGameState());
+    }
 
 
-    public void Pause() => SetState(new PauseGameState());
+    public void Pause()
+    {
+        SetState(new PauseGameState());
+    }
 
 
-    public void Exit() => SetState(new ExitGameState());
+    public void Exit()
+    {
+        SetState(new ExitGameState());
+    }
 
 
-    public void SetState(IGameState newGameState)
+    private void SetState(IGameState newGameState)
     {
         CurrentGameState = newGameState;
 
         CurrentGameState.Enter(this);
     }
-
-
-#region Enable / Disable
-
-    private void OnEnable()
-    {
-        _mainSceneGUI.OnDifficultyLevelSelected += Loading;
-    }
-
-
-    private void OnDisable()
-    {
-        _mainSceneGUI.OnDifficultyLevelSelected -= Loading;
-    }
-
-#endregion
 }

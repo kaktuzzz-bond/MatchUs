@@ -1,20 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class GameController : Singleton<GameController>
 {
-    public event Action OnGameStarted;
+    private DifficultyLevel _difficultyLevel;
 
-    private bool _isGameStarted;
-
-    private GameSceneGUI _sceneGUI;
-
-    public DifficultyLevel DifficultyLevel { get; private set; }
+    private GameStateManager _gameStateManager;
 
     public int ChipsOnStartNumber =>
-            DifficultyLevel switch
+            _difficultyLevel switch
             {
                     DifficultyLevel.Test => 9,
                     DifficultyLevel.Easy => 27,
@@ -24,7 +21,7 @@ public class GameController : Singleton<GameController>
             };
 
     public float ChanceForRandom =>
-            DifficultyLevel switch
+            _difficultyLevel switch
             {
                     DifficultyLevel.Test => 1.0f,
                     DifficultyLevel.Easy => 0.9f,
@@ -36,32 +33,14 @@ public class GameController : Singleton<GameController>
 
     private void Awake()
     {
-        _sceneGUI = GameSceneGUI.Instance;
+        _gameStateManager = GameStateManager.Instance;
     }
 
 
-    private void StartGame()
+    public void StartGame(DifficultyLevel difficultyLevel)
     {
-        DifficultyLevel = GameStateManager.Instance.CurrentDifficultyLevel;
+        _difficultyLevel = difficultyLevel;
 
-        _isGameStarted = true;
-
-        OnGameStarted?.Invoke();
+        _gameStateManager.Loading();
     }
-
-
-#region Enable / Disable
-
-    private void OnEnable()
-    {
-        _sceneGUI.OnFadedIn += StartGame;
-    }
-
-
-    private void OnDisable()
-    {
-        _sceneGUI.OnFadedIn -= StartGame;
-    }
-
-#endregion
 }

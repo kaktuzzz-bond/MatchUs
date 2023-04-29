@@ -7,33 +7,31 @@ using UnityEngine.UI;
 
 public class MainSceneGUI : Singleton<MainSceneGUI>
 {
-    public event Action<DifficultyLevel> OnDifficultyLevelSelected;
-
-    [SerializeField, TabGroup("Main Menu")]
+    [SerializeField] [TabGroup("Main Menu")]
     private Button easyMode;
 
-    [SerializeField, TabGroup("Main Menu")]
+    [SerializeField] [TabGroup("Main Menu")]
     private Button normalMode;
 
-    [SerializeField, TabGroup("Main Menu")]
+    [SerializeField] [TabGroup("Main Menu")]
     private Button hardMode;
 
-    [SerializeField, TabGroup("Main Menu")]
+    [SerializeField] [TabGroup("Main Menu")]
     private Button testMode;
 
-    private GameManager _gameManager;
+    private GameController _gameController;
 
 
     private void Awake()
     {
-        _gameManager = GameManager.Instance;
+        _gameController = GameController.Instance;
 
-        easyMode.onClick.AddListener(() => OnDifficultyLevelSelected?.Invoke(DifficultyLevel.Easy));
+        easyMode.onClick.AddListener(() => _gameController.StartGame(DifficultyLevel.Easy));
 
-        normalMode.onClick.AddListener(() => OnDifficultyLevelSelected?.Invoke(DifficultyLevel.Normal));
+        normalMode.onClick.AddListener(() => _gameController.StartGame(DifficultyLevel.Normal));
 
-        hardMode.onClick.AddListener(() => OnDifficultyLevelSelected?.Invoke(DifficultyLevel.Hard));
+        hardMode.onClick.AddListener(() => _gameController.StartGame(DifficultyLevel.Hard));
 
-        testMode.onClick.AddListener(() => OnDifficultyLevelSelected?.Invoke(DifficultyLevel.Test));
+        testMode.onClick.AddListener(() => _gameController.StartGame(DifficultyLevel.Test));
     }
 }
