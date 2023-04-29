@@ -1,7 +1,7 @@
 public enum DifficultyLevel
 {
-        Test =9,
-        Easy = 18,
-        Normal = 27,
-        Hard = 45
+        Test = 9,
+        Easy = 27,
+        Normal = 45,
+        Hard = 63
 }

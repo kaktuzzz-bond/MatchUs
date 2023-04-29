@@ -6,7 +6,8 @@ using UnityEngine;
 public class GameController : Singleton<GameController>
 {
     public event Action OnGameStarted;
-
+    
+    
     private bool _isGameStarted;
 
     private GameSceneGUI _sceneGUI;

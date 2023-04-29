@@ -120,6 +120,17 @@ public class ChipController : Singleton<ChipController>
 
         second.StateManager.SetFadedOutState();
 
+        int firstLine = first.BoardPosition.y;
+        
+        int secondLine = second.BoardPosition.y;
+
+        if (firstLine == secondLine)
+        {
+            CheckLine(firstLine);
+
+            return;
+        }
+        
         int topLine = Mathf.Min(first.BoardPosition.y, second.BoardPosition.y);
 
         int bottomLine = Mathf.Max(first.BoardPosition.y, second.BoardPosition.y);

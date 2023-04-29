@@ -83,7 +83,7 @@ public class ChipHandler : Singleton<ChipHandler>
                 DifficultyLevel.Test => GetChipDataByChance(1.0f),
                 DifficultyLevel.Easy => GetChipDataByChance(0.9f),
                 DifficultyLevel.Normal => GetChipDataByChance(0.6f),
-                DifficultyLevel.Hard => GetChipDataByChance(1.0f),
+                DifficultyLevel.Hard => GetChipDataByChance(1f),
                 _ => throw new ArgumentOutOfRangeException($"ERROR!")
         };
     }
