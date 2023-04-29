@@ -16,6 +16,19 @@ public class ChipController : Singleton<ChipController>
     [SerializeField]
     private Transform chipPrefab;
 
+    public Vector2Int NextBoardPosition =>
+            new(_chipCounter % _board.Width, _chipCounter / _board.Width);
+
+    public List<Chip> InGameChips => _inGameChips;
+
+    private int _chipCounter;
+
+    [ShowInInspector]
+    private List<Chip> _inGameChips = new();
+
+    [ShowInInspector]
+    private List<Chip> _outOfGameChips = new();
+
     private readonly WaitForSeconds _wait01 = new(0.02f);
 
 #region Component Links
@@ -40,9 +53,29 @@ public class ChipController : Singleton<ChipController>
     }
 
 
+    public void Register(Chip chip)
+    {
+        _inGameChips.Add(chip);
+
+        _outOfGameChips.Remove(chip);
+
+        _chipCounter++;
+    }
+
+
+    public void Unregister(Chip chip)
+    {
+        _outOfGameChips.Add(chip);
+
+        _inGameChips.Remove(chip);
+
+        _chipCounter--;
+    }
+
+
     private void DrawStartArray()
     {
-        StartCoroutine(DrawStartChipsRoutine());
+        StartCoroutine(DrawStartChipsRoutine(_gameController.ChipsOnStartNumber));
     }
 
 
@@ -121,7 +154,7 @@ public class ChipController : Singleton<ChipController>
         second.StateManager.SetFadedOutState();
 
         int firstLine = first.BoardPosition.y;
-        
+
         int secondLine = second.BoardPosition.y;
 
         if (firstLine == secondLine)
@@ -130,7 +163,7 @@ public class ChipController : Singleton<ChipController>
 
             return;
         }
-        
+
         int topLine = Mathf.Min(first.BoardPosition.y, second.BoardPosition.y);
 
         int bottomLine = Mathf.Max(first.BoardPosition.y, second.BoardPosition.y);
@@ -141,9 +174,9 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    private IEnumerator DrawStartChipsRoutine()
+    private IEnumerator DrawStartChipsRoutine(int count)
     {
-        for (int i = 0; i < (int)_gameController.DifficultyLevel; i++)
+        for (int i = 0; i < count; i++)
         {
             CreateChip();
 
@@ -154,7 +187,7 @@ public class ChipController : Singleton<ChipController>
 
     public void CreateChip(int shapeIndex, int colorIndex)
     {
-        Vector2Int boardPos = _handler.NextBoardPosition;
+        Vector2Int boardPos = NextBoardPosition;
 
         CreateNewChip(shapeIndex, colorIndex, boardPos);
     }
@@ -162,9 +195,9 @@ public class ChipController : Singleton<ChipController>
 
     private void CreateChip()
     {
-        ChipData data = _handler.GetNewChipData();
+        ChipData data = GetChipDataByChance();
 
-        Vector2Int boardPos = _handler.NextBoardPosition;
+        Vector2Int boardPos = NextBoardPosition;
 
         CreateNewChip(data.shapeIndex, data.colorIndex, boardPos);
     }
@@ -181,6 +214,50 @@ public class ChipController : Singleton<ChipController>
         chip.Init(shapeIndex, colorIndex, boardPosition);
 
         instance.name = $"Chip ({shapeIndex}, {colorIndex})";
+    }
+
+
+    public ChipData GetChipDataByChance()
+    {
+        return Random.value <= _gameController.ChanceForRandom
+                ? GetRandomChipData()
+                : GetChipDataForHardLevel();
+    }
+
+
+    private ChipData GetRandomChipData()
+    {
+        int shapeIndex = Random.Range(0, _board.ShapePalletLength);
+
+        int colorIndex = Random.Range(0, _board.ColorPalletLength);
+
+        return new ChipData(shapeIndex, colorIndex);
+    }
+
+
+    private ChipData GetChipDataForHardLevel()
+    {
+        var shapeIndexes = Utils.GetIndexes(_board.ShapePalletLength);
+        var colorIndexes = Utils.GetIndexes(_board.ColorPalletLength);
+
+        if (_chipCounter > 0)
+        {
+            shapeIndexes.Remove(_inGameChips.Last().ShapeIndex);
+            colorIndexes.Remove(_inGameChips.Last().ColorIndex);
+
+            if (_chipCounter >= _board.Width)
+            {
+                Chip chip = _inGameChips[^_board.Width];
+
+                shapeIndexes.Remove(chip.ShapeIndex);
+                colorIndexes.Remove(chip.ColorIndex);
+            }
+        }
+
+        int shapeIndex = shapeIndexes[Random.Range(0, shapeIndexes.Count)];
+        int colorIndex = colorIndexes[Random.Range(0, colorIndexes.Count)];
+
+        return new ChipData(shapeIndex, colorIndex);
     }
 
 
