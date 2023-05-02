@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -9,19 +11,21 @@ public class ChipStateManager : MonoBehaviour
     public IChipState CurrentState { get; private set; } = new EnabledChipState();
 
     private readonly EnabledChipState _enabledChipState = new();
-
+    
     private readonly FadedOutChipState _fadedOutChipState = new();
-
+    
     private readonly FadedInChipState _fadedInChipState = new();
-
+    
     private readonly DisabledChipState _disabledChipState = new();
+    
+    private readonly SelfDestroyableChipState _selfDestroyableChipState = new();
 
-    private Chip _chip;
+    public Chip Chip { get; private set; }
 
 
     private void Awake()
     {
-        _chip = GetComponent<Chip>();
+        Chip = GetComponent<Chip>();
     }
 
 
@@ -31,7 +35,7 @@ public class ChipStateManager : MonoBehaviour
 
         CurrentState = _enabledChipState;
 
-        CurrentState.Enter(_chip);
+        CurrentState.Enter(Chip);
 
         SetFadedInState();
     }
@@ -64,25 +68,38 @@ public class ChipStateManager : MonoBehaviour
         SetState(_disabledChipState);
     }
 
-
+    [Button("Set SelfDestroyable State")]
+    public void SetSelfDestroyableState()
+    {
+        SetState(_selfDestroyableChipState);
+    }
+    
     private void SetState(IChipState newState)
     {
         CurrentState = newState;
-        CurrentState.Enter(_chip);
+        CurrentState.Enter(Chip);
     }
 
 
+    public static void DisableChips(List<ChipStateManager> states)
+    {
+        foreach (ChipStateManager state in states)
+        {
+            state.SetDisabledState();
+        }
+    }
+    
 #region Enable / Disable
 
     private void OnEnable()
     {
-        _chip.OnInitialized += Launch;
+        Chip.OnInitialized += Launch;
     }
 
 
     private void OnDisable()
     {
-        _chip.OnInitialized -= Launch;
+        Chip.OnInitialized -= Launch;
     }
 
 #endregion

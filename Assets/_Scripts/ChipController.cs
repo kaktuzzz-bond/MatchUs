@@ -29,7 +29,10 @@ public class ChipController : Singleton<ChipController>
     [ShowInInspector]
     private List<Chip> _outOfGameChips = new();
 
-    private readonly WaitForSeconds _wait01 = new(0.02f);
+    private readonly WaitForSeconds _wait01 = new(0.01f);
+
+    
+    public CommandLogger Log { get; } = new();
 
 #region Component Links
 
@@ -53,6 +56,15 @@ public class ChipController : Singleton<ChipController>
     }
 
 
+
+    public void AddChips()
+    {
+        ICommand command = new AddChipsCommand();
+        
+        command.Execute();
+    }
+    
+    
     public void Register(Chip chip)
     {
         _inGameChips.Add(chip);
@@ -70,40 +82,6 @@ public class ChipController : Singleton<ChipController>
         _inGameChips.Remove(chip);
 
         _chipCounter--;
-    }
-
-
-    private void DrawStartArray()
-    {
-        StartCoroutine(DrawStartChipsRoutine(_gameController.ChipsOnStartNumber));
-    }
-
-
-    private void RemoveLine(int boardLine)
-    {
-        Debug.Log($"Remove ({boardLine}) line.");
-
-        OnLineRemoved?.Invoke(boardLine);
-    }
-
-
-    private void DisableChips(List<ChipStateManager> states)
-    {
-        foreach (ChipStateManager state in states) state.SetDisabledState();
-    }
-
-
-    private void CheckLine(int boardLine)
-    {
-        var hits = GetRaycastHits(boardLine);
-
-        var states = AreAllFadedOut(hits);
-
-        if (states == null) return;
-
-        DisableChips(states);
-
-        RemoveLine(boardLine);
     }
 
 
@@ -136,7 +114,7 @@ public class ChipController : Singleton<ChipController>
         {
             if (!hit.collider.TryGetComponent(out Chip chip)) continue;
 
-            if (chip.StateManager.CurrentState.GetType() == typeof(FadedInChipState))
+            if (chip.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState))
             {
                 return null;
             }
@@ -150,9 +128,9 @@ public class ChipController : Singleton<ChipController>
 
     private void FadeOutChips(Chip first, Chip second)
     {
-        first.StateManager.SetFadedOutState();
+        ICommand command = new FadeOutCommand(first, second);
 
-        second.StateManager.SetFadedOutState();
+        command.Execute();
 
         int firstLine = first.BoardPosition.y;
 
@@ -172,6 +150,32 @@ public class ChipController : Singleton<ChipController>
         CheckLine(bottomLine);
 
         CheckLine(topLine);
+
+        // FadeOutCommand
+    }
+
+
+    private void CheckLine(int boardLine)
+    {
+        var hits = GetRaycastHits(boardLine);
+
+        var states = AreAllFadedOut(hits);
+
+        if (states == null) return;
+
+        ICommand command = new RemoveSingleLineCommand(states);
+
+        command.Execute();
+
+        OnLineRemoved?.Invoke(boardLine);
+    }
+
+
+#region Push On Board Section
+
+    private void DrawStartArray()
+    {
+        StartCoroutine(DrawStartChipsRoutine(_gameController.ChipsOnStartNumber));
     }
 
 
@@ -186,25 +190,50 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public void CreateChip(int shapeIndex, int colorIndex)
-    {
-        Vector2Int boardPos = NextBoardPosition;
+    private readonly List<Chip> _addedChips = new();
 
-        CreateNewChip(shapeIndex, colorIndex, boardPos);
+    public void CloneInGameChips(List<Chip> chips, out List<Chip> addedChips)
+    {
+      
+        StartCoroutine(CloneInGameChipsRoutine(chips));
+        
+        addedChips = _addedChips;
     }
 
 
-    private void CreateChip()
+    private IEnumerator CloneInGameChipsRoutine(List<Chip> chips)
+    {
+        foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex)))
+        {
+            _addedChips.Add(newChip);
+
+            yield return _wait01;
+        }
+    }
+
+#endregion
+
+#region Chip Creation Section
+
+    private Chip CreateChip(int shapeIndex, int colorIndex)
+    {
+        Vector2Int boardPos = NextBoardPosition;
+
+        return CreateNewChip(shapeIndex, colorIndex, boardPos);
+    }
+
+
+    private Chip  CreateChip()
     {
         ChipData data = GetChipDataByChance();
 
         Vector2Int boardPos = NextBoardPosition;
 
-        CreateNewChip(data.shapeIndex, data.colorIndex, boardPos);
+        return CreateNewChip(data.shapeIndex, data.colorIndex, boardPos);
     }
 
 
-    private void CreateNewChip(int shapeIndex, int colorIndex, Vector2Int boardPosition)
+    private Chip CreateNewChip(int shapeIndex, int colorIndex, Vector2Int boardPosition)
     {
         Vector3 worldPos = _board[boardPosition.x, boardPosition.y].position;
 
@@ -215,10 +244,15 @@ public class ChipController : Singleton<ChipController>
         chip.Init(shapeIndex, colorIndex, boardPosition);
 
         instance.name = $"Chip ({shapeIndex}, {colorIndex})";
+
+        return chip;
     }
 
+#endregion
 
-    public ChipData GetChipDataByChance()
+#region Get Chip Section
+
+    private ChipData GetChipDataByChance()
     {
         return Random.value <= _gameController.ChanceForRandom
                 ? GetRandomChipData()
@@ -261,6 +295,7 @@ public class ChipController : Singleton<ChipController>
         return new ChipData(shapeIndex, colorIndex);
     }
 
+#endregion
 
 #region Enable / Disable
 

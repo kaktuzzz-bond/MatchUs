@@ -31,19 +31,20 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
 
     private CameraController _cameraController;
 
+    private ChipController _chipController;
+    
     private Board _board;
-
-    private ChipHandler _chipHandler;
 
 
     private void Awake()
     {
         _cameraController = CameraController.Instance;
+        _chipController = ChipController.Instance;
         _board = Board.Instance;
-        _chipHandler = ChipHandler.Instance;
 
-        add.onClick.AddListener(() => _chipHandler.Execute(new AddChipsCommand()));
-        special.onClick.AddListener(() => _chipHandler.Execute(new SpecialActionCommand()));
+        add.onClick.AddListener(() => _chipController.AddChips());
+        undo.onClick.AddListener(() => _chipController.Log.Undo());
+        //special.onClick.AddListener(() => _commandLogger.Execute(new SpecialActionCommand()));
     }
 
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -24,7 +25,7 @@ public class Chip : MonoBehaviour
 
     public const float MoveTime = 0.2f;
 
-    public ChipStateManager StateManager { get; private set; }
+    public ChipStateManager ChipStateManager { get; private set; }
 
     [HorizontalGroup("Appearance", Title = "Chip Settings")]
     [ShowInInspector] [BoxGroup("Appearance/Chip data")] [HideLabel] [ReadOnly]
@@ -48,7 +49,7 @@ public class Chip : MonoBehaviour
         _board = Board.Instance;
         _chipController = ChipController.Instance;
 
-        StateManager = GetComponent<ChipStateManager>();
+        ChipStateManager = GetComponent<ChipStateManager>();
         _collider = GetComponent<Collider2D>();
     }
 
@@ -162,7 +163,13 @@ public class Chip : MonoBehaviour
     }
 
 
-    public bool IsPathClear(Vector2 direction, float distance, Chip other)
+    public void SelfDestroy()
+    {
+        Destroy(gameObject);
+    }
+
+
+    private bool IsPathClear(Vector2 direction, float distance, Chip other)
     {
         ContactFilter2D filter = new();
 
@@ -180,7 +187,7 @@ public class Chip : MonoBehaviour
                 continue;
             }
 
-            if (chip.StateManager.CurrentState.GetType() == typeof(FadedInChipState))
+            if (chip.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState))
             {
                 return false;
             }
