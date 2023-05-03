@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -39,6 +40,10 @@ public class Board : Singleton<Board>
 
     public int Height => height;
 
+    public List<int> ShapeIndexes { get; private set; }
+
+    public List<int> ColorIndexes { get; private set; }
+
     public int ColorPalletLength => colorPallet.Length;
 
     public int ShapePalletLength => shapePallet.Length;
@@ -50,6 +55,9 @@ public class Board : Singleton<Board>
 
     private void Start()
     {
+        ShapeIndexes = Utils.GetIndexes(ShapePalletLength);
+        ColorIndexes = Utils.GetIndexes(ColorPalletLength);
+
         DrawBoard(Width, Height);
     }
 

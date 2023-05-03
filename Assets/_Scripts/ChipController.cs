@@ -31,7 +31,6 @@ public class ChipController : Singleton<ChipController>
 
     private readonly WaitForSeconds _wait01 = new(0.01f);
 
-    
     public CommandLogger Log { get; } = new();
 
 #region Component Links
@@ -56,15 +55,14 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-
     public void AddChips()
     {
         ICommand command = new AddChipsCommand();
-        
+
         command.Execute();
     }
-    
-    
+
+
     public void Register(Chip chip)
     {
         _inGameChips.Add(chip);
@@ -192,11 +190,11 @@ public class ChipController : Singleton<ChipController>
 
     private readonly List<Chip> _addedChips = new();
 
+
     public void CloneInGameChips(List<Chip> chips, out List<Chip> addedChips)
     {
-      
         StartCoroutine(CloneInGameChipsRoutine(chips));
-        
+
         addedChips = _addedChips;
     }
 
@@ -223,7 +221,7 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    private Chip  CreateChip()
+    private Chip CreateChip()
     {
         ChipData data = GetChipDataByChance();
 
@@ -272,8 +270,8 @@ public class ChipController : Singleton<ChipController>
 
     private ChipData GetChipDataForHardLevel()
     {
-        var shapeIndexes = Utils.GetIndexes(_board.ShapePalletLength);
-        var colorIndexes = Utils.GetIndexes(_board.ColorPalletLength);
+        List<int> shapeIndexes = new(_board.ShapeIndexes);
+        List<int> colorIndexes =  new(_board.ColorIndexes);
 
         if (_chipCounter > 0)
         {

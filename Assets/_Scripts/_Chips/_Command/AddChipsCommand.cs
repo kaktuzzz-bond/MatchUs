@@ -37,5 +37,7 @@ public class AddChipsCommand : ICommand
         {
             chip.ChipStateManager.SetSelfDestroyableState();
         }
+        
+        _addedChips.Clear();
     }
 }

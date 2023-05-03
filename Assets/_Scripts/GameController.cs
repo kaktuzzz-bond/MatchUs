@@ -24,9 +24,9 @@ public class GameController : Singleton<GameController>
             _difficultyLevel switch
             {
                     DifficultyLevel.Test => 1.0f,
-                    DifficultyLevel.Easy => 0.9f,
-                    DifficultyLevel.Normal => 0.6f,
-                    DifficultyLevel.Hard => 1f,
+                    DifficultyLevel.Easy => 0.8f,
+                    DifficultyLevel.Normal => 0.0f,
+                    DifficultyLevel.Hard => 1.0f,
                     _ => throw new ArgumentOutOfRangeException()
             };
 
