@@ -39,15 +39,12 @@ public class Chip : MonoBehaviour
 
     private Collider2D _collider;
 
-    private ChipController _chipController;
-
     private Tween _tween;
 
 
     private void Awake()
     {
         _board = Board.Instance;
-        _chipController = ChipController.Instance;
 
         ChipStateManager = GetComponent<ChipStateManager>();
         _collider = GetComponent<Collider2D>();
@@ -203,13 +200,13 @@ public class Chip : MonoBehaviour
 
     private void OnEnable()
     {
-        _chipController.OnLineRemoved += MoveUp;
+        _board.OnLineRemoved += MoveUp;
     }
 
 
     private void OnDisable()
     {
-        _chipController.OnLineRemoved -= MoveUp;
+        _board.OnLineRemoved -= MoveUp;
     }
 
 #endregion

@@ -1,39 +1,23 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
-using Sirenix.Serialization;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using System.Linq;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 
+[RequireComponent(typeof(ChipRegistry))]
 public class ChipController : Singleton<ChipController>
 {
-    public event Action<int> OnLineRemoved;
-
     [SerializeField]
     private Transform chipPrefab;
 
     private Vector2Int NextBoardPosition =>
-            new(_chipCounter % _board.Width, _chipCounter / _board.Width);
-
-    public List<Chip> InGameChips => _inGameChips;
-
-    private int _chipCounter;
-
-    [ShowInInspector]
-    private List<Chip> _inGameChips = new();
-
-    [ShowInInspector]
-    private List<Chip> _outOfGameChips = new();
+            new(_chipRegistry.Counter % _board.Width, _chipRegistry.Counter / _board.Width);
 
     private readonly WaitForSeconds _wait01 = new(0.01f);
 
     public CommandLogger Log { get; } = new();
 
-#region Component Links
+#region COMPONENTS LINKS
 
     private Board _board;
 
@@ -42,6 +26,8 @@ public class ChipController : Singleton<ChipController>
     private CameraController _cameraController;
 
     private ChipComparer _chipComparer;
+
+    private ChipRegistry _chipRegistry;
 
 #endregion
 
@@ -52,6 +38,8 @@ public class ChipController : Singleton<ChipController>
         _gameController = GameController.Instance;
         _chipComparer = ChipComparer.Instance;
         _cameraController = CameraController.Instance;
+
+        _chipRegistry = ChipRegistry.Instance;
     }
 
 
@@ -63,68 +51,7 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public void Register(Chip chip)
-    {
-        _inGameChips.Add(chip);
-
-        _outOfGameChips.Remove(chip);
-
-        _chipCounter++;
-    }
-
-
-    public void Unregister(Chip chip)
-    {
-        _outOfGameChips.Add(chip);
-
-        _inGameChips.Remove(chip);
-
-        _chipCounter--;
-    }
-
-
-    private RaycastHit2D[] GetRaycastHits(int boardLine)
-    {
-        var hits = new RaycastHit2D[_board.Width];
-
-        ContactFilter2D filter = new();
-
-        Vector2 origin = _board[0, boardLine].position;
-
-        int result = Physics2D.Raycast(origin, Vector2.right, filter, hits, _board.Width);
-
-        if (result == 0)
-        {
-            Debug.LogError("CheckLine() caught the empty line!");
-        }
-
-        return hits;
-    }
-
-
-    private static List<ChipStateManager> AreAllFadedOut([NotNull] RaycastHit2D[] hits)
-    {
-        if (hits == null) throw new ArgumentNullException(nameof(hits));
-
-        List<ChipStateManager> chips = new();
-
-        foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
-        {
-            if (!hit.collider.TryGetComponent(out Chip chip)) continue;
-
-            if (chip.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState))
-            {
-                return null;
-            }
-
-            chips.Add(chip.GetComponent<ChipStateManager>());
-        }
-
-        return chips;
-    }
-
-
-    private void FadeOutChips(Chip first, Chip second)
+    private void ProcessMatched(Chip first, Chip second)
     {
         ICommand command = new FadeOutCommand(first, second);
 
@@ -136,7 +63,7 @@ public class ChipController : Singleton<ChipController>
 
         if (firstLine == secondLine)
         {
-            CheckLine(firstLine);
+            _board.CheckLine(firstLine);
 
             return;
         }
@@ -145,31 +72,13 @@ public class ChipController : Singleton<ChipController>
 
         int bottomLine = Mathf.Max(first.BoardPosition.y, second.BoardPosition.y);
 
-        CheckLine(bottomLine);
+        _board.CheckLine(bottomLine);
 
-        CheckLine(topLine);
-
-        // FadeOutCommand
+        _board.CheckLine(topLine);
     }
 
 
-    private void CheckLine(int boardLine)
-    {
-        var hits = GetRaycastHits(boardLine);
-
-        var states = AreAllFadedOut(hits);
-
-        if (states == null) return;
-
-        ICommand command = new RemoveSingleLineCommand(states);
-
-        command.Execute();
-
-        OnLineRemoved?.Invoke(boardLine);
-    }
-
-
-#region Push On Board Section
+#region PLACE ON BOARD
 
     private void DrawStartArray()
     {
@@ -181,7 +90,7 @@ public class ChipController : Singleton<ChipController>
     {
         for (int i = 0; i < count; i++)
         {
-            CreateChip();
+            _ = CreateChip();
 
             yield return _wait01;
         }
@@ -211,7 +120,7 @@ public class ChipController : Singleton<ChipController>
 
 #endregion
 
-#region Chip Creation Section
+#region CHIP CREATION
 
     private Chip CreateChip(int shapeIndex, int colorIndex)
     {
@@ -248,7 +157,7 @@ public class ChipController : Singleton<ChipController>
 
 #endregion
 
-#region Get Chip Section
+#region CHIP DATA
 
     private ChipData GetChipDataByChance()
     {
@@ -271,16 +180,16 @@ public class ChipController : Singleton<ChipController>
     private ChipData GetChipDataForHardLevel()
     {
         List<int> shapeIndexes = new(_board.ShapeIndexes);
-        List<int> colorIndexes =  new(_board.ColorIndexes);
+        List<int> colorIndexes = new(_board.ColorIndexes);
 
-        if (_chipCounter > 0)
+        if (_chipRegistry.Counter > 0)
         {
-            shapeIndexes.Remove(_inGameChips.Last().ShapeIndex);
-            colorIndexes.Remove(_inGameChips.Last().ColorIndex);
+            shapeIndexes.Remove(_chipRegistry.InGameChips.Last().ShapeIndex);
+            colorIndexes.Remove(_chipRegistry.InGameChips.Last().ColorIndex);
 
-            if (_chipCounter >= _board.Width)
+            if (_chipRegistry.Counter >= _board.Width)
             {
-                Chip chip = _inGameChips[^_board.Width];
+                Chip chip = _chipRegistry.InGameChips[^_board.Width];
 
                 shapeIndexes.Remove(chip.ShapeIndex);
                 colorIndexes.Remove(chip.ColorIndex);
@@ -295,19 +204,19 @@ public class ChipController : Singleton<ChipController>
 
 #endregion
 
-#region Enable / Disable
+#region ENABLE / DISABLE
 
     private void OnEnable()
     {
         _cameraController.OnCameraSetup += DrawStartArray;
-        _chipComparer.OnChipMatched += FadeOutChips;
+        _chipComparer.OnChipMatched += ProcessMatched;
     }
 
 
     private void OnDisable()
     {
         _cameraController.OnCameraSetup -= DrawStartArray;
-        _chipComparer.OnChipMatched -= FadeOutChips;
+        _chipComparer.OnChipMatched -= ProcessMatched;
     }
 
 #endregion

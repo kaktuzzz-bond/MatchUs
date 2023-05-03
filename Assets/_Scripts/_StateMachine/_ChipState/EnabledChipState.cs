@@ -19,6 +19,6 @@ public class EnabledChipState : IChipState
                 .DOMoveY(targetPos.y, Chip.FadeTime)
                 .SetEase(Ease.Linear);
 
-        ChipController.Instance.Register(chip);
+        ChipRegistry.Instance.Register(chip);
     }
 }

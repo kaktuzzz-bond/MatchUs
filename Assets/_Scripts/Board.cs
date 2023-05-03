@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -8,6 +10,8 @@ public class Board : Singleton<Board>
 {
     public event Action OnTilesGenerated;
 
+    public event Action<int> OnLineRemoved;
+    
     [HorizontalGroup("Size", Title = "Board Settings")]
     [SerializeField] [BoxGroup("Size/Width")] [HideLabel] [ReadOnly]
     private int width = 9;
@@ -135,4 +139,60 @@ public class Board : Singleton<Board>
 
         sr.color = GetColor(index);
     }
+    
+    
+    public void CheckLine(int boardLine)
+    {
+        var hits = GetRaycastHits(boardLine);
+
+        var states = AreAllFadedOut(hits);
+
+        if (states == null) return;
+
+        ICommand command = new RemoveSingleLineCommand(states);
+
+        command.Execute();
+
+        OnLineRemoved?.Invoke(boardLine);
+    }
+    
+    private RaycastHit2D[] GetRaycastHits(int boardLine)
+    {
+        var hits = new RaycastHit2D[Width];
+
+        ContactFilter2D filter = new();
+
+        Vector2 origin = this[0, boardLine].position;
+
+        int result = Physics2D.Raycast(origin, Vector2.right, filter, hits, Width);
+
+        if (result == 0)
+        {
+            Debug.LogError("CheckLine() caught the empty line!");
+        }
+
+        return hits;
+    }
+    
+    private static List<ChipStateManager> AreAllFadedOut([NotNull] RaycastHit2D[] hits)
+    {
+        if (hits == null) throw new ArgumentNullException(nameof(hits));
+
+        List<ChipStateManager> chips = new();
+
+        foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
+        {
+            if (!hit.collider.TryGetComponent(out Chip chip)) continue;
+
+            if (chip.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState))
+            {
+                return null;
+            }
+
+            chips.Add(chip.GetComponent<ChipStateManager>());
+        }
+
+        return chips;
+    }
+
 }

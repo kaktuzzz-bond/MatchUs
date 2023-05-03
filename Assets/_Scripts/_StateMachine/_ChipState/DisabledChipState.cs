@@ -20,6 +20,6 @@ public class DisabledChipState : IChipState
                 .SetEase(Ease.Linear)
                 .onComplete += () => chip.gameObject.SetActive(false);
 
-        ChipController.Instance.Unregister(chip);
+        ChipRegistry.Instance.Unregister(chip);
     }
 }

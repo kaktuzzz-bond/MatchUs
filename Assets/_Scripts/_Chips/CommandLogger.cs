@@ -7,7 +7,6 @@ using UnityEngine;
 [Serializable]
 public class CommandLogger
 {
-   
     public readonly Stack<ICommand> log;
 
 

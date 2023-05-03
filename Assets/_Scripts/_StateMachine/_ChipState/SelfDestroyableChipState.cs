@@ -18,7 +18,7 @@ public class SelfDestroyableChipState : IChipState
                 .SetEase(Ease.Linear)
                 .onComplete += () =>
         {
-            ChipController.Instance.Unregister(chip);
+            ChipRegistry.Instance.Unregister(chip);
                 
             chip.SelfDestroy();
         };
