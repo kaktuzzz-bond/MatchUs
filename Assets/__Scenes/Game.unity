@@ -1012,7 +1012,7 @@ GameObject:
   - component: {fileID: 1537114065}
   - component: {fileID: 1537114064}
   m_Layer: 0
-  m_Name: Screenshot at Jan 27 21-07-57
+  m_Name: 'Screenshot '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

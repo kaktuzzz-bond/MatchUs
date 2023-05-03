@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using System.Linq;
+using Sirenix.OdinInspector;
 
 [RequireComponent(typeof(ChipRegistry))]
 public class ChipController : Singleton<ChipController>
@@ -15,7 +16,12 @@ public class ChipController : Singleton<ChipController>
 
     private readonly WaitForSeconds _wait01 = new(0.01f);
 
+    [ShowInInspector]
+    public Stack<ICommand> LogStack => Log.Stack;
+
     public CommandLogger Log { get; } = new();
+
+    private List<Chip> _addedChips;
 
 #region COMPONENTS LINKS
 
@@ -38,7 +44,6 @@ public class ChipController : Singleton<ChipController>
         _gameController = GameController.Instance;
         _chipComparer = ChipComparer.Instance;
         _cameraController = CameraController.Instance;
-
         _chipRegistry = ChipRegistry.Instance;
     }
 
@@ -53,14 +58,17 @@ public class ChipController : Singleton<ChipController>
 
     private void ProcessMatched(Chip first, Chip second)
     {
+        // fade out chips
         ICommand command = new FadeOutCommand(first, second);
 
         command.Execute();
 
+        // lines cash
         int firstLine = first.BoardPosition.y;
 
         int secondLine = second.BoardPosition.y;
 
+        // a single line
         if (firstLine == secondLine)
         {
             _board.CheckLine(firstLine);
@@ -68,9 +76,10 @@ public class ChipController : Singleton<ChipController>
             return;
         }
 
-        int topLine = Mathf.Min(first.BoardPosition.y, second.BoardPosition.y);
+        // two lines
+        int topLine = Mathf.Min(firstLine, secondLine);
 
-        int bottomLine = Mathf.Max(first.BoardPosition.y, second.BoardPosition.y);
+        int bottomLine = Mathf.Max(firstLine, secondLine);
 
         _board.CheckLine(bottomLine);
 
@@ -97,11 +106,10 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    private readonly List<Chip> _addedChips = new();
-
-
     public void CloneInGameChips(List<Chip> chips, out List<Chip> addedChips)
     {
+        _addedChips = new List<Chip>();
+
         StartCoroutine(CloneInGameChipsRoutine(chips));
 
         addedChips = _addedChips;
@@ -112,9 +120,9 @@ public class ChipController : Singleton<ChipController>
     {
         foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex)))
         {
-            _addedChips.Add(newChip);
-
             yield return _wait01;
+
+            _addedChips.Add(newChip);
         }
     }
 

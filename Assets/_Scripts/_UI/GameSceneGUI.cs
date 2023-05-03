@@ -43,7 +43,7 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
         _board = Board.Instance;
 
         add.onClick.AddListener(() => _chipController.AddChips());
-        undo.onClick.AddListener(() => _chipController.Log.Undo());
+        undo.onClick.AddListener(() => _chipController.Log.UndoCommand());
         //special.onClick.AddListener(() => _commandLogger.Execute(new SpecialActionCommand()));
     }
 

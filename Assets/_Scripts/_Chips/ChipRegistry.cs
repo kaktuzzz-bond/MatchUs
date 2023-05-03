@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 
 public class ChipRegistry : Singleton<ChipRegistry>
@@ -10,7 +11,7 @@ public class ChipRegistry : Singleton<ChipRegistry>
     public List<Chip> InGameChips { get; private set; } = new();
 
     [ShowInInspector]
-    public List<Chip> OutOfGameChips { get; private set;} = new();
+    public List<Chip> OutOfGameChips { get; private set; } = new();
 
 
     public void Register(Chip chip)
@@ -30,5 +31,23 @@ public class ChipRegistry : Singleton<ChipRegistry>
         InGameChips.Remove(chip);
 
         Counter--;
+    }
+
+
+    public void UnregisterAndDestroy(Chip chip)
+    {
+        InGameChips.Remove(chip);
+
+        OutOfGameChips.Remove(chip);
+
+        Counter--;
+    }
+
+
+    public List<Chip> GetActiveChips()
+    {
+        return InGameChips
+                .Where(c => c.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState))
+                .ToList();
     }
 }
