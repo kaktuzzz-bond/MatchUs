@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,8 @@ using Sirenix.OdinInspector;
 [RequireComponent(typeof(ChipRegistry))]
 public class ChipController : Singleton<ChipController>
 {
+    public event Action<int> OnLineRestored;
+
     [SerializeField]
     private Transform chipPrefab;
 
@@ -53,6 +56,13 @@ public class ChipController : Singleton<ChipController>
         ICommand command = new AddChipsCommand();
 
         command.Execute();
+    }
+
+
+    [Button("Restore Line From")]
+    public void RestoreLine(int boardLine)
+    {
+        OnLineRestored?.Invoke(boardLine);
     }
 
 

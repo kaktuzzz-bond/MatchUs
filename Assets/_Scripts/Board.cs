@@ -12,6 +12,8 @@ public class Board : Singleton<Board>
 
     public event Action<int> OnLineRemoved;
     
+ 
+    
     [HorizontalGroup("Size", Title = "Board Settings")]
     [SerializeField] [BoxGroup("Size/Width")] [HideLabel] [ReadOnly]
     private int width = 9;
@@ -155,6 +157,7 @@ public class Board : Singleton<Board>
 
         OnLineRemoved?.Invoke(boardLine);
     }
+    
     
     private RaycastHit2D[] GetRaycastHits(int boardLine)
     {

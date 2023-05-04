@@ -5,6 +5,7 @@ using System.Linq;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(ChipStateManager))]
@@ -37,6 +38,8 @@ public class Chip : MonoBehaviour
 
     private Board _board;
 
+    private ChipController _chipController;
+
     private Collider2D _collider;
 
     private Tween _tween;
@@ -45,6 +48,7 @@ public class Chip : MonoBehaviour
     private void Awake()
     {
         _board = Board.Instance;
+        _chipController = ChipController.Instance;
 
         ChipStateManager = GetComponent<ChipStateManager>();
         _collider = GetComponent<Collider2D>();
@@ -109,6 +113,30 @@ public class Chip : MonoBehaviour
 
         _tween = transform
                 .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].position.y, MoveTime);
+    }
+
+
+    [Button("Move Down")]
+    private void MoveDown(int boardLine)
+    {
+        if (BoardPosition.y < boardLine ||
+            ChipStateManager.CurrentState.GetType() == typeof(DisabledChipState)) return;
+
+        Debug.Log($"Move down in ({boardLine})");
+
+        if (_tween.IsActive())
+        {
+            _tween.onComplete += () =>
+            {
+                _tween = transform
+                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, FadeTime);
+            };
+
+            return;
+        }
+
+        _tween = transform
+                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime);
     }
 
 
@@ -201,12 +229,14 @@ public class Chip : MonoBehaviour
     private void OnEnable()
     {
         _board.OnLineRemoved += MoveUp;
+        _chipController.OnLineRestored += MoveDown;
     }
 
 
     private void OnDisable()
     {
         _board.OnLineRemoved -= MoveUp;
+        _chipController.OnLineRestored -= MoveDown;
     }
 
 #endregion

@@ -18,14 +18,13 @@ public class CommandLogger
         if (Stack.Count == 0)
         {
             Debug.Log("Stack is empty");
-
             return;
         }
 
-        ICommand command = Stack.Pop();
-        
+        ICommand   command = Stack.Pop();
+
         Debug.Log($"Undo {command}");
-        
+
         command.Undo();
     }
 }
