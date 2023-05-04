@@ -43,24 +43,28 @@ public class ChipStateManager : MonoBehaviour
 
     public void SetEnabledState()
     {
+        Debug.Log("STATE: Enabled");
         SetState(_enabledChipState);
     }
 
 
     public void SetFadedOutState()
     {
+        Debug.Log("STATE: Fade Out");
         SetState(_fadedOutChipState);
     }
 
 
     public void SetFadedInState()
     {
+        Debug.Log("STATE: Fade In");
         SetState(_fadedInChipState);
     }
 
 
     public void SetSelfDestroyableState()
     {
+        Debug.Log("STATE: SelfDestroy");
         SetState(_selfDestroyableChipState);
     }
 
@@ -77,6 +81,7 @@ public class ChipStateManager : MonoBehaviour
 
     private void SetDisabledState()
     {
+        Debug.Log("STATE: Disabled");
         SetState(_disabledChipState);
     }
 

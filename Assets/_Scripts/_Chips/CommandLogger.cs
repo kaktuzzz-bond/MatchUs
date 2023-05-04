@@ -18,13 +18,20 @@ public class CommandLogger
         if (Stack.Count == 0)
         {
             Debug.Log("Stack is empty");
+
             return;
         }
 
-        ICommand   command = Stack.Pop();
+        ICommand command;
 
-        Debug.Log($"Undo {command}");
+        do
+        {
+            command = Stack.Pop();
 
-        command.Undo();
+            Debug.Log($"Undo {command}");
+
+            command.Undo();
+        } while (command.GetType() != typeof(FadeOutCommand));
+
     }
 }

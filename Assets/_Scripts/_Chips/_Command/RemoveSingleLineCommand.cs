@@ -34,10 +34,14 @@ public class RemoveSingleLineCommand : ICommand
     public void Undo()
     {
         _chipController.RestoreLine(_removedLine);
-        
+
         foreach (ChipStateManager state in _chipStates)
         {
-            state.transform.position -= new Vector3(0, 0.5f, 0);
+            Vector3 chipPos = state.transform.position;
+
+            chipPos.y = _removedLine;
+
+            state.transform.position = chipPos;
 
             state.SetFadedOutState();
 

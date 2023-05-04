@@ -91,9 +91,9 @@ public class ChipController : Singleton<ChipController>
 
         int bottomLine = Mathf.Max(firstLine, secondLine);
 
-        _board.CheckLine(bottomLine);
-
         _board.CheckLine(topLine);
+        
+        _board.CheckLine(bottomLine);
     }
 
 
