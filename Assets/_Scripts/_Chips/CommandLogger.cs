@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CommandLogger
 {
-    public Stack<ICommand> Stack { get; private set; } = new();
+    public Stack<ICommand> Stack { get; } = new();
 
 
     public void AddCommand(ICommand command)

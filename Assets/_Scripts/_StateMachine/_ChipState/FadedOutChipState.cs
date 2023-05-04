@@ -8,7 +8,7 @@ public class FadedOutChipState : IChipState
         //Debug.Log("Fade Out Enter");
 
         chip.Renderer
-                .DOFade(0.2f, Chip.FadeTime * 2)
+                .DOFade(0.12f, Chip.FadeTime * 2)
                 .SetEase(Ease.Linear);
     }
 }
