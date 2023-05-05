@@ -45,6 +45,7 @@ public class CameraController : Singleton<CameraController>
 
     private Vector3 _bottomBoundPoint;
 
+    private WaitForEndOfFrame _wait = new();
 
     private void Awake()
     {
@@ -152,12 +153,14 @@ public class CameraController : Singleton<CameraController>
     {
         SetOrthographicSize();
 
-        yield return new WaitForEndOfFrame();
+        yield return _wait;
 
         SetBounds();
 
         SetInitialPosition();
 
+        yield return _wait;
+        
         OnCameraSetup?.Invoke();
     }
 

@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class GameSceneGUI : Singleton<GameSceneGUI>
 {
-    public event Action OnFadedIn;
+    public event Action OnFaderDisappeared;
+
+#region GAME OBJECT LINKS
 
     [SerializeField]
     private RectTransform header;
@@ -29,23 +31,15 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button undo;
 
-    private CameraController _cameraController;
-
-    private ChipController _chipController;
-    
-    private Board _board;
+#endregion
 
 
     private void Awake()
     {
-        _cameraController = CameraController.Instance;
-        _chipController = ChipController.Instance;
-        _board = Board.Instance;
+        add.onClick.AddListener(() => ChipController.Instance.AddChips());
 
-        add.onClick.AddListener(() => _chipController.AddChips());
-        
-        undo.onClick.AddListener(() => StartCoroutine(_chipController.Log.UndoCommand()));
-        
+        undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
+
         //special.onClick.AddListener(() => _commandLogger.Execute(new SpecialActionCommand()));
     }
 
@@ -65,7 +59,7 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     public bool IsGameAreaPosition(Vector3 position)
     {
         bool checkX = position.x > -0.5f &&
-                      position.x < _board.Width + 0.5f;
+                      position.x < Board.Instance.Width + 0.5f;
 
         bool checkY = position.y < GetHeaderCorners()[0].y &&
                       position.y > GetFooterCorners()[1].y;
@@ -77,24 +71,30 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     private void FadeIn()
     {
         fader
-                .DOFade(0, 0.5f)
-                .SetEase(Ease.InSine);
+                .DOFade(0, 0.2f)
+                .SetEase(Ease.InCubic)
+                .onComplete += () =>
+        {
+            fader.gameObject.SetActive(false);
+            
+            OnFaderDisappeared?.Invoke();
+        };
 
-        OnFadedIn?.Invoke();
+       
     }
 
 
-#region Enable / Disable
+#region ENABLE / DISABLE
 
     private void OnEnable()
     {
-        _cameraController.OnCameraSetup += FadeIn;
+        CameraController.Instance.OnCameraSetup += FadeIn;
     }
 
 
     private void OnDisable()
     {
-        _cameraController.OnCameraSetup -= FadeIn;
+        CameraController.Instance.OnCameraSetup -= FadeIn;
     }
 
 #endregion

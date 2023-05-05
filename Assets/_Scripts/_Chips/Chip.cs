@@ -17,7 +17,7 @@ public class Chip : MonoBehaviour
 
     public int ColorIndex => _chipData.colorIndex;
 
-    private const float FadeTime = 0.1f;
+    private const float FadeTime = 0.2f;
 
     private const float MoveTime = 0.2f;
 
@@ -77,7 +77,7 @@ public class Chip : MonoBehaviour
     public void Fade(float endValue)
     {
         spriteRenderer
-                .DOFade(endValue, Chip.FadeTime)
+                .DOFade(endValue, FadeTime)
                 .SetEase(Ease.Linear);
     }
 
@@ -89,7 +89,7 @@ public class Chip : MonoBehaviour
     public void MoveTo(float targetY)
     {
         transform
-                .DOMoveY(targetY, Chip.FadeTime)
+                .DOMoveY(targetY, FadeTime)
                 .SetEase(Ease.Linear);
     }
 
@@ -97,7 +97,7 @@ public class Chip : MonoBehaviour
     public void MoveTo(float targetY, TweenCallback doOnComplete)
     {
         transform
-                .DOMoveY(targetY, Chip.FadeTime)
+                .DOMoveY(targetY, FadeTime)
                 .SetEase(Ease.Linear)
                 .OnComplete(doOnComplete);
     }

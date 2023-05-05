@@ -9,9 +9,15 @@ using Random = UnityEngine.Random;
 
 public class Board : Singleton<Board>
 {
+#region EVENTS
+
     public event Action OnTilesGenerated;
 
     public event Action<int> OnLineRemoved;
+
+#endregion
+
+#region BOARD SETUP
 
     [HorizontalGroup("Size", Title = "Board Settings")]
     [SerializeField] [BoxGroup("Size/Width")] [HideLabel] [ReadOnly]
@@ -41,6 +47,10 @@ public class Board : Singleton<Board>
     [SerializeField] [FoldoutGroup("Chips")]
     private Sprite[] shapePallet;
 
+#endregion
+
+#region PROPERTIES
+
     public int Width => width;
 
     public int Height => height;
@@ -51,20 +61,15 @@ public class Board : Singleton<Board>
 
     public int ColorPalletLength => colorPallet.Length;
 
-    public int ShapePalletLength => shapePallet.Length;
+    public int ShapePalletLength { get => shapePallet.Length; set => throw new NotImplementedException(); }
+
+#endregion
+
+#region INDEXER & GETTERS
 
     private Transform[,] _tiles;
 
     public Transform this[int x, int y] => _tiles[x, y];
-
-
-    private void Start()
-    {
-        ShapeIndexes = Utils.GetIndexes(ShapePalletLength);
-        ColorIndexes = Utils.GetIndexes(ColorPalletLength);
-
-        DrawBoard(Width, Height);
-    }
 
 
     public Color GetColor(int index)
@@ -88,6 +93,19 @@ public class Board : Singleton<Board>
         }
 
         return shapePallet[index];
+    }
+
+#endregion
+
+
+#region BOARD CREATION
+
+    private void Start()
+    {
+        ShapeIndexes = Utils.GetIndexes(ShapePalletLength);
+        ColorIndexes = Utils.GetIndexes(ColorPalletLength);
+
+        DrawBoard(Width, Height);
     }
 
 
@@ -141,8 +159,45 @@ public class Board : Singleton<Board>
         sr.color = GetColor(index);
     }
 
+#endregion
 
-    public void CheckLine(int boardLine)
+#region MATCH PROCESSING
+
+    private void ProcessMatched(Chip first, Chip second)
+    {
+        // fade out chips
+        ICommand command = new FadeOutCommand(first, second);
+
+        command.Execute();
+
+        // lines cash
+        int firstLine = first.BoardPosition.y;
+
+        int secondLine = second.BoardPosition.y;
+
+        // a single line
+        if (firstLine == secondLine)
+        {
+            CheckLine(firstLine);
+
+            return;
+        }
+
+        // two lines
+        int topLine = Mathf.Min(firstLine, secondLine);
+
+        int bottomLine = Mathf.Max(firstLine, secondLine);
+
+        CheckLine(bottomLine);
+
+        CheckLine(topLine);
+    }
+
+#endregion
+
+#region LINE CHECKING
+
+    private void CheckLine(int boardLine)
     {
         var hits = GetRaycastHits(boardLine);
 
@@ -199,9 +254,8 @@ public class Board : Singleton<Board>
     }
 
 
-    public static bool IsPathClear(Vector2 direction, float distance,  [NotNull] Chip origin, [NotNull] Chip other)
+    public static bool IsPathClear(Vector2 direction, float distance, [NotNull] Chip origin, [NotNull] Chip other)
     {
-        
         ContactFilter2D filter = new();
 
         List<RaycastHit2D> hits = new();
@@ -210,7 +264,6 @@ public class Board : Singleton<Board>
         {
             int count = component.Raycast(direction, filter, hits, distance);
         }
-       
 
         foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
         {
@@ -232,4 +285,21 @@ public class Board : Singleton<Board>
 
         return true;
     }
+
+#endregion
+
+#region ENABLE / DISABLE
+
+    private void OnEnable()
+    {
+        ChipComparer.Instance.OnChipMatched += ProcessMatched;
+    }
+
+
+    private void OnDisable()
+    {
+        ChipComparer.Instance.OnChipMatched -= ProcessMatched;
+    }
+
+#endregion
 }

@@ -32,7 +32,7 @@ public class ChipController : Singleton<ChipController>
 
     private CameraController _cameraController;
 
-    private ChipComparer _chipComparer;
+ 
 
     private ChipRegistry _chipRegistry;
 
@@ -43,7 +43,6 @@ public class ChipController : Singleton<ChipController>
     {
         _board = Board.Instance;
         _gameManager = GameManager.Instance;
-        _chipComparer = ChipComparer.Instance;
         _cameraController = CameraController.Instance;
         _chipRegistry = ChipRegistry.Instance;
     }
@@ -65,37 +64,7 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    private void ProcessMatched(Chip first, Chip second)
-    {
-        // fade out chips
-        ICommand command = new FadeOutCommand(first, second);
-
-        command.Execute();
-
-        // lines cash
-        int firstLine = first.BoardPosition.y;
-
-        int secondLine = second.BoardPosition.y;
-
-        // a single line
-        if (firstLine == secondLine)
-        {
-            _board.CheckLine(firstLine);
-
-            return;
-        }
-
-        // two lines
-        int topLine = Mathf.Min(firstLine, secondLine);
-
-        int bottomLine = Mathf.Max(firstLine, secondLine);
-
-        _board.CheckLine(bottomLine);
-        
-        _board.CheckLine(topLine);
-
-      
-    }
+  
 
 
 #region PLACE ON BOARD
@@ -229,15 +198,13 @@ public class ChipController : Singleton<ChipController>
 
     private void OnEnable()
     {
-        _cameraController.OnCameraSetup += DrawStartArray;
-        _chipComparer.OnChipMatched += ProcessMatched;
+        GameSceneGUI.Instance.OnFaderDisappeared += DrawStartArray;
     }
 
 
     private void OnDisable()
     {
-        _cameraController.OnCameraSetup -= DrawStartArray;
-        _chipComparer.OnChipMatched -= ProcessMatched;
+        GameSceneGUI.Instance.OnFaderDisappeared -= DrawStartArray;
     }
 
 #endregion

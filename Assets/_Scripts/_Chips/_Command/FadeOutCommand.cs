@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class FadeOutCommand : ICommand
@@ -18,6 +19,9 @@ public class FadeOutCommand : ICommand
     }
 
 
+    public event Action OnUndoCompleted;
+
+
     public void Execute()
     {
         _first.ChipFiniteStateMachine.SetFadedOutState();
@@ -33,5 +37,7 @@ public class FadeOutCommand : ICommand
         _first.ChipFiniteStateMachine.SetFadedInState();
 
         _second.ChipFiniteStateMachine.SetFadedInState();
+        
+        OnUndoCompleted?.Invoke();
     }
 }

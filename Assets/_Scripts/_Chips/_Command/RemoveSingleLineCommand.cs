@@ -23,6 +23,9 @@ public class RemoveSingleLineCommand : ICommand
     }
 
 
+    public event Action OnUndoCompleted;
+
+
     public void Execute()
     {
         Logger.Debug($"Removed single line in ({_removedLine})");
@@ -49,5 +52,7 @@ public class RemoveSingleLineCommand : ICommand
 
             state.SetEnabledState();
         }
+        
+        OnUndoCompleted?.Invoke();
     }
 }

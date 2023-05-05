@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,9 +18,12 @@ public class AddChipsCommand : ICommand
     }
 
 
+    public event Action OnUndoCompleted;
+
+
     public void Execute()
     {
-        var inGameChips = _chipRegistry.GetActiveChips();
+        var inGameChips = _chipRegistry.ActiveChips;
 
         _chipController.CloneInGameChips(inGameChips, out _addedChips);
 
@@ -35,5 +39,7 @@ public class AddChipsCommand : ICommand
         }
 
         _addedChips.Clear();
+        
+        OnUndoCompleted?.Invoke();
     }
 }
