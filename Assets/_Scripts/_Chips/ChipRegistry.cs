@@ -11,15 +11,20 @@ public class ChipRegistry : Singleton<ChipRegistry>
     public List<Chip> InGameChips { get; private set; } = new();
 
     [ShowInInspector]
+    public HashSet<Chip> AllChips { get; private set; } = new();
+    
+    [ShowInInspector]
     public List<Chip> OutOfGameChips { get; private set; } = new();
 
-    public List<Chip> ActiveChips => InGameChips
+    public List<Chip> ActiveChips => AllChips
             .Where(c => c.ChipFiniteStateMachine.CurrentState.GetType() == typeof(FadedInChipState))
             .ToList();
 
 
     public void Register(Chip chip)
     {
+        AllChips.Add(chip);
+        
         InGameChips.Add(chip);
 
         OutOfGameChips.Remove(chip);
@@ -36,9 +41,11 @@ public class ChipRegistry : Singleton<ChipRegistry>
 
     public void UnregisterAndDestroy(Chip chip)
     {
+        AllChips.Remove(chip);
+        
         InGameChips.Remove(chip);
 
-        //OutOfGameChips.Remove(chip);
+        OutOfGameChips.Remove(chip);
 
         Destroy(chip.gameObject);
     }
