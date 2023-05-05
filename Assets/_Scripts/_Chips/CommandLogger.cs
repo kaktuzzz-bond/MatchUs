@@ -1,10 +1,14 @@
 #define ENABLE_LOGS
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class CommandLogger
 {
     public Stack<ICommand> Stack { get; } = new();
+
+    private readonly WaitForSeconds _wait = new(0.2f);
 
 
     public void AddCommand(ICommand command)
@@ -14,30 +18,30 @@ public class CommandLogger
     }
 
 
-    public void UndoCommand()
+    public IEnumerator UndoCommand()
     {
         if (Stack.Count == 0)
         {
             Logger.Debug("Stack is empty");
 
-            return;
+            yield break;
         }
 
-        ICommand command = Stack.Pop();
+        // Add
+        // Fade Out
+        // Remove Single Line 
+        // Special
+        ICommand command;
 
-        Logger.Debug($"Undo {command}");
+        do
+        {
+            command = Stack.Pop();
 
-        command.Undo();
-        
-        // ICommand command;
-        // do
-        // {
-        //     command = Stack.Pop();
-        //
-        //     Logger.Debug($"Undo {command}");
-        //
-        //     command.Undo();
-        // } while (command.GetType() != typeof(FadeOutCommand));
+            Logger.Debug($"Undo {command}");
 
+            command.Undo();
+
+            yield return _wait;
+        } while (command.GetType() == typeof(RemoveSingleLineCommand));
     }
 }

@@ -55,8 +55,9 @@ public class ChipController : Singleton<ChipController>
 
         command.Execute();
     }
-
-
+    
+    
+    
     [Button("Restore Line From")]
     public void RestoreLine(int boardLine)
     {
