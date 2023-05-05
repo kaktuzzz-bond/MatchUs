@@ -11,8 +11,8 @@ public class ChipRegistry : Singleton<ChipRegistry>
     public List<Chip> InGameChips { get; private set; } = new();
 
     [ShowInInspector]
-    public HashSet<Chip> AllChips { get; private set; } = new();
-    
+    public List<Chip> AllChips { get; private set; } = new();
+
     [ShowInInspector]
     public List<Chip> OutOfGameChips { get; private set; } = new();
 
@@ -23,8 +23,11 @@ public class ChipRegistry : Singleton<ChipRegistry>
 
     public void Register(Chip chip)
     {
-        AllChips.Add(chip);
-        
+        if (!AllChips.Contains(chip))
+        {
+            AllChips.Add(chip);
+        }
+
         InGameChips.Add(chip);
 
         OutOfGameChips.Remove(chip);
@@ -34,7 +37,7 @@ public class ChipRegistry : Singleton<ChipRegistry>
     public void Unregister(Chip chip)
     {
         OutOfGameChips.Add(chip);
-    
+
         InGameChips.Remove(chip);
     }
 
@@ -42,7 +45,7 @@ public class ChipRegistry : Singleton<ChipRegistry>
     public void UnregisterAndDestroy(Chip chip)
     {
         AllChips.Remove(chip);
-        
+
         InGameChips.Remove(chip);
 
         OutOfGameChips.Remove(chip);
