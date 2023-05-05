@@ -20,9 +20,9 @@ public class FadeOutCommand : ICommand
 
     public void Execute()
     {
-        _first.ChipStateManager.SetFadedOutState();
+        _first.ChipFiniteStateMachine.SetFadedOutState();
 
-        _second.ChipStateManager.SetFadedOutState();
+        _second.ChipFiniteStateMachine.SetFadedOutState();
 
         _chipController.Log.AddCommand(this);
     }
@@ -30,8 +30,8 @@ public class FadeOutCommand : ICommand
 
     public void Undo()
     {
-        _first.ChipStateManager.SetFadedInState();
+        _first.ChipFiniteStateMachine.SetFadedInState();
 
-        _second.ChipStateManager.SetFadedInState();
+        _second.ChipFiniteStateMachine.SetFadedInState();
     }
 }

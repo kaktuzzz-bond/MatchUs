@@ -1,3 +1,4 @@
+#define ENABLE_LOGS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,7 @@ public class Board : Singleton<Board>
     public event Action OnTilesGenerated;
 
     public event Action<int> OnLineRemoved;
-    
- 
-    
+
     [HorizontalGroup("Size", Title = "Board Settings")]
     [SerializeField] [BoxGroup("Size/Width")] [HideLabel] [ReadOnly]
     private int width = 9;
@@ -141,8 +140,8 @@ public class Board : Singleton<Board>
 
         sr.color = GetColor(index);
     }
-    
-    
+
+
     public void CheckLine(int boardLine)
     {
         var hits = GetRaycastHits(boardLine);
@@ -157,8 +156,8 @@ public class Board : Singleton<Board>
 
         OnLineRemoved?.Invoke(boardLine);
     }
-    
-    
+
+
     private RaycastHit2D[] GetRaycastHits(int boardLine)
     {
         var hits = new RaycastHit2D[Width];
@@ -171,31 +170,66 @@ public class Board : Singleton<Board>
 
         if (result == 0)
         {
-            Debug.LogError("CheckLine() caught the empty line!");
+            Logger.DebugError("CheckLine() caught the empty line!");
         }
 
         return hits;
     }
-    
-    private static List<ChipStateManager> AreAllFadedOut([NotNull] RaycastHit2D[] hits)
+
+
+    private static List<ChipFiniteStateMachine> AreAllFadedOut([NotNull] RaycastHit2D[] hits)
     {
         if (hits == null) throw new ArgumentNullException(nameof(hits));
 
-        List<ChipStateManager> chips = new();
+        List<ChipFiniteStateMachine> chips = new();
 
         foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
         {
             if (!hit.collider.TryGetComponent(out Chip chip)) continue;
 
-            if (chip.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState))
+            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(FadedInChipState))
             {
                 return null;
             }
 
-            chips.Add(chip.GetComponent<ChipStateManager>());
+            chips.Add(chip.GetComponent<ChipFiniteStateMachine>());
         }
 
         return chips;
     }
 
+
+    public static bool IsPathClear(Vector2 direction, float distance,  [NotNull] Chip origin, [NotNull] Chip other)
+    {
+        
+        ContactFilter2D filter = new();
+
+        List<RaycastHit2D> hits = new();
+
+        if (origin.TryGetComponent(out Collider2D component))
+        {
+            int count = component.Raycast(direction, filter, hits, distance);
+        }
+       
+
+        foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
+        {
+            if (!hit.collider.TryGetComponent(out Chip chip)) continue;
+
+            if (other != null &&
+                chip.Equals(other))
+            {
+                continue;
+            }
+
+            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(FadedInChipState))
+            {
+                return false;
+            }
+        }
+
+        Logger.DebugDrawRay(origin.transform.position, direction, Color.red, 5f);
+
+        return true;
+    }
 }

@@ -1,14 +1,11 @@
+#define ENABLE_LOGS
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(Collider2D))]
-[RequireComponent(typeof(ChipStateManager))]
+[RequireComponent(typeof(ChipFiniteStateMachine))]
 public class Chip : MonoBehaviour
 {
     public event Action OnInitialized;
@@ -16,17 +13,15 @@ public class Chip : MonoBehaviour
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
-    public SpriteRenderer Renderer => spriteRenderer;
-
     public int ShapeIndex => _chipData.shapeIndex;
 
     public int ColorIndex => _chipData.colorIndex;
 
-    public const float FadeTime = 0.1f;
+    private const float FadeTime = 0.1f;
 
-    public const float MoveTime = 0.2f;
+    private const float MoveTime = 0.2f;
 
-    public ChipStateManager ChipStateManager { get; private set; }
+    public ChipFiniteStateMachine ChipFiniteStateMachine { get; private set; }
 
     [HorizontalGroup("Appearance", Title = "Chip Settings")]
     [ShowInInspector] [BoxGroup("Appearance/Chip data")] [HideLabel] [ReadOnly]
@@ -40,22 +35,20 @@ public class Chip : MonoBehaviour
 
     private ChipController _chipController;
 
-    private Collider2D _collider;
-
     private Tween _tween;
 
+#region INITIALIZATION
 
     private void Awake()
     {
         _board = Board.Instance;
         _chipController = ChipController.Instance;
 
-        ChipStateManager = GetComponent<ChipStateManager>();
-        _collider = GetComponent<Collider2D>();
+        ChipFiniteStateMachine = GetComponent<ChipFiniteStateMachine>();
     }
 
 
-    public void Init(int shapeIndex, int colorIndex, Vector2Int boardPosition)
+    public void Init(int shapeIndex, int colorIndex)
     {
         _chipData = new ChipData(shapeIndex, colorIndex);
 
@@ -63,13 +56,6 @@ public class Chip : MonoBehaviour
 
         OnInitialized?.Invoke();
     }
-
-
-    // public void Shake()
-    // {
-    //     Vector3 shakeStrength = new Vector3(0.2f, 0.2f, 0f);
-    //     transform.DOShakePosition(1f, shakeStrength, 20);
-    // }
 
 
     private void SetAppearance()
@@ -83,18 +69,48 @@ public class Chip : MonoBehaviour
         spriteRenderer.color = color;
     }
 
+#endregion
 
-    public bool CompareShape(Chip other)
+#region COMMANDS
+
+    [Button("Fade")]
+    public void Fade(float endValue)
     {
-        return ShapeIndex == other.ShapeIndex;
+        spriteRenderer
+                .DOFade(endValue, Chip.FadeTime)
+                .SetEase(Ease.Linear);
     }
 
 
-    public bool CompareColor(Chip other)
+    [Button("Activate")]
+    public void Activate(bool isActive) => gameObject.SetActive(isActive);
+
+
+    public void MoveTo(float targetY)
     {
-        return ColorIndex == other.ColorIndex;
+        transform
+                .DOMoveY(targetY, Chip.FadeTime)
+                .SetEase(Ease.Linear);
     }
 
+
+    public void MoveTo(float targetY, TweenCallback doOnComplete)
+    {
+        transform
+                .DOMoveY(targetY, Chip.FadeTime)
+                .SetEase(Ease.Linear)
+                .OnComplete(doOnComplete);
+    }
+
+#endregion
+
+    // public void Shake()
+    // {
+    //     Vector3 shakeStrength = new Vector3(0.2f, 0.2f, 0f);
+    //     transform.DOShakePosition(1f, shakeStrength, 20);
+    // }
+
+#region MOVING
 
     private void MoveUp(int boardLine)
     {
@@ -116,13 +132,12 @@ public class Chip : MonoBehaviour
     }
 
 
-    [Button("Move Down")]
     private void MoveDown(int boardLine)
     {
         if (BoardPosition.y < boardLine ||
-            ChipStateManager.CurrentState.GetType() == typeof(DisabledChipState)) return;
+            ChipFiniteStateMachine.CurrentState.GetType() == typeof(DisabledChipState)) return;
 
-        Debug.Log($"Move down in ({boardLine})");
+        Logger.Debug($"Move down in ({boardLine})");
 
         if (_tween.IsActive())
         {
@@ -139,6 +154,21 @@ public class Chip : MonoBehaviour
                 .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime);
     }
 
+#endregion
+
+#region COMPARISON
+
+    public bool CompareShape(Chip other)
+    {
+        return ShapeIndex == other.ShapeIndex;
+    }
+
+
+    public bool CompareColor(Chip other)
+    {
+        return ColorIndex == other.ColorIndex;
+    }
+
 
     public bool CompareHorizontalPosition(Chip other)
     {
@@ -148,7 +178,7 @@ public class Chip : MonoBehaviour
 
         float distance = Mathf.Abs(direction.x);
 
-        return IsPathClear(direction, distance, other);
+        return Board.IsPathClear(direction, distance, this, other);
     }
 
 
@@ -160,7 +190,7 @@ public class Chip : MonoBehaviour
 
         float distance = Mathf.Abs(direction.y);
 
-        return IsPathClear(-direction, distance, other);
+        return Board.IsPathClear(-direction, distance, this, other);
     }
 
 
@@ -181,50 +211,15 @@ public class Chip : MonoBehaviour
             chips[1] = other;
         }
 
-        bool isTopClear = chips[0].IsPathClear(Vector2.right, _board.Width - chips[0].BoardPosition.x, chips[1]);
-        bool isBottomClear = chips[1].IsPathClear(Vector2.left, chips[1].BoardPosition.x, chips[0]);
+        bool isTopClear = Board.IsPathClear(Vector2.right, _board.Width - chips[0].BoardPosition.x, chips[0], chips[1]);
+        bool isBottomClear = Board.IsPathClear(Vector2.left, chips[1].BoardPosition.x, chips[1], chips[0]);
 
         return isTopClear && isBottomClear;
     }
 
+#endregion
 
-    public void SelfDestroy()
-    {
-        Destroy(gameObject);
-    }
-
-
-    private bool IsPathClear(Vector2 direction, float distance, Chip other)
-    {
-        ContactFilter2D filter = new();
-
-        List<RaycastHit2D> hits = new();
-
-        int count = _collider.Raycast(direction, filter, hits, distance);
-
-        foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
-        {
-            if (!hit.collider.TryGetComponent(out Chip chip)) continue;
-
-            if (other != null &&
-                chip.Equals(other))
-            {
-                continue;
-            }
-
-            if (chip.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState))
-            {
-                return false;
-            }
-        }
-
-        Debug.DrawRay(transform.position, direction, Color.red, 5f);
-
-        return true;
-    }
-
-
-#region Enable / Disable
+#region ENABLE / DISABLE
 
     private void OnEnable()
     {

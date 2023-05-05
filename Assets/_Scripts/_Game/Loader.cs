@@ -1,4 +1,4 @@
-using System;
+#define ENABLE_LOGS
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,12 +7,12 @@ public class Loader : MonoBehaviour
 {
     private readonly WaitForSeconds _wait = new(0f);
 
-    private GameStateManager _gameStateManager;
+    private GameFiniteStateMachine _gameFiniteStateMachine;
 
 
     private void Awake()
     {
-        _gameStateManager = GameStateManager.Instance;
+        _gameFiniteStateMachine = GameFiniteStateMachine.Instance;
     }
 
 
@@ -24,13 +24,13 @@ public class Loader : MonoBehaviour
 
     private IEnumerator LoadingRoutine()
     {
-        Debug.Log(">>> LOADING...");
+        Logger.Debug(">>> LOADING...");
 
         yield return _wait;
 
-        Debug.Log(" ...COMPLETED <<<");
+        Logger.Debug(" ...COMPLETED <<<");
 
-        _gameStateManager.Active();
+        _gameFiniteStateMachine.Active();
     }
 
 
@@ -42,6 +42,6 @@ public class Loader : MonoBehaviour
     //
     //     Debug.Log(" ...COMPLETED <<<");
     //
-    //     _gameStateManager.Prepare();
+    //     _gameFiniteStateMachine.Prepare();
     // }
 }

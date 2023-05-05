@@ -17,8 +17,6 @@ public class ChipController : Singleton<ChipController>
     private Vector2Int NextBoardPosition =>
             new(_chipRegistry.Counter % _board.Width, _chipRegistry.Counter / _board.Width);
 
-    private readonly WaitForSeconds _wait01 = new(0.01f);
-
     [ShowInInspector]
     public Stack<ICommand> LogStack => Log.Stack;
 
@@ -30,7 +28,7 @@ public class ChipController : Singleton<ChipController>
 
     private Board _board;
 
-    private GameController _gameController;
+    private GameManager _gameManager;
 
     private CameraController _cameraController;
 
@@ -44,7 +42,7 @@ public class ChipController : Singleton<ChipController>
     private void Awake()
     {
         _board = Board.Instance;
-        _gameController = GameController.Instance;
+        _gameManager = GameManager.Instance;
         _chipComparer = ChipComparer.Instance;
         _cameraController = CameraController.Instance;
         _chipRegistry = ChipRegistry.Instance;
@@ -91,9 +89,11 @@ public class ChipController : Singleton<ChipController>
 
         int bottomLine = Mathf.Max(firstLine, secondLine);
 
-        _board.CheckLine(topLine);
-        
         _board.CheckLine(bottomLine);
+        
+        _board.CheckLine(topLine);
+
+      
     }
 
 
@@ -101,7 +101,7 @@ public class ChipController : Singleton<ChipController>
 
     private void DrawStartArray()
     {
-        StartCoroutine(DrawStartChipsRoutine(_gameController.ChipsOnStartNumber));
+        StartCoroutine(DrawStartChipsRoutine(_gameManager.ChipsOnStartNumber));
     }
 
 
@@ -111,7 +111,7 @@ public class ChipController : Singleton<ChipController>
         {
             _ = CreateChip();
 
-            yield return _wait01;
+            yield return null;
         }
     }
 
@@ -130,7 +130,7 @@ public class ChipController : Singleton<ChipController>
     {
         foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex)))
         {
-            yield return _wait01;
+            yield return null;
 
             _addedChips.Add(newChip);
         }
@@ -164,9 +164,11 @@ public class ChipController : Singleton<ChipController>
 
         Transform instance = Instantiate(chipPrefab, worldPos, Quaternion.identity, _board.chipParent);
 
-        Chip chip = instance.GetComponent<Chip>();
+        if (!instance.TryGetComponent(out Chip chip)) return null;
 
-        chip.Init(shapeIndex, colorIndex, boardPosition);
+        chip = instance.GetComponent<Chip>();
+
+        chip.Init(shapeIndex, colorIndex);
 
         instance.name = $"Chip ({shapeIndex}, {colorIndex})";
 
@@ -179,7 +181,7 @@ public class ChipController : Singleton<ChipController>
 
     private ChipData GetChipDataByChance()
     {
-        return Random.value <= _gameController.ChanceForRandom
+        return Random.value <= _gameManager.ChanceForRandom
                 ? GetRandomChipData()
                 : GetChipDataForHardLevel();
     }

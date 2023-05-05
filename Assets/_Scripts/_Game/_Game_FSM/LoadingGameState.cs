@@ -1,11 +1,11 @@
-using UnityEngine;
+#define ENABLE_LOGS
 using UnityEngine.SceneManagement;
 
 public class LoadingGameState : IGameState
 {
-    public void Enter(GameStateManager context)
+    public void Enter(GameFiniteStateMachine context)
     {
-        Debug.Log("Loading Game State entered ");
+        Logger.Debug("Loading Game State entered ");
 
         SceneManager.LoadSceneAsync(1);
     }

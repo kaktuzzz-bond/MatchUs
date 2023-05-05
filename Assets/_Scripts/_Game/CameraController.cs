@@ -1,3 +1,4 @@
+#define ENABLE_LOGS
 using System;
 using System.Collections;
 using DG.Tweening;
@@ -81,7 +82,7 @@ public class CameraController : Singleton<CameraController>
 
         if (!hit.collider.TryGetComponent(out Chip chip)) return;
 
-        bool isChipFadedIn = chip.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState);
+        bool isChipFadedIn = chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(FadedInChipState);
 
         if (isChipFadedIn)
         {
@@ -89,7 +90,7 @@ public class CameraController : Singleton<CameraController>
         }
         else
         {
-            Debug.Log("Tapped chip is NOT ACTIVE");
+            Logger.Debug("Tapped chip is NOT ACTIVE");
         }
     }
 

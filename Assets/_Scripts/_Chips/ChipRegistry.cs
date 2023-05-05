@@ -41,13 +41,15 @@ public class ChipRegistry : Singleton<ChipRegistry>
         OutOfGameChips.Remove(chip);
 
         Counter--;
+        
+        Destroy(chip.gameObject);
     }
 
 
     public List<Chip> GetActiveChips()
     {
         return InGameChips
-                .Where(c => c.ChipStateManager.CurrentState.GetType() == typeof(FadedInChipState))
+                .Where(c => c.ChipFiniteStateMachine.CurrentState.GetType() == typeof(FadedInChipState))
                 .ToList();
     }
 }

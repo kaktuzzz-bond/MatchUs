@@ -1,3 +1,4 @@
+#define ENABLE_LOGS
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,12 +7,12 @@ public class RemoveSingleLineCommand : ICommand
 {
     private readonly int _removedLine;
 
-    private readonly List<ChipStateManager> _chipStates;
+    private readonly List<ChipFiniteStateMachine> _chipStates;
 
     private readonly ChipController _chipController;
 
 
-    public RemoveSingleLineCommand(List<ChipStateManager> chipStates)
+    public RemoveSingleLineCommand(List<ChipFiniteStateMachine> chipStates)
     {
         _chipStates = chipStates;
 
@@ -23,9 +24,9 @@ public class RemoveSingleLineCommand : ICommand
 
     public void Execute()
     {
-        Debug.Log($"Removed single line in ({_removedLine})");
+        Logger.Debug($"Removed single line in ({_removedLine})");
 
-        ChipStateManager.DisableChips(_chipStates);
+        ChipFiniteStateMachine.DisableChips(_chipStates);
 
         _chipController.Log.AddCommand(this);
     }
@@ -35,7 +36,7 @@ public class RemoveSingleLineCommand : ICommand
     {
         _chipController.RestoreLine(_removedLine);
 
-        foreach (ChipStateManager state in _chipStates)
+        foreach (ChipFiniteStateMachine state in _chipStates)
         {
             Vector3 chipPos = state.transform.position;
 

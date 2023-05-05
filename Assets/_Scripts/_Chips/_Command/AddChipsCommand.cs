@@ -31,7 +31,7 @@ public class AddChipsCommand : ICommand
     {
         foreach (Chip chip in _addedChips)
         {
-            chip.ChipStateManager.SetSelfDestroyableState();
+            chip.ChipFiniteStateMachine.SetSelfDestroyableState();
         }
 
         _addedChips.Clear();

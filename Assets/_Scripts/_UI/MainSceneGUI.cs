@@ -19,19 +19,19 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
     [SerializeField] [TabGroup("Main Menu")]
     private Button testMode;
 
-    private GameController _gameController;
+    private GameManager _gameManager;
 
 
     private void Awake()
     {
-        _gameController = GameController.Instance;
+        _gameManager = GameManager.Instance;
 
-        easyMode.onClick.AddListener(() => _gameController.StartGame(DifficultyLevel.Easy));
+        easyMode.onClick.AddListener(() => _gameManager.StartGame(DifficultyLevel.Easy));
 
-        normalMode.onClick.AddListener(() => _gameController.StartGame(DifficultyLevel.Normal));
+        normalMode.onClick.AddListener(() => _gameManager.StartGame(DifficultyLevel.Normal));
 
-        hardMode.onClick.AddListener(() => _gameController.StartGame(DifficultyLevel.Hard));
+        hardMode.onClick.AddListener(() => _gameManager.StartGame(DifficultyLevel.Hard));
 
-        testMode.onClick.AddListener(() => _gameController.StartGame(DifficultyLevel.Test));
+        testMode.onClick.AddListener(() => _gameManager.StartGame(DifficultyLevel.Test));
     }
 }

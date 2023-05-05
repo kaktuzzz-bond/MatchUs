@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class GameController : Singleton<GameController>
+[RequireComponent(typeof(GameFiniteStateMachine))]
+public class GameManager : Singleton<GameManager>
 {
     private DifficultyLevel _difficultyLevel;
 
-    private GameStateManager _gameStateManager;
+    private GameFiniteStateMachine _gameFiniteStateMachine;
 
     public int ChipsOnStartNumber =>
             _difficultyLevel switch
@@ -33,7 +34,10 @@ public class GameController : Singleton<GameController>
 
     private void Awake()
     {
-        _gameStateManager = GameStateManager.Instance;
+        DontDestroyOnLoad(gameObject);
+        
+        _gameFiniteStateMachine = GameFiniteStateMachine.Instance;
+        
     }
 
 
@@ -41,6 +45,6 @@ public class GameController : Singleton<GameController>
     {
         _difficultyLevel = difficultyLevel;
 
-        _gameStateManager.Loading();
+        _gameFiniteStateMachine.Loading();
     }
 }

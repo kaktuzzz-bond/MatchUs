@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
+#define ENABLE_LOGS
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 [RequireComponent(typeof(Chip))]
-public class ChipStateManager : MonoBehaviour
+public class ChipFiniteStateMachine : MonoBehaviour
 {
     [ShowInInspector]
     public IChipState CurrentState { get; private set; } = new EnabledChipState();
@@ -29,6 +28,7 @@ public class ChipStateManager : MonoBehaviour
     }
 
 
+    [Button("Launch")]
     private void Launch()
     {
         gameObject.SetActive(false);
@@ -40,48 +40,48 @@ public class ChipStateManager : MonoBehaviour
         SetFadedInState();
     }
 
-
+    [Button("Set Enabled State")]
     public void SetEnabledState()
     {
-        Debug.Log("STATE: Enabled");
+        Logger.Debug("STATE: Enabled");
         SetState(_enabledChipState);
     }
 
-
+    [Button("Set Faded Out State")]
     public void SetFadedOutState()
     {
-        Debug.Log("STATE: Fade Out");
+        Logger.Debug("STATE: Fade Out");
         SetState(_fadedOutChipState);
     }
 
-
+    [Button("Set Faded In State")]
     public void SetFadedInState()
     {
-        Debug.Log("STATE: Fade In");
+        Logger.Debug("STATE: Fade In");
         SetState(_fadedInChipState);
     }
 
-
+    [Button("Set Self-Destroy State")]
     public void SetSelfDestroyableState()
     {
-        Debug.Log("STATE: SelfDestroy");
+        Logger.Debug("STATE: Destroy");
         SetState(_selfDestroyableChipState);
     }
 
 
-    public static void DisableChips(List<ChipStateManager> states)
+    public static void DisableChips(List<ChipFiniteStateMachine> states)
     {
-        foreach (ChipStateManager state in states)
+        foreach (ChipFiniteStateMachine state in states)
         {
             state.SetDisabledState();
         }
     }
     
 
-
+    [Button("Set Disabled State")]
     private void SetDisabledState()
     {
-        Debug.Log("STATE: Disabled");
+        Logger.Debug("STATE: Disabled");
         SetState(_disabledChipState);
     }
 

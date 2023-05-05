@@ -1,3 +1,4 @@
+#define ENABLE_LOGS
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -66,7 +67,7 @@ public class ChipComparer : Singleton<ChipComparer>
         //case: Tap the same
         if (chip.Equals(_storage))
         {
-            Debug.LogWarning("The same chip");
+            Logger.Debug("The same chip");
 
             _storage = null;
 

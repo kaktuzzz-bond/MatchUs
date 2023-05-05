@@ -2,7 +2,7 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class GameStateManager : Singleton<GameStateManager>
+public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
 {
     [ShowInInspector]
     public IGameState CurrentGameState { get; private set; }
@@ -10,13 +10,13 @@ public class GameStateManager : Singleton<GameStateManager>
 
     private void Start()
     {
-        CurrentGameState = new InitialGameState();
-        CurrentGameState.Enter(this);
+        Initial();
     }
 
 
-    public void Initial()
+    private void Initial()
     {
+        
         SetState(new InitialGameState());
     }
 
