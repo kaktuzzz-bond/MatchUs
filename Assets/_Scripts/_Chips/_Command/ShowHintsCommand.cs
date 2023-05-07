@@ -7,8 +7,6 @@ public class ShowHintsCommand : ICommand
 {
     private GamePointer[] _hinters;
 
-    public event Action OnUndoCompleted;
-
     public event Action<Vector2Int, Vector2Int> OnHintFound;
 
 
@@ -37,5 +35,8 @@ public class ShowHintsCommand : ICommand
     }
 
 
-    public void Undo() { }
+    public void Undo()
+    {
+        throw new System.NotImplementedException();
+    }
 }

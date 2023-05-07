@@ -8,19 +8,16 @@ public class LoadingGameState : IGameState
     {
         Logger.Debug("Loading Game State entered ");
 
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+        GameFiniteStateMachine.Instance.LoadScene(1);
+
+        GameFiniteStateMachine.Instance.OnSceneLoaded += DoOnLoad;
     }
 
 
-    public void Exit(GameFiniteStateMachine context)
+    private static void DoOnLoad()
     {
-        Logger.Debug("Loading Game State exit");
-
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(2);
-
-        if (asyncLoad.isDone)
-        {
-            GameFiniteStateMachine.Instance.Active();
-        }
+        Logger.DebugWarning("LOADED");
+        
+        GameFiniteStateMachine.Instance.OnSceneLoaded -= DoOnLoad;
     }
 }

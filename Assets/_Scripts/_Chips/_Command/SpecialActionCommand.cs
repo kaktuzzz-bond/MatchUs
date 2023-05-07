@@ -2,7 +2,6 @@ using System;
 
 public class SpecialActionCommand : ICommand
 {
-    public event Action OnUndoCompleted;
 
 
     public void Execute()
@@ -14,6 +13,5 @@ public class SpecialActionCommand : ICommand
     public void Undo()
     {
         throw new System.NotImplementedException();
-        OnUndoCompleted?.Invoke();
     }
 }

@@ -22,8 +22,7 @@ public class RemoveSingleLineCommand : ICommand
         _removedLine = _chipStates.First().Chip.BoardPosition.y;
     }
 
-
-    public event Action OnUndoCompleted;
+    
 
 
     public void Execute()
@@ -53,6 +52,5 @@ public class RemoveSingleLineCommand : ICommand
             state.SetEnabledState();
         }
         
-        OnUndoCompleted?.Invoke();
     }
 }

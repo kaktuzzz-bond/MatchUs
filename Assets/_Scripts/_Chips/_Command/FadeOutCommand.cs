@@ -16,11 +16,7 @@ public class FadeOutCommand : ICommand
 
         _chipController = ChipController.Instance;
     }
-
-
-    public event Action OnUndoCompleted;
-
-
+    
     public void Execute()
     {
         _first.ChipFiniteStateMachine.SetFadedOutState();
@@ -36,7 +32,5 @@ public class FadeOutCommand : ICommand
         _first.ChipFiniteStateMachine.SetFadedInState();
 
         _second.ChipFiniteStateMachine.SetFadedInState();
-        
-        OnUndoCompleted?.Invoke();
     }
 }

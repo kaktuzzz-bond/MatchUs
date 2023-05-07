@@ -14,9 +14,6 @@ public class AddChipsCommand : ICommand
     }
 
 
-    public event Action OnUndoCompleted;
-
-
     public void Execute()
     {
         var inGameChips = ChipRegistry.Instance.ActiveChips;
@@ -35,7 +32,5 @@ public class AddChipsCommand : ICommand
         }
 
         _addedChips.Clear();
-
-        OnUndoCompleted?.Invoke();
     }
 }

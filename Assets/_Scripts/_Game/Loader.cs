@@ -22,7 +22,7 @@ public class Loader : MonoBehaviour
 
         Logger.Debug(" ...COMPLETED <<<");
 
-        GameFiniteStateMachine.Instance.CurrentGameState.Exit(GameFiniteStateMachine.Instance);
+        GameFiniteStateMachine.Instance.Active();
     }
 
 

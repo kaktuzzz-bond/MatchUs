@@ -1,9 +1,14 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
 {
+    public event Action OnSceneLoaded;
+    
     [ShowInInspector]
     public IGameState CurrentGameState { get; private set; }
 
@@ -50,5 +55,24 @@ public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
         CurrentGameState = newGameState;
 
         CurrentGameState.Enter(this);
+    }
+
+
+    public void LoadScene(int sceneIndex)
+    {
+        StartCoroutine(LoadSceneRoutine(sceneIndex));
+    }
+
+
+    private IEnumerator LoadSceneRoutine(int sceneIndex)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex);
+        
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        
+        OnSceneLoaded?.Invoke();
     }
 }
