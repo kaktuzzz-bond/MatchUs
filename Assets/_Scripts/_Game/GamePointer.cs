@@ -11,7 +11,7 @@ public class GamePointer : MonoBehaviour
 
     private PointerController _pointerController;
 
-    private const float FadeDuration = 0.1f;
+    private const float FadeDuration = 0.05f;
 
 
     private void Awake()

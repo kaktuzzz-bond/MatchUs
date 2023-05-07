@@ -19,6 +19,7 @@ public class ChipComparer : Singleton<ChipComparer>
 
     public void ClearStorage() => _storage = null;
 
+
     private void Awake()
     {
         _pointerController = PointerController.Instance;
@@ -26,16 +27,33 @@ public class ChipComparer : Singleton<ChipComparer>
     }
 
 
-    private void CompareStorage(Chip chip)
+    private void ProcessChip(Chip chip)
     {
-        bool isInPosition = chip.CompareHorizontalPosition(_storage) ||
-                            chip.CompareVerticalPosition(_storage) ||
-                            chip.CompareMultilinePosition(_storage);
+        //case: Storage is empty
+        if (_storage == null)
+        {
+            _pointerController.ShowPointer(PointerController.Selector, chip.BoardPosition);
 
-        bool isComparing = chip.CompareShape(_storage) ||
-                           chip.CompareColor(_storage);
+            _storage = chip;
 
-        if (isInPosition && isComparing)
+            return;
+        }
+
+        //case: Tap the same
+        if (chip.Equals(_storage))
+        {
+            Logger.Debug("The same first");
+
+            _storage = null;
+
+            _pointerController.HidePointers();
+
+            return;
+        }
+
+        // case: Compare chips
+
+        if (CompareChips(chip, _storage))
         {
             OnChipMatched?.Invoke(chip, _storage);
 
@@ -47,39 +65,20 @@ public class ChipComparer : Singleton<ChipComparer>
         {
             _pointerController.HidePointers();
 
-            _pointerController.GetPointer(PointerController.Selector, chip.BoardPosition);
+            _pointerController.ShowPointer(PointerController.Selector, chip.BoardPosition);
 
             _storage = chip;
         }
     }
 
 
-    private void ProcessChip(Chip chip)
+    public static bool CompareChips(Chip first, Chip second)
     {
-        //case: Storage is empty
-        if (_storage == null)
-        {
-            _pointerController.GetPointer(PointerController.Selector, chip.BoardPosition);
-
-            _storage = chip;
-
-            return;
-        }
-
-        //case: Tap the same
-        if (chip.Equals(_storage))
-        {
-            Logger.Debug("The same chip");
-
-            _storage = null;
-
-            _pointerController.HidePointers();
-
-            return;
-        }
-
-        // case: Compare chips
-        CompareStorage(chip);
+        return (first.CompareHorizontalPosition(second) ||
+               first.CompareVerticalPosition(second) ||
+               first.CompareMultilinePosition(second)) &&
+               (first.CompareShape(second) ||
+               first.CompareColor(second));
     }
 
 

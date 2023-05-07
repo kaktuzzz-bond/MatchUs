@@ -10,7 +10,7 @@ public class PointerController : Singleton<PointerController>
 
     public const string Selector = "Selector";
 
-    public const string Hint = "Hint";
+    private const string Hint = "Hint";
 
     [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform selectorPrefab;
@@ -21,7 +21,12 @@ public class PointerController : Singleton<PointerController>
     [ShowInInspector]
     private Dictionary<string, ObjectPool> _pools;
 
+    [ShowInInspector]
+    private GamePointer[] _hinters = new GamePointer[2];
+
     private Board _board;
+
+    private bool _isHintShown;
 
 
     private void Awake()
@@ -40,7 +45,23 @@ public class PointerController : Singleton<PointerController>
     }
 
 
-    public void GetPointer(string pointerTag, Vector2Int boardPosition)
+    public void ShowHints()
+    {
+        ShowHintsCommand hintsCommand = new();
+
+        hintsCommand.OnHintFound += (first, second) =>
+        {
+            ShowPointer(Hint, first);
+            ShowPointer(Hint, second);
+
+            _isHintShown = true;
+        };
+
+        hintsCommand.Execute();
+    }
+
+
+    public void ShowPointer(string pointerTag, Vector2Int boardPosition)
     {
         _pools[pointerTag]
                 .Get()
@@ -62,5 +83,14 @@ public class PointerController : Singleton<PointerController>
     public void HidePointers()
     {
         OnPointersHidden?.Invoke();
+    }
+
+
+    public void CheckForHints()
+    {
+        if (!_isHintShown) return;
+
+        HidePointers();
+        _isHintShown = false;
     }
 }

@@ -61,6 +61,8 @@ public class CameraController : Singleton<CameraController>
 
     private void DoOnStartTouch(Vector3 position)
     {
+        PointerController.Instance.CheckForHints();
+        
         _isStopMovement = Mathf.Abs(_camera.velocity.y) > cameraVelocityThreshold;
 
         _camera.transform.DOKill();

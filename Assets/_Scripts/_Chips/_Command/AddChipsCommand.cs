@@ -5,15 +5,12 @@ public class AddChipsCommand : ICommand
 {
     private readonly ChipController _chipController;
 
-    private readonly ChipRegistry _chipRegistry;
-
     private List<Chip> _addedChips;
 
 
     public AddChipsCommand()
     {
         _chipController = ChipController.Instance;
-        _chipRegistry = ChipRegistry.Instance;
     }
 
 
@@ -22,7 +19,7 @@ public class AddChipsCommand : ICommand
 
     public void Execute()
     {
-        var inGameChips = _chipRegistry.ActiveChips;
+        var inGameChips = ChipRegistry.Instance.ActiveChips;
 
         _chipController.CloneInGameChips(inGameChips, out _addedChips);
 
