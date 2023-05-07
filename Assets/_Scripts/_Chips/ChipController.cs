@@ -14,7 +14,7 @@ public class ChipController : Singleton<ChipController>
     [SerializeField]
     private Transform chipPrefab;
 
-    private Vector2Int NextBoardPosition =>
+    public Vector2Int NextBoardPosition =>
             new(_chipRegistry.Counter % _board.Width, _chipRegistry.Counter / _board.Width);
 
     [ShowInInspector]
@@ -109,9 +109,7 @@ public class ChipController : Singleton<ChipController>
 
     private Chip CreateChip(int shapeIndex, int colorIndex)
     {
-        Vector2Int boardPos = NextBoardPosition;
-
-        return CreateNewChip(shapeIndex, colorIndex, boardPos);
+        return CreateNewChip(shapeIndex, colorIndex, NextBoardPosition);
     }
 
 
@@ -119,9 +117,7 @@ public class ChipController : Singleton<ChipController>
     {
         ChipData data = GetChipDataByChance();
 
-        Vector2Int boardPos = NextBoardPosition;
-
-        return CreateNewChip(data.shapeIndex, data.colorIndex, boardPos);
+        return CreateNewChip(data.shapeIndex, data.colorIndex, NextBoardPosition);
     }
 
 

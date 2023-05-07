@@ -17,15 +17,20 @@ public class CameraController : Singleton<CameraController>
 
 #region CAMERA SETUP OPTIONS
 
-    [HorizontalGroup("Split", Title = "On Hold Properties")]
-    [SerializeField] [PropertyRange(0f, 2f)] [BoxGroup("Split/Velocity Threshold")] [HideLabel]
+    [SerializeField, MinValue(0)]
     private float cameraVelocityThreshold = 1f;
 
-    [SerializeField] [MinValue(0)] [BoxGroup("Split/On Hold Speed")] [HideLabel]
+    [SerializeField, MinValue(0)]
     private float endTouchMoveDuration = 1f;
 
-    [SerializeField] [MinValue(0)] [BoxGroup("Split/On Hold Delay")] [HideLabel]
+    [SerializeField] [MinValue(0)] [HideLabel]
     private float onHoldMoveDuration = 0.2f;
+
+    [SerializeField, MinValue(0)]
+    private float distanceToFooter = 2f;
+
+    [SerializeField, MinValue(0)]
+    private float moveToBottomBoundDuration = 1f;
 
 #endregion
 
@@ -55,11 +60,11 @@ public class CameraController : Singleton<CameraController>
 
     private Vector3 _bottomBoundPoint;
 
+    private float _camToNextPositionDistance;
+
     private WaitForEndOfFrame _wait = new();
-    
 
 #endregion
-
 
 #region INITIALIZATION
 
@@ -76,13 +81,12 @@ public class CameraController : Singleton<CameraController>
 
 #endregion
 
-
 #region PLAYER INPUT ACTIONS
 
     private void DoOnStartTouch(Vector3 position)
     {
         PointerController.Instance.CheckForHints();
-        
+
         _isStopMovement = Mathf.Abs(_camera.velocity.y) > cameraVelocityThreshold;
 
         _camera.transform.DOKill();
@@ -118,7 +122,6 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-
     private void MovementOnHoldTouch(Vector3 position)
     {
         float offset = position.y - _startTouchFingerPosition.y;
@@ -142,6 +145,15 @@ public class CameraController : Singleton<CameraController>
         LimitCameraMovementToBounds(targetValue);
     }
 
+
+    public void MoveToBottomBound()
+    {
+        CalculateBottomBound();
+
+        _camera.transform
+                .DOMoveY(_bottomBoundPoint.y, moveToBottomBoundDuration)
+                .SetEase(Ease.OutQuad);
+    }
 
 #endregion
 
@@ -187,7 +199,7 @@ public class CameraController : Singleton<CameraController>
         SetInitialPosition();
 
         yield return _wait;
-        
+
         OnCameraSetup?.Invoke();
     }
 
@@ -206,26 +218,45 @@ public class CameraController : Singleton<CameraController>
 
         float headerHeight = rectHeader[1].y - rectHeader[0].y;
 
+        _topBoundPoint = new Vector3(
+                x: (_board.Width - 1f) * 0.5f,
+                y: headerHeight - _camera.orthographicSize + 0.5f,
+                z: _camera.transform.position.z);
+
+        // supposed distance between camera and next chip position
         var rectFooter = _gameSceneGUI.GetFooterCorners();
 
         float footerHeight = rectFooter[1].y - rectFooter[0].y;
-        
-        _topBoundPoint = new Vector3(
-                (_board.Width - 1f) * 0.5f,
-                headerHeight - _camera.orthographicSize + 0.5f,
-                _camera.transform.position.z);
 
-        _bottomBoundPoint = _topBoundPoint - new Vector3(0, 25f, 0);
+        _camToNextPositionDistance = _camera.orthographicSize - footerHeight - distanceToFooter;
+
+        _bottomBoundPoint = _topBoundPoint;
+
+        CalculateBottomBound();
+    }
+
+
+    private void CalculateBottomBound()
+    {
+        Vector2Int nextBoardPos = ChipController.Instance.NextBoardPosition;
+
+        Vector3 worldPos = _board[nextBoardPos.x, nextBoardPos.y].position;
+
+        _bottomBoundPoint.y = worldPos.y + _camToNextPositionDistance;
+
+        if (_bottomBoundPoint.y > _topBoundPoint.y)
+        {
+            _bottomBoundPoint.y = _topBoundPoint.y;
+        }
     }
 
 
     private void SetInitialPosition()
     {
-        _camera.transform.position = _topBoundPoint;
+        _camera.transform.position = _bottomBoundPoint;
     }
 
 #endregion
-
 
 #region ENABLE / DISABLE
 

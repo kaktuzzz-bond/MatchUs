@@ -10,19 +10,13 @@ public class RemoveSingleLineCommand : ICommand
 
     private readonly List<ChipFiniteStateMachine> _chipStates;
 
-    private readonly ChipController _chipController;
-
 
     public RemoveSingleLineCommand(List<ChipFiniteStateMachine> chipStates)
     {
         _chipStates = chipStates;
 
-        _chipController = ChipController.Instance;
-
         _removedLine = _chipStates.First().Chip.BoardPosition.y;
     }
-
-    
 
 
     public void Execute()
@@ -31,13 +25,15 @@ public class RemoveSingleLineCommand : ICommand
 
         ChipFiniteStateMachine.DisableChips(_chipStates);
 
-        _chipController.Log.AddCommand(this);
+        ChipController.Instance.Log.AddCommand(this);
+
+        CameraController.Instance.MoveToBottomBound();
     }
 
 
     public void Undo()
     {
-        _chipController.RestoreLine(_removedLine);
+        ChipController.Instance.RestoreLine(_removedLine);
 
         foreach (ChipFiniteStateMachine state in _chipStates)
         {
@@ -51,6 +47,7 @@ public class RemoveSingleLineCommand : ICommand
 
             state.SetEnabledState();
         }
-        
+
+        CameraController.Instance.MoveToBottomBound();
     }
 }
