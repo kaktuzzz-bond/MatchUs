@@ -17,6 +17,8 @@ public class ChipComparer : Singleton<ChipComparer>
     private CameraController _cameraController;
 
 
+    public void ClearStorage() => _storage = null;
+
     private void Awake()
     {
         _pointerController = PointerController.Instance;

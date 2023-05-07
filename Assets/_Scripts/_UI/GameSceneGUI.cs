@@ -36,7 +36,7 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
 
     private void Awake()
     {
-        add.onClick.AddListener(() => ChipController.Instance.AddChips());
+        add.onClick.AddListener(ChipController.AddChips);
 
         undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
 

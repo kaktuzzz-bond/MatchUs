@@ -30,10 +30,6 @@ public class ChipController : Singleton<ChipController>
 
     private GameManager _gameManager;
 
-    private CameraController _cameraController;
-
- 
-
     private ChipRegistry _chipRegistry;
 
 #endregion
@@ -43,28 +39,27 @@ public class ChipController : Singleton<ChipController>
     {
         _board = Board.Instance;
         _gameManager = GameManager.Instance;
-        _cameraController = CameraController.Instance;
         _chipRegistry = ChipRegistry.Instance;
     }
 
 
-    public void AddChips()
+    public static void AddChips()
     {
+        PointerController.Instance.HidePointers();
+
+        ChipComparer.Instance.ClearStorage();
+        
         ICommand command = new AddChipsCommand();
 
         command.Execute();
     }
-    
-    
-    
+
+
     [Button("Restore Line From")]
     public void RestoreLine(int boardLine)
     {
         OnLineRestored?.Invoke(boardLine);
     }
-
-
-  
 
 
 #region PLACE ON BOARD

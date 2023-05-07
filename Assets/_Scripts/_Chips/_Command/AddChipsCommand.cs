@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 public class AddChipsCommand : ICommand
 {
@@ -39,7 +38,7 @@ public class AddChipsCommand : ICommand
         }
 
         _addedChips.Clear();
-        
+
         OnUndoCompleted?.Invoke();
     }
 }
