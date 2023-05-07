@@ -1,4 +1,5 @@
 #define ENABLE_LOGS
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LoadingGameState : IGameState
@@ -7,6 +8,19 @@ public class LoadingGameState : IGameState
     {
         Logger.Debug("Loading Game State entered ");
 
-        SceneManager.LoadSceneAsync(1);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+    }
+
+
+    public void Exit(GameFiniteStateMachine context)
+    {
+        Logger.Debug("Loading Game State exit");
+
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(2);
+
+        if (asyncLoad.isDone)
+        {
+            GameFiniteStateMachine.Instance.Active();
+        }
     }
 }

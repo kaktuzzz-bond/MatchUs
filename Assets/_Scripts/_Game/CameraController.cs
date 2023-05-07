@@ -7,9 +7,15 @@ using Sirenix.OdinInspector;
 
 public class CameraController : Singleton<CameraController>
 {
+#region EVENTS
+
     public event Action OnCameraSetup;
 
     public event Action<Chip> OnChipTapped;
+
+#endregion
+
+#region CAMERA SETUP OPTIONS
 
     [HorizontalGroup("Split", Title = "On Hold Properties")]
     [SerializeField] [PropertyRange(0f, 2f)] [BoxGroup("Split/Velocity Threshold")] [HideLabel]
@@ -21,7 +27,9 @@ public class CameraController : Singleton<CameraController>
     [SerializeField] [MinValue(0)] [BoxGroup("Split/On Hold Delay")] [HideLabel]
     private float onHoldMoveDuration = 0.2f;
 
-#region Component Links
+#endregion
+
+#region COMPONENT LINKS
 
     private Camera _camera;
 
@@ -32,6 +40,8 @@ public class CameraController : Singleton<CameraController>
     private GameSceneGUI _gameSceneGUI;
 
 #endregion
+
+#region VARIABLES
 
     private Vector3 _startCameraPosition;
 
@@ -46,6 +56,12 @@ public class CameraController : Singleton<CameraController>
     private Vector3 _bottomBoundPoint;
 
     private WaitForEndOfFrame _wait = new();
+    
+
+#endregion
+
+
+#region INITIALIZATION
 
     private void Awake()
     {
@@ -58,6 +74,10 @@ public class CameraController : Singleton<CameraController>
         _camera = Camera.main;
     }
 
+#endregion
+
+
+#region PLAYER INPUT ACTIONS
 
     private void DoOnStartTouch(Vector3 position)
     {
@@ -98,6 +118,7 @@ public class CameraController : Singleton<CameraController>
     }
 
 
+
     private void MovementOnHoldTouch(Vector3 position)
     {
         float offset = position.y - _startTouchFingerPosition.y;
@@ -121,6 +142,10 @@ public class CameraController : Singleton<CameraController>
         LimitCameraMovementToBounds(targetValue);
     }
 
+
+#endregion
+
+#region CAMERA SETUP
 
     private void LimitCameraMovementToBounds(float targetValue)
     {
@@ -181,6 +206,10 @@ public class CameraController : Singleton<CameraController>
 
         float headerHeight = rectHeader[1].y - rectHeader[0].y;
 
+        var rectFooter = _gameSceneGUI.GetFooterCorners();
+
+        float footerHeight = rectFooter[1].y - rectFooter[0].y;
+        
         _topBoundPoint = new Vector3(
                 (_board.Width - 1f) * 0.5f,
                 headerHeight - _camera.orthographicSize + 0.5f,
@@ -195,8 +224,10 @@ public class CameraController : Singleton<CameraController>
         _camera.transform.position = _topBoundPoint;
     }
 
+#endregion
 
-#region Enable / Disable
+
+#region ENABLE / DISABLE
 
     private void OnEnable()
     {

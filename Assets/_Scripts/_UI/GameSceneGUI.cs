@@ -34,7 +34,9 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
 #endregion
 
 
-    private void Awake()
+#region INITIALIZATION
+
+    public void Init()
     {
         add.onClick.AddListener(ChipController.AddChips);
 
@@ -45,32 +47,11 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
         //special.onClick.AddListener(() => _commandLogger.Execute(new SpecialActionCommand()));
     }
 
+#endregion
 
-    public Vector3[] GetHeaderCorners()
-    {
-        return Utils.GetRectWorldCorners(header);
-    }
+#region FADE IN / FADE OUT
 
-
-    public Vector3[] GetFooterCorners()
-    {
-        return Utils.GetRectWorldCorners(footer);
-    }
-
-
-    public bool IsGameAreaPosition(Vector3 position)
-    {
-        bool checkX = position.x > -0.5f &&
-                      position.x < Board.Instance.Width + 0.5f;
-
-        bool checkY = position.y < GetHeaderCorners()[0].y &&
-                      position.y > GetFooterCorners()[1].y;
-
-        return checkX && checkY;
-    }
-
-
-    private void FadeIn()
+    private void FadeInEffect()
     {
         fader
                 .DOFade(0, 0.2f)
@@ -85,18 +66,42 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
        
     }
 
+#endregion
+  
+
+
+    public Vector3[] GetHeaderCorners() => Utils.GetRectWorldCorners(header);
+
+
+    public Vector3[] GetFooterCorners() => Utils.GetRectWorldCorners(footer);
+
+
+    public bool IsGameAreaPosition(Vector3 position)
+    {
+        bool checkX = position.x > -0.5f &&
+                      position.x < Board.Instance.Width + 0.5f;
+
+        bool checkY = position.y < GetHeaderCorners()[0].y &&
+                      position.y > GetFooterCorners()[1].y;
+
+        return checkX && checkY;
+    }
+
+
+
+
 
 #region ENABLE / DISABLE
 
     private void OnEnable()
     {
-        CameraController.Instance.OnCameraSetup += FadeIn;
+        CameraController.Instance.OnCameraSetup += FadeInEffect;
     }
 
 
     private void OnDisable()
     {
-        CameraController.Instance.OnCameraSetup -= FadeIn;
+        CameraController.Instance.OnCameraSetup -= FadeInEffect;
     }
 
 #endregion

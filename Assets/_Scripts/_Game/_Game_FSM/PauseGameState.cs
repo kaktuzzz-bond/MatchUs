@@ -6,4 +6,10 @@ public class PauseGameState : IGameState
     {
         Logger.Debug("Pause Game State Entered ");
     }
+
+
+    public void Exit(GameFiniteStateMachine context)
+    {
+        throw new System.NotImplementedException();
+    }
 }

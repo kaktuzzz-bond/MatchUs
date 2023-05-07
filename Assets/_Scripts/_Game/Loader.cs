@@ -7,14 +7,6 @@ public class Loader : MonoBehaviour
 {
     private readonly WaitForSeconds _wait = new(0f);
 
-    private GameFiniteStateMachine _gameFiniteStateMachine;
-
-
-    private void Awake()
-    {
-        _gameFiniteStateMachine = GameFiniteStateMachine.Instance;
-    }
-
 
     public void Start()
     {
@@ -30,7 +22,7 @@ public class Loader : MonoBehaviour
 
         Logger.Debug(" ...COMPLETED <<<");
 
-        _gameFiniteStateMachine.Active();
+        GameFiniteStateMachine.Instance.CurrentGameState.Exit(GameFiniteStateMachine.Instance);
     }
 
 

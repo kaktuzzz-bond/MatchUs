@@ -1,7 +1,5 @@
 #define ENABLE_LOGS
 using DG.Tweening;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class ActiveGameState : IGameState
 {
@@ -10,7 +8,13 @@ public class ActiveGameState : IGameState
         Logger.Debug("Active Game State entered ");
 
         DOTween.SetTweensCapacity(5000, 1000);
-        
-        SceneManager.LoadScene(2);
+
+        GameSceneGUI.Instance.Init();
+    }
+
+
+    public void Exit(GameFiniteStateMachine context)
+    {
+        throw new System.NotImplementedException();
     }
 }

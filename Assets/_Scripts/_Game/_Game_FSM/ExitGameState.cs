@@ -9,4 +9,10 @@ public class ExitGameState : IGameState
 
         SceneManager.LoadScene(0);
     }
+
+
+    public void Exit(GameFiniteStateMachine context)
+    {
+        throw new System.NotImplementedException();
+    }
 }

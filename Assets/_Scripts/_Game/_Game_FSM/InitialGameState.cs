@@ -9,4 +9,10 @@ public class InitialGameState : IGameState
     {
         Logger.Debug("MainScreen: Initial Game State entered ");
     }
+
+
+    public void Exit(GameFiniteStateMachine context)
+    {
+        throw new System.NotImplementedException();
+    }
 }
