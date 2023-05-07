@@ -12,8 +12,6 @@ public class AddChipsCommand : ICommand
         ChipController.Instance.CloneInGameChips(inGameChips, out _addedChips);
 
         ChipController.Instance.Log.AddCommand(this);
-
-        CameraController.Instance.MoveToBottomBound();
     }
 
 
@@ -25,7 +23,5 @@ public class AddChipsCommand : ICommand
         }
 
         _addedChips.Clear();
-
-        CameraController.Instance.MoveToBottomBound();
     }
 }

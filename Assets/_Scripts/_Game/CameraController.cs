@@ -23,11 +23,11 @@ public class CameraController : Singleton<CameraController>
     [SerializeField, MinValue(0)]
     private float endTouchMoveDuration = 1f;
 
-    [SerializeField] [MinValue(0)] [HideLabel]
+    [SerializeField] [MinValue(0)]
     private float onHoldMoveDuration = 0.2f;
 
     [SerializeField, MinValue(0)]
-    private float distanceToFooter = 2f;
+    private float distanceToFooter = 1f;
 
     [SerializeField, MinValue(0)]
     private float moveToBottomBoundDuration = 1f;
@@ -155,6 +155,18 @@ public class CameraController : Singleton<CameraController>
                 .SetEase(Ease.OutQuad);
     }
 
+
+    public void MoveToBoardPosition(int boardLine)
+    {
+        float targetY = _board[0, boardLine].position.y;
+
+        targetY = Mathf.Clamp(targetY, _bottomBoundPoint.y, _topBoundPoint.y);
+
+        _camera.transform
+                .DOMoveY(targetY, moveToBottomBoundDuration)
+                .SetEase(Ease.OutQuad);
+    }
+
 #endregion
 
 #region CAMERA SETUP
@@ -229,6 +241,8 @@ public class CameraController : Singleton<CameraController>
         float footerHeight = rectFooter[1].y - rectFooter[0].y;
 
         _camToNextPositionDistance = _camera.orthographicSize - footerHeight - distanceToFooter;
+
+        Debug.LogError($"_camToNextPositionDistance: ({_camToNextPositionDistance})");
 
         _bottomBoundPoint = _topBoundPoint;
 

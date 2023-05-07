@@ -54,6 +54,8 @@ public class PointerController : Singleton<PointerController>
             ShowPointer(Hint, first);
             ShowPointer(Hint, second);
 
+            CameraController.Instance.MoveToBoardPosition(Mathf.Max(first.y, second.y));
+            
             _isHintShown = true;
         };
 

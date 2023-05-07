@@ -31,6 +31,8 @@ public class ChipRegistry : Singleton<ChipRegistry>
         InGameChips.Add(chip);
 
         OutOfGameChips.Remove(chip);
+        
+        CameraController.Instance.MoveToBottomBound();
     }
 
 
@@ -39,6 +41,8 @@ public class ChipRegistry : Singleton<ChipRegistry>
         OutOfGameChips.Add(chip);
 
         InGameChips.Remove(chip);
+        
+        CameraController.Instance.MoveToBottomBound();
     }
 
 
@@ -51,5 +55,7 @@ public class ChipRegistry : Singleton<ChipRegistry>
         OutOfGameChips.Remove(chip);
 
         Destroy(chip.gameObject);
+        
+        CameraController.Instance.MoveToBottomBound();
     }
 }

@@ -26,8 +26,6 @@ public class RemoveSingleLineCommand : ICommand
         ChipFiniteStateMachine.DisableChips(_chipStates);
 
         ChipController.Instance.Log.AddCommand(this);
-
-        CameraController.Instance.MoveToBottomBound();
     }
 
 
@@ -47,7 +45,5 @@ public class RemoveSingleLineCommand : ICommand
 
             state.SetEnabledState();
         }
-
-        CameraController.Instance.MoveToBottomBound();
     }
 }
