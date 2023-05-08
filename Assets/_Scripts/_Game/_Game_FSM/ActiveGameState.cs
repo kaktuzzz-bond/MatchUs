@@ -19,8 +19,6 @@ public class ActiveGameState : IGameState
     
     private static void DoOnLoad()
     {
-        Logger.DebugWarning("ACTIVE");
-            
         GameSceneGUI.Instance.Init();
         
         GameFiniteStateMachine.Instance.OnSceneLoaded -= DoOnLoad;

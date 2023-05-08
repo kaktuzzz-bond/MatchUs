@@ -1,4 +1,5 @@
 #define ENABLE_LOGS
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,13 @@ public class CommandLogger
         Stack.Push(command);
     }
 
+
+    public static void ExecuteCommand(ICommand command)
+    {
+        ICommand execute = command ?? throw new ArgumentNullException(nameof(command));
+
+        execute.Execute();
+    }
 
     public IEnumerator UndoCommand()
     {

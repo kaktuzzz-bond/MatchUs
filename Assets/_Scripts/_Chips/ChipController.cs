@@ -43,17 +43,25 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-  
-    
     public static void AddChips()
     {
         PointerController.Instance.HidePointers();
 
         ChipComparer.Instance.ClearStorage();
-        
-        ICommand command = new AddChipsCommand();
 
-        command.Execute();
+        CommandLogger.ExecuteCommand(new AddChipsCommand());
+       
+    }
+
+
+    public static void ShuffleChips()
+    {
+        PointerController.Instance.HidePointers();
+
+        ChipComparer.Instance.ClearStorage();
+
+        CommandLogger.ExecuteCommand(new ShuffleCommand());
+      
     }
 
 

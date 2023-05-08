@@ -19,7 +19,7 @@ public class Chip : MonoBehaviour
 
     private const float FadeTime = 0.2f;
 
-    private const float MoveTime = 0.2f;
+    private const float MoveTime = 0.5f;
 
     public ChipFiniteStateMachine ChipFiniteStateMachine { get; private set; }
 
@@ -86,7 +86,7 @@ public class Chip : MonoBehaviour
     public void Activate(bool isActive) => gameObject.SetActive(isActive);
 
 
-    public void MoveTo(float targetY)
+    public void VerticalShiftTo(float targetY)
     {
         transform
                 .DOMoveY(targetY, FadeTime)
@@ -94,12 +94,23 @@ public class Chip : MonoBehaviour
     }
 
 
-    public void MoveTo(float targetY, TweenCallback doOnComplete)
+    public void VerticalShiftTo(float targetY, TweenCallback doOnComplete)
     {
         transform
                 .DOMoveY(targetY, FadeTime)
                 .SetEase(Ease.Linear)
                 .OnComplete(doOnComplete);
+    }
+
+
+    public void MoveTo(Vector2Int boardPos)
+    {
+
+        Vector3 worldPos = _board[boardPos.x, boardPos.y].position;
+
+        transform
+                .DOMove(worldPos, MoveTime)
+                .SetEase(Ease.OutCubic);
     }
 
 #endregion

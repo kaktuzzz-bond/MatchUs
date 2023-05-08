@@ -242,8 +242,6 @@ public class CameraController : Singleton<CameraController>
 
         _camToNextPositionDistance = _camera.orthographicSize - footerHeight - distanceToFooter;
 
-        Debug.LogError($"_camToNextPositionDistance: ({_camToNextPositionDistance})");
-
         _bottomBoundPoint = _topBoundPoint;
 
         CalculateBottomBound();

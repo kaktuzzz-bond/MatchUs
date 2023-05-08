@@ -11,7 +11,7 @@ public class SelfDestroyableChipState : IChipState
 
         chip.Fade(0f);
 
-        chip.MoveTo(
+        chip.VerticalShiftTo(
                 targetPos.y,
                 () => ChipRegistry.Instance.UnregisterAndDestroy(chip));
     }

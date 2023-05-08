@@ -16,8 +16,6 @@ public class LoadingGameState : IGameState
 
     private static void DoOnLoad()
     {
-        Logger.DebugWarning("LOADED");
-        
         GameFiniteStateMachine.Instance.OnSceneLoaded -= DoOnLoad;
     }
 }

@@ -10,7 +10,7 @@ public class DisabledChipState : IChipState
 
         chip.Fade(0f);
 
-        chip.MoveTo(
+        chip.VerticalShiftTo(
                 targetPos.y,
                 () =>
                 {

@@ -40,11 +40,13 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     {
         add.onClick.AddListener(ChipController.AddChips);
 
+        special.onClick.AddListener(ChipController.ShuffleChips);
+        
         hint.onClick.AddListener(PointerController.Instance.ShowHints);
         
         undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
 
-        //special.onClick.AddListener(() => _commandLogger.Execute(new SpecialActionCommand()));
+       
     }
 
 #endregion
