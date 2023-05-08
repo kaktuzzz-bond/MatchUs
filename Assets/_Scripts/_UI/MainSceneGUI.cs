@@ -26,12 +26,12 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
     {
         _gameManager = GameManager.Instance;
 
-        easyMode.onClick.AddListener(() => _gameManager.StartGame(DifficultyLevel.Easy));
+        easyMode.onClick.AddListener(() => _gameManager.StartLoading(DifficultyLevel.Easy));
 
-        normalMode.onClick.AddListener(() => _gameManager.StartGame(DifficultyLevel.Normal));
+        normalMode.onClick.AddListener(() => _gameManager.StartLoading(DifficultyLevel.Normal));
 
-        hardMode.onClick.AddListener(() => _gameManager.StartGame(DifficultyLevel.Hard));
+        hardMode.onClick.AddListener(() => _gameManager.StartLoading(DifficultyLevel.Hard));
 
-        testMode.onClick.AddListener(() => _gameManager.StartGame(DifficultyLevel.Test));
+        testMode.onClick.AddListener(() => _gameManager.StartLoading(DifficultyLevel.Test));
     }
 }

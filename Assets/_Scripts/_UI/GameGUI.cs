@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameSceneGUI : Singleton<GameSceneGUI>
+public class GameGUI : Singleton<GameGUI>
 {
     public event Action OnFaderDisappeared;
 
@@ -69,7 +69,7 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
 
 #region FADE IN / FADE OUT SCREEN
 
-    private void FadeInEffect()
+    private void FadeOutEffect()
     {
         fader
                 .DOFade(0, 0.2f)
@@ -88,13 +88,13 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
 
     private void OnEnable()
     {
-        CameraController.Instance.OnCameraSetup += FadeInEffect;
+        CameraController.Instance.OnCameraSetup += FadeOutEffect;
     }
 
 
     private void OnDisable()
     {
-        CameraController.Instance.OnCameraSetup -= FadeInEffect;
+        CameraController.Instance.OnCameraSetup -= FadeOutEffect;
     }
 
 #endregion

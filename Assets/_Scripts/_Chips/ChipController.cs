@@ -76,11 +76,11 @@ public class ChipController : Singleton<ChipController>
 
     private void DrawStartArray()
     {
-        StartCoroutine(DrawStartChipsRoutine(_gameManager.ChipsOnStartNumber));
+        StartCoroutine(DrawStartArrayRoutine(_gameManager.ChipsOnStartNumber));
     }
 
 
-    private IEnumerator DrawStartChipsRoutine(int count)
+    private IEnumerator DrawStartArrayRoutine(int count)
     {
         for (int i = 0; i < count; i++)
         {
@@ -88,6 +88,8 @@ public class ChipController : Singleton<ChipController>
 
             yield return null;
         }
+        
+        GameManager.Instance.StartGame();
     }
 
 
@@ -199,13 +201,13 @@ public class ChipController : Singleton<ChipController>
 
     private void OnEnable()
     {
-        GameSceneGUI.Instance.OnFaderDisappeared += DrawStartArray;
+        GameGUI.Instance.OnFaderDisappeared += DrawStartArray;
     }
 
 
     private void OnDisable()
     {
-        GameSceneGUI.Instance.OnFaderDisappeared -= DrawStartArray;
+        GameGUI.Instance.OnFaderDisappeared -= DrawStartArray;
     }
 
 #endregion

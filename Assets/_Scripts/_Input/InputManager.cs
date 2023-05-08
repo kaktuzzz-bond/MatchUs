@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 [DefaultExecutionOrder(-1)]
 public class InputManager : Singleton<InputManager>
 {
-#region Events
+#region EVENTS
 
     public event Action<Vector3> OnTouchStarted;
 
@@ -129,7 +129,7 @@ public class InputManager : Singleton<InputManager>
     //     //}
     // }
 
-#region Enabel / Disable
+#region ENABLE / DISABLE
 
     private void OnEnable()
     {

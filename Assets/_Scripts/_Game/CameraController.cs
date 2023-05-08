@@ -42,7 +42,7 @@ public class CameraController : Singleton<CameraController>
 
     private InputManager _inputManager;
 
-    private GameSceneGUI _gameSceneGUI;
+    private GameGUI _gameGUI;
 
 #endregion
 
@@ -74,7 +74,7 @@ public class CameraController : Singleton<CameraController>
 
         _inputManager = InputManager.Instance;
 
-        _gameSceneGUI = GameSceneGUI.Instance;
+        _gameGUI = GameGUI.Instance;
 
         _camera = Camera.main;
     }
@@ -101,7 +101,7 @@ public class CameraController : Singleton<CameraController>
     {
         if (_isStopMovement) return;
 
-        if (!_gameSceneGUI.IsGameAreaPosition(position)) return;
+        if (!_gameGUI.IsGameAreaPosition(position)) return;
 
         RaycastHit2D hit = Physics2D.Raycast(position, -Vector2.up);
 
@@ -226,7 +226,7 @@ public class CameraController : Singleton<CameraController>
 
     private void SetBounds()
     {
-        var rectHeader = _gameSceneGUI.GetHeaderCorners();
+        var rectHeader = _gameGUI.GetHeaderCorners();
 
         float headerHeight = rectHeader[1].y - rectHeader[0].y;
 
@@ -236,7 +236,7 @@ public class CameraController : Singleton<CameraController>
                 z: _camera.transform.position.z);
 
         // supposed distance between camera and next chip position
-        var rectFooter = _gameSceneGUI.GetFooterCorners();
+        var rectFooter = _gameGUI.GetFooterCorners();
 
         float footerHeight = rectFooter[1].y - rectFooter[0].y;
 

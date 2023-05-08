@@ -19,7 +19,7 @@ public class ActiveGameState : IGameState
     
     private static void DoOnLoad()
     {
-        GameSceneGUI.Instance.Init();
+        GameGUI.Instance.Init();
         
         GameFiniteStateMachine.Instance.OnSceneLoaded -= DoOnLoad;
     }

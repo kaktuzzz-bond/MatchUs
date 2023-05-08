@@ -5,6 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(GameFiniteStateMachine))]
 public class GameManager : Singleton<GameManager>
 {
+    public event Action OnGameStarted;
+    
+    public event Action OnGameEnded;
+    
     private DifficultyLevel _difficultyLevel;
 
     private GameFiniteStateMachine _gameFiniteStateMachine;
@@ -24,8 +28,8 @@ public class GameManager : Singleton<GameManager>
             {
                     DifficultyLevel.Test => 1.0f,
                     DifficultyLevel.Easy => 0.8f,
-                    DifficultyLevel.Normal => 0.0f,
-                    DifficultyLevel.Hard => 1.0f,
+                    DifficultyLevel.Normal => 0.6f,
+                    DifficultyLevel.Hard => 0.3f,
                     _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -39,16 +43,26 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    public void StartGame(DifficultyLevel difficultyLevel)
+    public void StartLoading(DifficultyLevel difficultyLevel)
     {
         _difficultyLevel = difficultyLevel;
 
         _gameFiniteStateMachine.Loading();
     }
+
+
+    public void StartGame()
+    {
+        Logger.DebugWarning("GAME STARTED!");
+        
+        OnGameStarted?.Invoke();
+    }
     
     public void EndGame()
     {
        Logger.DebugWarning("GAME OVER!");
+       
+       OnGameEnded?.Invoke();
     }
     
 }
