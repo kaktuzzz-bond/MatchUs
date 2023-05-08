@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
@@ -10,52 +11,57 @@ public class ChipRegistry : Singleton<ChipRegistry>
     [ShowInInspector]
     public List<Chip> InGameChips { get; private set; } = new();
 
-    [ShowInInspector]
-    public List<Chip> AllChips { get; private set; } = new();
-
-    [ShowInInspector]
-    public List<Chip> OutOfGameChips { get; private set; } = new();
-
-    public List<Chip> ActiveChips => AllChips
+    public List<Chip> ActiveChips => InGameChips
             .Where(c => c.ChipFiniteStateMachine.CurrentState.GetType() == typeof(FadedInChipState))
+            .OrderBy(c => c.BoardPosition.y)
+            .ThenBy(c => c.BoardPosition.x)
             .ToList();
+
+    private readonly List<Chip> _allChips = new();
 
 
     public void Register(Chip chip)
     {
-        if (!AllChips.Contains(chip))
+        if (!_allChips.Contains(chip))
         {
-            AllChips.Add(chip);
+            _allChips.Add(chip);
         }
 
         InGameChips.Add(chip);
 
-        OutOfGameChips.Remove(chip);
-        
         CameraController.Instance.MoveToBottomBound();
     }
 
 
     public void Unregister(Chip chip)
     {
-        OutOfGameChips.Add(chip);
-
         InGameChips.Remove(chip);
-        
+
         CameraController.Instance.MoveToBottomBound();
+
+        CheckCounter();
     }
 
 
     public void UnregisterAndDestroy(Chip chip)
     {
-        AllChips.Remove(chip);
+        _allChips.Remove(chip);
 
         InGameChips.Remove(chip);
 
-        OutOfGameChips.Remove(chip);
-
         Destroy(chip.gameObject);
-        
+
         CameraController.Instance.MoveToBottomBound();
+
+        CheckCounter();
+    }
+
+
+    private void CheckCounter()
+    {
+        if (Counter == 0)
+        {
+            GameManager.Instance.EndGame();
+        }
     }
 }

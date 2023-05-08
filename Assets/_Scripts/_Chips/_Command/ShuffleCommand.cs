@@ -28,10 +28,11 @@ public class ShuffleCommand : ICommand
         {
            pair.Value.MoveTo(pair.Key);
         }
+      
     }
 
 
-    private static void SendChipsToNewPositions(IReadOnlyList<Chip> original, IReadOnlyList<Chip> modified)
+    private static void SendChipsToNewPositions(IReadOnlyList<Chip> original, IReadOnlyList<Chip>  modified)
     {
         for (int i = 0; i < original.Count; i++)
         {

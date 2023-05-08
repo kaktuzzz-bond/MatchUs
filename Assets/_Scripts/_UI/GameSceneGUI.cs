@@ -34,44 +34,6 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
 #endregion
 
 
-#region INITIALIZATION
-
-    public void Init()
-    {
-        add.onClick.AddListener(ChipController.AddChips);
-
-        special.onClick.AddListener(ChipController.ShuffleChips);
-        
-        hint.onClick.AddListener(PointerController.Instance.ShowHints);
-        
-        undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
-
-       
-    }
-
-#endregion
-
-#region FADE IN / FADE OUT
-
-    private void FadeInEffect()
-    {
-        fader
-                .DOFade(0, 0.2f)
-                .SetEase(Ease.InCubic)
-                .onComplete += () =>
-        {
-            fader.gameObject.SetActive(false);
-            
-            OnFaderDisappeared?.Invoke();
-        };
-
-       
-    }
-
-#endregion
-  
-
-
     public Vector3[] GetHeaderCorners() => Utils.GetRectWorldCorners(header);
 
 
@@ -90,8 +52,37 @@ public class GameSceneGUI : Singleton<GameSceneGUI>
     }
 
 
+#region INITIALIZATION
 
+    public void Init()
+    {
+        add.onClick.AddListener(ChipController.AddChips);
 
+        special.onClick.AddListener(ChipController.ShuffleChips);
+
+        hint.onClick.AddListener(PointerController.Instance.ShowHints);
+
+        undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
+    }
+
+#endregion
+
+#region FADE IN / FADE OUT SCREEN
+
+    private void FadeInEffect()
+    {
+        fader
+                .DOFade(0, 0.2f)
+                .SetEase(Ease.InCubic)
+                .onComplete += () =>
+        {
+            fader.gameObject.SetActive(false);
+
+            OnFaderDisappeared?.Invoke();
+        };
+    }
+
+#endregion
 
 #region ENABLE / DISABLE
 

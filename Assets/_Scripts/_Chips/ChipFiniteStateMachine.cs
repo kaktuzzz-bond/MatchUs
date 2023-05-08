@@ -1,4 +1,4 @@
-#define ENABLE_LOGS
+//#define ENABLE_LOGS
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
