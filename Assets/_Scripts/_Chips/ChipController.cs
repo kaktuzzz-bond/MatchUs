@@ -50,7 +50,6 @@ public class ChipController : Singleton<ChipController>
         ChipComparer.Instance.ClearStorage();
 
         CommandLogger.ExecuteCommand(new AddChipsCommand());
-       
     }
 
 
@@ -61,11 +60,9 @@ public class ChipController : Singleton<ChipController>
         ChipComparer.Instance.ClearStorage();
 
         CommandLogger.ExecuteCommand(new ShuffleCommand());
-      
     }
 
 
-    [Button("Restore Line From")]
     public void RestoreLine(int boardLine)
     {
         OnLineRestored?.Invoke(boardLine);
@@ -88,7 +85,7 @@ public class ChipController : Singleton<ChipController>
 
             yield return null;
         }
-        
+
         GameManager.Instance.StartGame();
     }
 
