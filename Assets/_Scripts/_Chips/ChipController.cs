@@ -22,7 +22,7 @@ public class ChipController : Singleton<ChipController>
 
     public CommandLogger Log { get; } = new();
 
-    private readonly ChipComparer _comparer = new();
+    private ChipComparer _comparer;
 
     private List<Chip> _addedChips;
 
@@ -42,6 +42,7 @@ public class ChipController : Singleton<ChipController>
         _board = Board.Instance;
         _gameManager = GameManager.Instance;
         _chipRegistry = ChipRegistry.Instance;
+        _comparer = new ChipComparer(PointerController.Instance);
     }
 
 

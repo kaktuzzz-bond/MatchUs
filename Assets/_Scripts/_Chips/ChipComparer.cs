@@ -5,8 +5,16 @@ public class ChipComparer
 {
     private Chip _storage;
 
+    private PointerController _pointerController;
 
     public void ClearStorage() => _storage = null;
+
+
+    public ChipComparer(PointerController pointerController)
+    {
+        _pointerController = pointerController;
+        _pointerController.OnPointersHidden += ClearStorage;
+    }
 
 
     public Chip[] IsMatching(Chip chip)
@@ -62,5 +70,11 @@ public class ChipComparer
                 first.CompareMultilinePosition(second)) &&
                (first.CompareShape(second) ||
                 first.CompareColor(second));
+    }
+
+
+    ~ChipComparer()
+    {
+        _pointerController.OnPointersHidden -= ClearStorage;
     }
 }
