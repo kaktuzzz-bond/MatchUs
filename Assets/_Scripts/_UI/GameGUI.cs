@@ -56,9 +56,9 @@ public class GameGUI : Singleton<GameGUI>
 
     public void Init()
     {
-        add.onClick.AddListener(ChipController.AddChips);
+        add.onClick.AddListener(ChipController.Instance.AddChips);
 
-        special.onClick.AddListener(ChipController.ShuffleChips);
+        special.onClick.AddListener(ChipController.Instance.ShuffleChips);
 
         hint.onClick.AddListener(PointerController.Instance.ShowHints);
 

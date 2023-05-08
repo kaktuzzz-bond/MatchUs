@@ -11,8 +11,6 @@ public class CameraController : Singleton<CameraController>
 
     public event Action OnCameraSetup;
 
-    public event Action<Chip> OnChipTapped;
-
 #endregion
 
 #region CAMERA SETUP OPTIONS
@@ -113,11 +111,7 @@ public class CameraController : Singleton<CameraController>
 
         if (isChipFadedIn)
         {
-            OnChipTapped?.Invoke(chip);
-        }
-        else
-        {
-            Logger.Debug("Tapped chip is NOT ACTIVE");
+            ChipController.Instance.ProcessTappedChip(chip);
         }
     }
 

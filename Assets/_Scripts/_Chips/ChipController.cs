@@ -22,6 +22,8 @@ public class ChipController : Singleton<ChipController>
 
     public CommandLogger Log { get; } = new();
 
+    private readonly ChipComparer _comparer = new();
+
     private List<Chip> _addedChips;
 
 #region COMPONENTS LINKS
@@ -43,21 +45,21 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public static void AddChips()
+    public void AddChips()
     {
         PointerController.Instance.HidePointers();
 
-        ChipComparer.Instance.ClearStorage();
+        _comparer.ClearStorage();
 
         CommandLogger.ExecuteCommand(new AddChipsCommand());
     }
 
 
-    public static void ShuffleChips()
+    public void ShuffleChips()
     {
         PointerController.Instance.HidePointers();
 
-        ChipComparer.Instance.ClearStorage();
+        _comparer.ClearStorage();
 
         CommandLogger.ExecuteCommand(new ShuffleCommand());
     }
@@ -66,6 +68,17 @@ public class ChipController : Singleton<ChipController>
     public void RestoreLine(int boardLine)
     {
         OnLineRestored?.Invoke(boardLine);
+    }
+
+
+    public void ProcessTappedChip(Chip chip)
+    {
+        var matched = _comparer.IsMatching(chip);
+
+        if (matched != null)
+        {
+            Board.Instance.ProcessMatched(matched[0], matched[1]);
+        }
     }
 
 

@@ -163,7 +163,7 @@ public class Board : Singleton<Board>
 
 #region MATCH PROCESSING
 
-    private void ProcessMatched(Chip first, Chip second)
+    public void ProcessMatched(Chip first, Chip second)
     {
         // fade out chips
         ICommand command = new FadeOutCommand(first, second);
@@ -288,18 +288,4 @@ public class Board : Singleton<Board>
 
 #endregion
 
-#region ENABLE / DISABLE
-
-    private void OnEnable()
-    {
-        ChipComparer.Instance.OnChipMatched += ProcessMatched;
-    }
-
-
-    private void OnDisable()
-    {
-        ChipComparer.Instance.OnChipMatched -= ProcessMatched;
-    }
-
-#endregion
 }
