@@ -47,6 +47,8 @@ public class PointerController : Singleton<PointerController>
 
     public void ShowHints()
     {
+        //
+            
         ShowHintsCommand hintsCommand = new();
 
         hintsCommand.OnHintFound += (first, second) =>
