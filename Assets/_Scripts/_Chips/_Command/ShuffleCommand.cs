@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -23,7 +24,10 @@ public class ShuffleCommand : ICommand
 
     public void Undo()
     {
-        throw new System.NotImplementedException();
+        foreach (var pair in _original)
+        {
+           pair.Value.MoveTo(pair.Key);
+        }
     }
 
 
