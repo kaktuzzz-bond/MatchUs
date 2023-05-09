@@ -13,16 +13,8 @@ public class CommandLogger
 
     public void AddCommand(ICommand command)
     {
-        Logger.Debug($"Adding {command}");
+        Debug.Log($"Adding {command}");
         Stack.Push(command);
-    }
-
-
-    public static void ExecuteCommand(ICommand command)
-    {
-        ICommand execute = command ?? throw new ArgumentNullException(nameof(command));
-
-        execute.Execute();
     }
 
     public IEnumerator UndoCommand()
@@ -31,7 +23,7 @@ public class CommandLogger
         
         if (Stack.Count == 0)
         {
-            Logger.Debug("Stack is empty");
+            Debug.Log("Stack is empty");
 
             yield break;
         }
@@ -46,7 +38,7 @@ public class CommandLogger
         {
             command = Stack.Pop();
 
-            Logger.Debug($"Undo {command}");
+            Debug.Log($"Undo {command}");
 
             command.Undo();
 

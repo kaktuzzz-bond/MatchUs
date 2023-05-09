@@ -1,4 +1,3 @@
-//#define ENABLE_LOGS
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -28,7 +27,7 @@ public class ChipFiniteStateMachine : MonoBehaviour
     }
 
 
-    [Button("Launch")]
+    //[Button("Launch")]
     private void Launch()
     {
         gameObject.SetActive(false);
@@ -40,34 +39,32 @@ public class ChipFiniteStateMachine : MonoBehaviour
         SetFadedInState();
     }
 
-    [Button("Set Enabled State")]
-    public void SetEnabledState()
+   private void SetEnabledState()
     {
-        Logger.Debug("STATE: Enabled");
         SetState(_enabledChipState);
     }
 
-    [Button("Set Faded Out State")]
     public void SetFadedOutState()
     {
-        Logger.Debug("STATE: Fade Out");
         SetState(_fadedOutChipState);
     }
 
-    [Button("Set Faded In State")]
     public void SetFadedInState()
     {
-        Logger.Debug("STATE: Fade In");
         SetState(_fadedInChipState);
     }
 
-    [Button("Set Self-Destroy State")]
     public void SetSelfDestroyableState()
     {
-        Logger.Debug("STATE: Destroy");
         SetState(_selfDestroyableChipState);
     }
 
+    public void SetRestoredState()
+    {
+        SetFadedOutState();
+
+        SetEnabledState();
+    }
 
     public static void DisableChips(List<ChipFiniteStateMachine> states)
     {
@@ -77,11 +74,8 @@ public class ChipFiniteStateMachine : MonoBehaviour
         }
     }
     
-
-    [Button("Set Disabled State")]
     private void SetDisabledState()
     {
-        Logger.Debug("STATE: Disabled");
         SetState(_disabledChipState);
     }
 
@@ -93,7 +87,7 @@ public class ChipFiniteStateMachine : MonoBehaviour
     }
 
 
-#region Enable / Disable
+#region ENABLE / DISABLE
 
     private void OnEnable()
     {

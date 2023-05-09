@@ -1,4 +1,3 @@
-#define ENABLE_LOGS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +22,7 @@ public class RemoveSingleLineCommand : ICommand
 
     public void Execute()
     {
-        Logger.Debug($"Removed single line in ({_removedLine})");
+        Debug.Log($"Removed single line in ({_removedLine})");
 
         ChipFiniteStateMachine.DisableChips(_chipStates);
 
@@ -45,9 +44,7 @@ public class RemoveSingleLineCommand : ICommand
 
             state.transform.position = chipPos;
 
-            state.SetFadedOutState();
-
-            state.SetEnabledState();
+            state.SetRestoredState();
         }
         
         GameManager.Instance.AddScore(-_score);

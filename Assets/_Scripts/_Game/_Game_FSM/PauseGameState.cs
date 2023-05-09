@@ -1,10 +1,10 @@
-#define ENABLE_LOGS
+using UnityEngine;
 
 public class PauseGameState : IGameState
 {
     public void Enter(GameFiniteStateMachine context)
     {
-        Logger.Debug("Pause Game State Entered ");
+        Debug.Log("Pause Game State Entered ");
     }
 
 

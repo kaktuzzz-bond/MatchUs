@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(GameFiniteStateMachine))]
 public class GameManager : Singleton<GameManager>
 {
+
     private DifficultyLevel _difficultyLevel;
 
     private GameFiniteStateMachine _gameFiniteStateMachine;
@@ -59,7 +60,7 @@ public class GameManager : Singleton<GameManager>
 
     public void StartLoading(DifficultyLevel difficultyLevel)
     {
-        Logger.DebugWarning("LOADING>>>");
+        Debug.LogWarning("LOADING>>>");
         
         _difficultyLevel = difficultyLevel;
 
@@ -69,7 +70,7 @@ public class GameManager : Singleton<GameManager>
 
     public void StartGame()
     {
-        Logger.DebugWarning("GAME STARTED!");
+        Debug.LogWarning("GAME STARTED!");
 
         _timerCounter = 0;
 
@@ -83,7 +84,7 @@ public class GameManager : Singleton<GameManager>
 
     public void PauseGame()
     {
-        Logger.DebugWarning("GAME PAUSED");
+        Debug.LogWarning("GAME PAUSED");
         
         _timerOn = false;
         
@@ -93,7 +94,7 @@ public class GameManager : Singleton<GameManager>
     
     public void ResumeGame()
     {
-        Logger.DebugWarning("GAME RESUMED!");
+        Debug.LogWarning("GAME RESUMED!");
         
         _timerOn = true;
         
@@ -102,10 +103,16 @@ public class GameManager : Singleton<GameManager>
     
     public void EndGame()
     {
-        Logger.DebugWarning("GAME OVER!");
+        Debug.LogWarning("GAME OVER!");
         
         _timerOn = false;
         
         AllowInput = false;
+    }
+
+
+    public void ExitGame()
+    {
+        
     }
 }

@@ -1,6 +1,4 @@
-#define ENABLE_LOGS
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Loader : MonoBehaviour
@@ -16,11 +14,11 @@ public class Loader : MonoBehaviour
 
     private IEnumerator LoadingRoutine()
     {
-        Logger.Debug(">>> LOADING...");
+        Debug.Log(">>> LOADING...");
 
         yield return _wait;
 
-        Logger.Debug(" ...COMPLETED <<<");
+        Debug.Log(" ...COMPLETED <<<");
 
         GameFiniteStateMachine.Instance.Active();
     }

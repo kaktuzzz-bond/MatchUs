@@ -31,7 +31,7 @@ public class ShowHintsCommand : ICommand
             }
         }
 
-        Logger.Debug("======== NO HINTS ========");
+        Debug.Log("======== NO HINTS ========");
     }
 
 

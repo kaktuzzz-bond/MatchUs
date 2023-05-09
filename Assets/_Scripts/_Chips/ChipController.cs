@@ -1,3 +1,4 @@
+#define ENABLE_LOGS
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ using Sirenix.OdinInspector;
 public class ChipController : Singleton<ChipController>
 {
     public event Action<int> OnLineRestored;
+
+    public event Action<List<Chip>> OnChipsAdded;
 
     [SerializeField]
     private Transform chipPrefab;
@@ -24,7 +27,7 @@ public class ChipController : Singleton<ChipController>
 
     private ChipComparer _comparer;
 
-    private List<Chip> _addedChips;
+    public List<Chip> AddedChips { get; private set; } = new();
 
 #region COMPONENTS LINKS
 
@@ -49,24 +52,28 @@ public class ChipController : Singleton<ChipController>
     public void AddChips()
     {
         //if (!GameManager.Instance.AllowInput) return;
-        
+
         PointerController.Instance.HidePointers();
 
         _comparer.ClearStorage();
 
-        CommandLogger.ExecuteCommand(new AddChipsCommand());
+        ICommand command = new AddChipsCommand();
+
+        command.Execute();
     }
 
 
     public void ShuffleChips()
     {
         //if (!GameManager.Instance.AllowInput) return;
-        
+
         PointerController.Instance.HidePointers();
 
         _comparer.ClearStorage();
 
-        CommandLogger.ExecuteCommand(new ShuffleCommand());
+        ICommand command = new ShuffleCommand();
+
+        command.Execute();
     }
 
 
@@ -99,7 +106,7 @@ public class ChipController : Singleton<ChipController>
     {
         for (int i = 0; i < count; i++)
         {
-            _ = CreateChip();
+            CreateChip();
 
             yield return null;
         }
@@ -108,24 +115,30 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public void CloneInGameChips(List<Chip> chips, out List<Chip> addedChips)
+    public void CloneInGameChips()
     {
-        _addedChips = new List<Chip>();
-
-        StartCoroutine(CloneInGameChipsRoutine(chips));
-
-        addedChips = _addedChips;
+        StartCoroutine(CloneInGameChipsRoutine());
     }
 
 
-    private IEnumerator CloneInGameChipsRoutine(List<Chip> chips)
+    private IEnumerator CloneInGameChipsRoutine()
     {
-        foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex)))
-        {
-            yield return null;
+        AddedChips.Clear();
 
-            _addedChips.Add(newChip);
+        var chips = ChipRegistry.Instance.ActiveChips;
+
+        foreach (Chip chip in chips)
+        {
+            Chip newChip = CreateChip(chip.ShapeIndex, chip.ColorIndex);
+
+            AddedChips.Add(newChip);
+
+            yield return null;
         }
+
+        Debug.LogError($"Added: ({AddedChips.Count})");
+
+        OnChipsAdded?.Invoke(AddedChips);
     }
 
 #endregion

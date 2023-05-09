@@ -1,4 +1,3 @@
-#define ENABLE_LOGS
 using System;
 using DG.Tweening;
 using Sirenix.OdinInspector;
@@ -111,7 +110,7 @@ public class GameGUI : Singleton<GameGUI>
 
     private void PauseClicked()
     {
-        Logger.DebugWarning("PAUSE");
+        Debug.LogWarning("PAUSE");
 
         GameManager.Instance.PauseGame();
     }
@@ -119,7 +118,7 @@ public class GameGUI : Singleton<GameGUI>
 
     private void ShopClicked()
     {
-        Logger.DebugWarning("SHOP");
+        Debug.LogWarning("SHOP");
 
         GameManager.Instance.PauseGame();
     }

@@ -148,7 +148,7 @@ public class Chip : MonoBehaviour
         if (BoardPosition.y < boardLine ||
             ChipFiniteStateMachine.CurrentState.GetType() == typeof(DisabledChipState)) return;
 
-        Logger.Debug($"Move down in ({boardLine})");
+       Debug.Log($"Move down in ({boardLine})");
 
         if (_tween.IsActive())
         {

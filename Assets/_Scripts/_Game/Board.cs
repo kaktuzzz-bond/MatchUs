@@ -229,7 +229,7 @@ public class Board : Singleton<Board>
 
         if (result == 0)
         {
-            Logger.DebugError("CheckLine() caught the empty line!");
+            Debug.LogError("CheckLine() caught the empty line!");
         }
 
         return hits;
@@ -285,7 +285,7 @@ public class Board : Singleton<Board>
             }
         }
 
-        Logger.DebugDrawRay(origin.transform.position, direction, Color.red, 5f);
+        Debug.DrawRay(origin.transform.position, direction, Color.red, 5f);
 
         return true;
     }

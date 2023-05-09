@@ -1,11 +1,11 @@
-#define ENABLE_LOGS
-using System;
+using UnityEngine;
 
 public class ChipComparer
 {
     private Chip _storage;
 
     private PointerController _pointerController;
+
 
     public void ClearStorage() => _storage = null;
 
@@ -32,7 +32,7 @@ public class ChipComparer
         //case: Tap the same
         if (chip.Equals(_storage))
         {
-            Logger.Debug("The same first");
+            Debug.Log("The same first");
 
             _storage = null;
 
