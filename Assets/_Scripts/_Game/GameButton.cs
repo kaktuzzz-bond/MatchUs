@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,16 +15,28 @@ public class GameButton : MonoBehaviour
     }
 
 
-    [Button("Disable")]
-    public void Disable()
+    public void MakeDeselectable()
     {
         _button.interactable = false;
     }
 
 
-    [Button("Enable")]
-    public void Enable()
+    public void MakeSelectable()
     {
         _button.interactable = true;
+    }
+
+
+    public void Enable()
+    {
+        MakeSelectable();
+        _button.enabled = true;
+    }
+
+
+    public void Disable()
+    {
+        MakeDeselectable();
+        _button.enabled = false;
     }
 }

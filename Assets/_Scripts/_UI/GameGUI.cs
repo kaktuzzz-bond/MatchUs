@@ -11,15 +11,13 @@ public class GameGUI : Singleton<GameGUI>
 
     public event Action OnFadeInEffected;
 
-
     public GameButton AddButton { get; private set; }
-    
+
     public GameButton SpecialButton { get; private set; }
-    
+
     public GameButton HintButton { get; private set; }
-    
+
     public GameButton UndoButton { get; private set; }
-    
 
 #region GAME OBJECTS
 
@@ -28,6 +26,9 @@ public class GameGUI : Singleton<GameGUI>
 
     [SerializeField]
     private RectTransform footer;
+
+    [SerializeField]
+    private InfoPanel infoPanel;
 
     [SerializeField]
     private Image fader;
@@ -79,34 +80,36 @@ public class GameGUI : Singleton<GameGUI>
 
 #region INITIALIZATION
 
-    public void Init()
+    private void Init()
     {
         // game buttons
         add.onClick.AddListener(ChipController.Instance.AddChips);
 
         AddButton = add.GetComponent<GameButton>();
-        
+
         special.onClick.AddListener(ChipController.Instance.ShuffleChips);
 
-        SpecialButton = add.GetComponent<GameButton>();
-        
+        SpecialButton = special.GetComponent<GameButton>();
+
         hint.onClick.AddListener(PointerController.Instance.ShowHints);
 
-        HintButton = add.GetComponent<GameButton>();
-        
+        HintButton = hint.GetComponent<GameButton>();
+
         undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
 
-        UndoButton = add.GetComponent<GameButton>();
-        
+        UndoButton = undo.GetComponent<GameButton>();
+
         // header buttons
         pause.onClick.AddListener(PauseClicked);
 
         shop.onClick.AddListener(ShopClicked);
+
+        infoPanel.Init();
     }
 
 #endregion
 
-#region BUTTON ACTIONS
+#region ACTIONS
 
     private void PauseClicked()
     {
@@ -121,6 +124,26 @@ public class GameGUI : Singleton<GameGUI>
         Debug.LogWarning("SHOP");
 
         GameManager.Instance.PauseGame();
+    }
+
+
+    public void ShowInfo()
+    {
+        infoPanel.Show();
+    }
+
+
+    public void HideInfo()
+    {
+        infoPanel.Hide();
+    }
+
+
+    private void SetupGUI()
+    {
+        Init();
+
+        FadeOutEffect();
     }
 
 #endregion
@@ -172,13 +195,13 @@ public class GameGUI : Singleton<GameGUI>
 
     private void OnEnable()
     {
-        CameraController.Instance.OnCameraSetup += FadeOutEffect;
+        CameraController.Instance.OnCameraSetup += SetupGUI;
     }
 
 
     private void OnDisable()
     {
-        CameraController.Instance.OnCameraSetup -= FadeOutEffect;
+        CameraController.Instance.OnCameraSetup -= SetupGUI;
     }
 
 #endregion

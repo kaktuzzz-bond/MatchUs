@@ -71,11 +71,11 @@ public class ChipRegistry : Singleton<ChipRegistry>
 
         if (emptyCells < Counter)
         {
-            GameGUI.Instance.AddButton.Disable();
+            GameGUI.Instance.AddButton.MakeDeselectable();
         }
         else
         {
-            GameGUI.Instance.AddButton.Enable();
+            GameGUI.Instance.AddButton.MakeSelectable();
         }
     }
 }

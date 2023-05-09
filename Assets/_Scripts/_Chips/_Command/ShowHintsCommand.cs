@@ -29,12 +29,13 @@ public class ShowHintsCommand : ICommand
             }
         }
 
-        Debug.Log("======== NO HINTS ========");
+        //Debug.Log("======== NO HINTS ========");
+
+        GameGUI.Instance.ShowInfo();
     }
 
 
-    public void Undo()
-    {
-        throw new System.NotImplementedException();
-    }
+    public void Undo() { }
+    
+    
 }

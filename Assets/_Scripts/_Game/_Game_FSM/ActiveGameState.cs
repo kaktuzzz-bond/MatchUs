@@ -10,15 +10,5 @@ public class ActiveGameState : IGameState
         DOTween.SetTweensCapacity(5000, 1000);
 
         GameFiniteStateMachine.Instance.LoadScene(2);
-
-        GameFiniteStateMachine.Instance.OnSceneLoaded += DoOnLoad;
-    }
-
-
-    private static void DoOnLoad()
-    {
-        GameGUI.Instance.Init();
-
-        GameFiniteStateMachine.Instance.OnSceneLoaded -= DoOnLoad;
     }
 }
