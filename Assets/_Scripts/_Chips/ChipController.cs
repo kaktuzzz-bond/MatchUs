@@ -48,6 +48,8 @@ public class ChipController : Singleton<ChipController>
 
     public void AddChips()
     {
+        //if (!GameManager.Instance.AllowInput) return;
+        
         PointerController.Instance.HidePointers();
 
         _comparer.ClearStorage();
@@ -58,6 +60,8 @@ public class ChipController : Singleton<ChipController>
 
     public void ShuffleChips()
     {
+        //if (!GameManager.Instance.AllowInput) return;
+        
         PointerController.Instance.HidePointers();
 
         _comparer.ClearStorage();
@@ -212,13 +216,13 @@ public class ChipController : Singleton<ChipController>
 
     private void OnEnable()
     {
-        GameGUI.Instance.OnFaderDisappeared += DrawStartArray;
+        GameGUI.Instance.OnFadeOutEffected += DrawStartArray;
     }
 
 
     private void OnDisable()
     {
-        GameGUI.Instance.OnFaderDisappeared -= DrawStartArray;
+        GameGUI.Instance.OnFadeOutEffected -= DrawStartArray;
     }
 
 #endregion

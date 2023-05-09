@@ -27,6 +27,8 @@ public class CommandLogger
 
     public IEnumerator UndoCommand()
     {
+        //if(!GameManager.Instance.AllowInput) yield break;
+        
         if (Stack.Count == 0)
         {
             Logger.Debug("Stack is empty");

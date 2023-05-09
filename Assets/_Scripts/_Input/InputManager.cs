@@ -38,7 +38,6 @@ public class InputManager : Singleton<InputManager>
 
     private float _endTouchTime;
 
-
     private void Awake()
     {
         _input = new PlayerInput();
@@ -49,6 +48,8 @@ public class InputManager : Singleton<InputManager>
 
     private void StartTouch(InputAction.CallbackContext context)
     {
+        if (!GameManager.Instance.AllowInput) return;
+        
         Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
 
         _startTouchPosition = Utils.ScreenToWorldPosition(_camera, touch);
@@ -78,6 +79,8 @@ public class InputManager : Singleton<InputManager>
 
     private void EndTouch(InputAction.CallbackContext context)
     {
+        if (!GameManager.Instance.AllowInput) return;
+        
         Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
 
         _endTouchPosition = Utils.ScreenToWorldPosition(_camera, touch);
