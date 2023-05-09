@@ -17,8 +17,8 @@ public class ChipRegistry : Singleton<ChipRegistry>
             .ToList();
 
     private readonly List<Chip> _allChips = new();
-
-
+    
+    
     public void Register(Chip chip)
     {
         if (!_allChips.Contains(chip))
@@ -61,6 +61,21 @@ public class ChipRegistry : Singleton<ChipRegistry>
         if (Counter == 0)
         {
             GameManager.Instance.EndGame();
+        }
+    }
+
+
+    public void CheckBoardCapacity()
+    {
+        int emptyCells = Board.Instance.BoardCapacity - InGameChips.Count;
+
+        if (emptyCells < Counter)
+        {
+            GameGUI.Instance.AddButton.Disable();
+        }
+        else
+        {
+            GameGUI.Instance.AddButton.Enable();
         }
     }
 }

@@ -12,7 +12,17 @@ public class GameGUI : Singleton<GameGUI>
 
     public event Action OnFadeInEffected;
 
-#region GAME OBJECT LINKS
+
+    public GameButton AddButton { get; private set; }
+    
+    public GameButton SpecialButton { get; private set; }
+    
+    public GameButton HintButton { get; private set; }
+    
+    public GameButton UndoButton { get; private set; }
+    
+
+#region GAME OBJECTS
 
     [SerializeField]
     private RectTransform header;
@@ -75,12 +85,20 @@ public class GameGUI : Singleton<GameGUI>
         // game buttons
         add.onClick.AddListener(ChipController.Instance.AddChips);
 
+        AddButton = add.GetComponent<GameButton>();
+        
         special.onClick.AddListener(ChipController.Instance.ShuffleChips);
 
+        SpecialButton = add.GetComponent<GameButton>();
+        
         hint.onClick.AddListener(PointerController.Instance.ShowHints);
 
+        HintButton = add.GetComponent<GameButton>();
+        
         undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
 
+        UndoButton = add.GetComponent<GameButton>();
+        
         // header buttons
         pause.onClick.AddListener(PauseClicked);
 

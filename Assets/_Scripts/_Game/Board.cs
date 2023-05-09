@@ -53,8 +53,10 @@ public class Board : Singleton<Board>
 
     public int Width => width;
 
-    public int Height => height;
+    private int Height => height;
 
+    public int BoardCapacity { get; private set; }
+    
     public List<int> ShapeIndexes { get; private set; }
 
     public List<int> ColorIndexes { get; private set; }
@@ -106,6 +108,8 @@ public class Board : Singleton<Board>
         ColorIndexes = Utils.GetIndexes(ColorPalletLength);
 
         DrawBoard(Width, Height);
+
+        BoardCapacity = Width * Height;
     }
 
 
