@@ -22,6 +22,8 @@ public class ChipController : Singleton<ChipController>
 
     public CommandLogger Log { get; } = new();
 
+    private ChipComparer _comparer;
+
     private List<Chip> _addedChips;
 
 #region COMPONENTS LINKS
@@ -40,6 +42,7 @@ public class ChipController : Singleton<ChipController>
         _board = Board.Instance;
         _gameManager = GameManager.Instance;
         _chipRegistry = ChipRegistry.Instance;
+        _comparer = new ChipComparer(PointerController.Instance);
     }
 
 
@@ -49,7 +52,7 @@ public class ChipController : Singleton<ChipController>
         
         PointerController.Instance.HidePointers();
 
-        ChipComparer.Instance.ClearStorage();
+        _comparer.ClearStorage();
 
         CommandLogger.ExecuteCommand(new AddChipsCommand());
     }
@@ -61,7 +64,7 @@ public class ChipController : Singleton<ChipController>
         
         PointerController.Instance.HidePointers();
 
-        ChipComparer.Instance.ClearStorage();
+        _comparer.ClearStorage();
 
         CommandLogger.ExecuteCommand(new ShuffleCommand());
     }
@@ -70,6 +73,17 @@ public class ChipController : Singleton<ChipController>
     public void RestoreLine(int boardLine)
     {
         OnLineRestored?.Invoke(boardLine);
+    }
+
+
+    public void ProcessTappedChip(Chip chip)
+    {
+        var matched = _comparer.IsMatching(chip);
+
+        if (matched != null)
+        {
+            Board.Instance.ProcessMatched(matched[0], matched[1]);
+        }
     }
 
 

@@ -1,42 +1,32 @@
 #define ENABLE_LOGS
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Sirenix.OdinInspector;
-using UnityEngine;
 
-public class ChipComparer : Singleton<ChipComparer>
+public class ChipComparer
 {
-    public event Action<Chip, Chip> OnChipMatched;
-
-    [ShowInInspector]
     private Chip _storage;
 
     private PointerController _pointerController;
 
-    private CameraController _cameraController;
-
-
     public void ClearStorage() => _storage = null;
 
 
-    private void Awake()
+    public ChipComparer(PointerController pointerController)
     {
-        _pointerController = PointerController.Instance;
-        _cameraController = CameraController.Instance;
+        _pointerController = pointerController;
+        _pointerController.OnPointersHidden += ClearStorage;
     }
 
 
-    private void ProcessChip(Chip chip)
+    public Chip[] IsMatching(Chip chip)
     {
         //case: Storage is empty
         if (_storage == null)
         {
-            _pointerController.ShowPointer(PointerController.Selector, chip.BoardPosition);
+            PointerController.Instance.ShowPointer(PointerController.Selector, chip.BoardPosition);
 
             _storage = chip;
 
-            return;
+            return null;
         }
 
         //case: Tap the same
@@ -46,54 +36,45 @@ public class ChipComparer : Singleton<ChipComparer>
 
             _storage = null;
 
-            _pointerController.HidePointers();
+            PointerController.Instance.HidePointers();
 
-            return;
+            return null;
         }
 
         // case: Compare chips
-
         if (CompareChips(chip, _storage))
         {
-            OnChipMatched?.Invoke(chip, _storage);
+            Chip other = _storage;
 
             _storage = null;
 
-            _pointerController.HidePointers();
-        }
-        else
-        {
-            _pointerController.HidePointers();
+            PointerController.Instance.HidePointers();
 
-            _pointerController.ShowPointer(PointerController.Selector, chip.BoardPosition);
-
-            _storage = chip;
+            return new[] { chip, other };
         }
+
+        PointerController.Instance.HidePointers();
+
+        PointerController.Instance.ShowPointer(PointerController.Selector, chip.BoardPosition);
+
+        _storage = chip;
+
+        return null;
     }
 
 
     public static bool CompareChips(Chip first, Chip second)
     {
         return (first.CompareHorizontalPosition(second) ||
-               first.CompareVerticalPosition(second) ||
-               first.CompareMultilinePosition(second)) &&
+                first.CompareVerticalPosition(second) ||
+                first.CompareMultilinePosition(second)) &&
                (first.CompareShape(second) ||
-               first.CompareColor(second));
+                first.CompareColor(second));
     }
 
 
-#region Enable / Disable
-
-    private void OnEnable()
+    ~ChipComparer()
     {
-        _cameraController.OnChipTapped += ProcessChip;
+        _pointerController.OnPointersHidden -= ClearStorage;
     }
-
-
-    private void OnDisable()
-    {
-        _cameraController.OnChipTapped -= ProcessChip;
-    }
-
-#endregion
 }

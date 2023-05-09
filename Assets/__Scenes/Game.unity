@@ -2196,7 +2196,6 @@ GameObject:
   - component: {fileID: 1936172045}
   - component: {fileID: 1936172051}
   - component: {fileID: 1936172055}
-  - component: {fileID: 1936172054}
   - component: {fileID: 1936172053}
   - component: {fileID: 1936172050}
   - component: {fileID: 1936172048}
@@ -2345,18 +2344,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectorPrefab: {fileID: 8430510590976786998, guid: 8d33d803af66b4539945b05a9bc9b990, type: 3}
   hintPrefab: {fileID: 8430510590976786998, guid: 171981802ad44495ea0fc51201298dc1, type: 3}
---- !u!114 &1936172054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1936172043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 344b5f827d5504919b80a05c44ee3df8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1936172055
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -21,9 +21,6 @@ public class PointerController : Singleton<PointerController>
     [ShowInInspector]
     private Dictionary<string, ObjectPool> _pools;
 
-    [ShowInInspector]
-    private GamePointer[] _hinters = new GamePointer[2];
-
     private Board _board;
 
     private bool _isHintShown;
@@ -47,8 +44,8 @@ public class PointerController : Singleton<PointerController>
 
     public void ShowHints()
     {
-        //
-            
+        HidePointers();
+        
         ShowHintsCommand hintsCommand = new();
 
         hintsCommand.OnHintFound += (first, second) =>
