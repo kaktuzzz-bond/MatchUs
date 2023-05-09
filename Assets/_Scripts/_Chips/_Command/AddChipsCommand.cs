@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AddChipsCommand : ICommand
 {
-    private List<Chip> _addedChips = new();
+    private List<Chip> _addedChips;
 
 
     public AddChipsCommand()
@@ -17,31 +17,23 @@ public class AddChipsCommand : ICommand
         ChipController.Instance.CloneInGameChips();
 
         ChipController.Instance.Log.AddCommand(this);
-
-        ChipRegistry.Instance.CheckBoardCapacity();
     }
 
 
     public void Undo()
     {
+        _addedChips.Reverse();
         
-        foreach (Chip chip in _addedChips)
-        {
-            chip.ChipFiniteStateMachine.SetSelfDestroyableState();
-        }
-
-        ChipRegistry.Instance.CheckBoardCapacity();
-
-        //_addedChips.Clear();
+        ChipController.Instance.RemoveChips(_addedChips);
     }
 
 
     private void RecordAdded(List<Chip> added)
     {
-        Debug.LogError($"Record: ({added.Count})");
+        _addedChips = new List<Chip>(added);
 
-        _addedChips = added;
-        
+        ChipRegistry.Instance.CheckBoardCapacity();
+
         ChipController.Instance.OnChipsAdded -= RecordAdded;
     }
 }

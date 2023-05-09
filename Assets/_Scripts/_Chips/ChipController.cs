@@ -126,20 +126,34 @@ public class ChipController : Singleton<ChipController>
 
         var chips = ChipRegistry.Instance.ActiveChips;
 
-        foreach (Chip chip in chips)
+        foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex)))
         {
-            Chip newChip = CreateChip(chip.ShapeIndex, chip.ColorIndex);
-
             AddedChips.Add(newChip);
 
             yield return null;
         }
 
-        Debug.LogError($"Added: ({AddedChips.Count})");
-
         OnChipsAdded?.Invoke(AddedChips);
     }
 
+
+    public void RemoveChips(List<Chip> chips)
+    {
+        StartCoroutine(RemoveChipsRoutine(chips));
+    }
+
+    private IEnumerator RemoveChipsRoutine(List<Chip> chips)
+    {
+        foreach (Chip chip in chips)
+        {
+            chip.ChipFiniteStateMachine.SetSelfDestroyableState();
+            
+            yield return null;
+        }
+
+        ChipRegistry.Instance.CheckBoardCapacity();
+    }
+    
 #endregion
 
 #region CHIP CREATION
