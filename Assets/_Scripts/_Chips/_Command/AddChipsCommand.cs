@@ -1,4 +1,3 @@
-#define ENABLE_LOGS
 using System.Collections.Generic;
 using UnityEngine;
 

@@ -1,5 +1,3 @@
-#define ENABLE_LOGS
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,10 +15,11 @@ public class CommandLogger
         Stack.Push(command);
     }
 
+
     public IEnumerator UndoCommand()
     {
         //if(!GameManager.Instance.AllowInput) yield break;
-        
+
         if (Stack.Count == 0)
         {
             Debug.Log("Stack is empty");

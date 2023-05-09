@@ -1,4 +1,3 @@
-#define ENABLE_LOGS
 using System;
 using DG.Tweening;
 using Sirenix.OdinInspector;
@@ -105,7 +104,6 @@ public class Chip : MonoBehaviour
 
     public void MoveTo(Vector2Int boardPos)
     {
-
         Vector3 worldPos = _board[boardPos.x, boardPos.y].position;
 
         transform
@@ -148,7 +146,7 @@ public class Chip : MonoBehaviour
         if (BoardPosition.y < boardLine ||
             ChipFiniteStateMachine.CurrentState.GetType() == typeof(DisabledChipState)) return;
 
-       Debug.Log($"Move down in ({boardLine})");
+        Debug.Log($"Move down in ({boardLine})");
 
         if (_tween.IsActive())
         {

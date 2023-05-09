@@ -1,6 +1,4 @@
-#define ENABLE_LOGS
 using System;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class ShowHintsCommand : ICommand

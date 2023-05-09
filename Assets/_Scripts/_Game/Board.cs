@@ -1,4 +1,3 @@
-#define ENABLE_LOGS
 using System;
 using System.Collections.Generic;
 using System.Linq;
