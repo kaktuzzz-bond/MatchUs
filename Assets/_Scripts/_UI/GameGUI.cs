@@ -7,10 +7,6 @@ using TMPro;
 
 public class GameGUI : Singleton<GameGUI>
 {
-    public event Action OnFadeOutEffected;
-
-    public event Action OnFadeInEffected;
-
     public GameButton AddButton { get; private set; }
 
     public GameButton SpecialButton { get; private set; }
@@ -31,7 +27,7 @@ public class GameGUI : Singleton<GameGUI>
     private InfoPanel infoPanel;
 
     [SerializeField]
-    private Image fader;
+    private FaderUI fader;
 
     [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button add;
@@ -123,7 +119,8 @@ public class GameGUI : Singleton<GameGUI>
     {
         Debug.LogWarning("SHOP");
 
-        GameManager.Instance.PauseGame();
+        //TODO remove ExitState from Shop
+        GameManager.Instance.ExitGame();
     }
 
 
@@ -143,7 +140,7 @@ public class GameGUI : Singleton<GameGUI>
     {
         Init();
 
-        FadeOutEffect();
+        fader.FadeOutEffect(ChipController.Instance.DrawStartArray);
     }
 
 #endregion
@@ -159,34 +156,6 @@ public class GameGUI : Singleton<GameGUI>
     public void UpdateTime(float timeCounter)
     {
         timer.text = Timer.FormatTime(timeCounter);
-    }
-
-#endregion
-
-#region FADE IN / FADE OUT SCREEN
-
-    private void FadeOutEffect()
-    {
-        fader
-                .DOFade(0, 0.2f)
-                .SetEase(Ease.InCubic)
-                .onComplete += () =>
-        {
-            fader.gameObject.SetActive(false);
-
-            OnFadeOutEffected?.Invoke();
-        };
-    }
-
-
-    private void FadeInEffect()
-    {
-        fader.gameObject.SetActive(true);
-
-        fader
-                .DOFade(0.8f, 0.2f)
-                .SetEase(Ease.InCubic)
-                .onComplete += () => { OnFadeInEffected?.Invoke(); };
     }
 
 #endregion

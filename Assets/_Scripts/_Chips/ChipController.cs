@@ -95,7 +95,7 @@ public class ChipController : Singleton<ChipController>
 
 #region PLACE ON BOARD
 
-    private void DrawStartArray()
+    public void DrawStartArray()
     {
         StartCoroutine(DrawStartArrayRoutine(_gameManager.ChipsOnStartNumber));
     }
@@ -234,21 +234,6 @@ public class ChipController : Singleton<ChipController>
         int colorIndex = colorIndexes[Random.Range(0, colorIndexes.Count)];
 
         return new ChipData(shapeIndex, colorIndex);
-    }
-
-#endregion
-
-#region ENABLE / DISABLE
-
-    private void OnEnable()
-    {
-        GameGUI.Instance.OnFadeOutEffected += DrawStartArray;
-    }
-
-
-    private void OnDisable()
-    {
-        GameGUI.Instance.OnFadeOutEffected -= DrawStartArray;
     }
 
 #endregion

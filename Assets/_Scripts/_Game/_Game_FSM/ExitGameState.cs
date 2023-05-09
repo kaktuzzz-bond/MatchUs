@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,12 +8,8 @@ public class ExitGameState : IGameState
     {
         Debug.Log("Exit Game State (Save data) entered ");
 
+        DOTween.KillAll();
+        
         SceneManager.LoadScene(0);
-    }
-
-
-    public void Exit(GameFiniteStateMachine context)
-    {
-        throw new System.NotImplementedException();
     }
 }

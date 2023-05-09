@@ -5,6 +5,14 @@ using UnityEngine;
 [RequireComponent(typeof(GameFiniteStateMachine))]
 public class GameManager : Singleton<GameManager>
 {
+    public event Action OnGameStarted;
+
+    public event Action OnGamePaused;
+
+    public event Action OnGameResumed;
+
+    public event Action OnGameOver;
+
     private DifficultyLevel _difficultyLevel;
 
     private GameFiniteStateMachine _gameFiniteStateMachine;
@@ -18,10 +26,6 @@ public class GameManager : Singleton<GameManager>
 
     private int _score;
 
-    private float _timerCounter;
-
-    private bool _timerOn;
-
 
     private void Awake()
     {
@@ -31,27 +35,11 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    private void Update()
-    {
-        CountTime();
-    }
-
-
     public void AddScore(int score)
     {
         _score += score;
 
         GameGUI.Instance.UpdateScore(_score);
-    }
-
-
-    private void CountTime()
-    {
-        if (!_timerOn) return;
-
-        _timerCounter += Time.deltaTime;
-
-        GameGUI.Instance.UpdateTime(_timerCounter);
     }
 
 
@@ -69,13 +57,13 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME STARTED!");
 
-        _timerCounter = 0;
-
         _score = 0;
 
-        _timerOn = true;
-
+        GameGUI.Instance.UpdateScore(0);
+        
         AllowInput = true;
+
+        OnGameStarted?.Invoke();
     }
 
 
@@ -83,9 +71,9 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME PAUSED");
 
-        _timerOn = false;
-
         AllowInput = false;
+        
+        OnGamePaused?.Invoke();
     }
 
 
@@ -93,9 +81,9 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME RESUMED!");
 
-        _timerOn = true;
-
         AllowInput = true;
+        
+        OnGameResumed?.Invoke();
     }
 
 
@@ -103,11 +91,15 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME OVER!");
 
-        _timerOn = false;
-
         AllowInput = false;
+        
+        OnGameOver?.Invoke();
     }
 
 
-    public void ExitGame() { }
+    public void ExitGame()
+    {
+        AllowInput = false;
+        _gameFiniteStateMachine.Exit();
+    }
 }
