@@ -5,10 +5,11 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
 public class GameGUI : Singleton<GameGUI>
 {
     public event Action OnFadeOutEffected;
-    
+
     public event Action OnFadeInEffected;
 
 #region GAME OBJECT LINKS
@@ -33,19 +34,19 @@ public class GameGUI : Singleton<GameGUI>
 
     [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button undo;
-    
+
     [SerializeField] [FoldoutGroup("Text")]
     private TextMeshProUGUI timer;
 
     [SerializeField] [FoldoutGroup("Text")]
     private TextMeshProUGUI score;
-    
+
     [SerializeField] [FoldoutGroup("Header Buttons")]
     private Button pause;
-    
+
     [SerializeField] [FoldoutGroup("Header Buttons")]
     private Button shop;
-    
+
 #endregion
 
 
@@ -79,10 +80,10 @@ public class GameGUI : Singleton<GameGUI>
         hint.onClick.AddListener(PointerController.Instance.ShowHints);
 
         undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
-        
+
         // header buttons
         pause.onClick.AddListener(PauseClicked);
-        
+
         shop.onClick.AddListener(ShopClicked);
     }
 
@@ -93,34 +94,35 @@ public class GameGUI : Singleton<GameGUI>
     private void PauseClicked()
     {
         Logger.DebugWarning("PAUSE");
-        
+
         GameManager.Instance.PauseGame();
     }
-    
+
+
     private void ShopClicked()
     {
         Logger.DebugWarning("SHOP");
-        
+
         GameManager.Instance.PauseGame();
     }
 
 #endregion
-    
-    
+
 #region TEXT
 
     public void UpdateScore(int scoreValue)
     {
         score.text = scoreValue.ToString();
     }
-    
+
+
     public void UpdateTime(float timeCounter)
     {
         timer.text = Timer.FormatTime(timeCounter);
     }
 
 #endregion
-    
+
 #region FADE IN / FADE OUT SCREEN
 
     private void FadeOutEffect()
@@ -144,10 +146,7 @@ public class GameGUI : Singleton<GameGUI>
         fader
                 .DOFade(0.8f, 0.2f)
                 .SetEase(Ease.InCubic)
-                .onComplete += () =>
-        {
-            OnFadeInEffected?.Invoke();
-        };
+                .onComplete += () => { OnFadeInEffected?.Invoke(); };
     }
 
 #endregion
