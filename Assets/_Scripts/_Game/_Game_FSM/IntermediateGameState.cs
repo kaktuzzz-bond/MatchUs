@@ -4,7 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LoadingGameState : IGameState
+public class IntermediateGameState : IGameState
 {
     private const int LoadingSceneIndex = 1;
 
