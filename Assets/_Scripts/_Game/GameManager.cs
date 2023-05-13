@@ -100,6 +100,6 @@ public class GameManager : Singleton<GameManager>
     public void ExitGame()
     {
         AllowInput = false;
-        _gameFiniteStateMachine.Exit();
+        _gameFiniteStateMachine.Loading();
     }
 }

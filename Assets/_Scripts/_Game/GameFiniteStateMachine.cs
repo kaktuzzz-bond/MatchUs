@@ -7,10 +7,18 @@ using UnityEngine.SceneManagement;
 
 public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
 {
-    public event Action OnSceneLoaded;
-    
     [ShowInInspector]
     public IGameState CurrentGameState { get; private set; }
+
+    public bool IsExitGame { get; private set; }
+
+    private readonly IGameState _initial = new InitialGameState();
+
+    private readonly IGameState _loading = new LoadingGameState();
+
+    private readonly IGameState _active = new ActiveGameState();
+
+    private readonly IGameState _pause = new PauseGameState();
 
 
     private void Start()
@@ -19,34 +27,31 @@ public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
     }
 
 
-    private void Initial()
+    public void Initial()
     {
-        
-        SetState(new InitialGameState());
+        IsExitGame = false;
+
+        SetState(_initial);
     }
 
 
     public void Loading()
     {
-        SetState(new LoadingGameState());
+        SetState(_loading);
     }
 
 
     public void Active()
     {
-        SetState(new ActiveGameState());
+        SetState(_active);
+
+        IsExitGame = true;
     }
 
 
     public void Pause()
     {
-        SetState(new PauseGameState());
-    }
-
-
-    public void Exit()
-    {
-        SetState(new ExitGameState());
+        SetState(_pause);
     }
 
 
@@ -55,24 +60,5 @@ public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
         CurrentGameState = newGameState;
 
         CurrentGameState.Enter(this);
-    }
-
-
-    public void LoadScene(int sceneIndex)
-    {
-        StartCoroutine(LoadSceneRoutine(sceneIndex));
-    }
-
-
-    private IEnumerator LoadSceneRoutine(int sceneIndex)
-    {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex);
-        
-        while (!asyncLoad.isDone)
-        {
-            yield return null;
-        }
-        
-        OnSceneLoaded?.Invoke();
     }
 }

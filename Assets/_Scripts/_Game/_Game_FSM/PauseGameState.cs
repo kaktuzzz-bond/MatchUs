@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class PauseGameState : IGameState
@@ -8,8 +9,4 @@ public class PauseGameState : IGameState
     }
 
 
-    public void Exit(GameFiniteStateMachine context)
-    {
-        throw new System.NotImplementedException();
-    }
 }
