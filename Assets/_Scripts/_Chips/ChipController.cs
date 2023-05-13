@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 
 [RequireComponent(typeof(ChipRegistry))]
@@ -16,6 +17,9 @@ public class ChipController : Singleton<ChipController>
     [SerializeField]
     private Transform chipPrefab;
 
+    [SerializeField]
+    private int chipDelay = 10;
+
     public Vector2Int NextBoardPosition =>
             new(_chipRegistry.Counter % _board.Width, _chipRegistry.Counter / _board.Width);
 
@@ -25,8 +29,6 @@ public class ChipController : Singleton<ChipController>
     public CommandLogger Log { get; } = new();
 
     private ChipComparer _comparer;
-
-    public List<Chip> AddedChips { get; private set; } = new();
 
 #region COMPONENTS LINKS
 
@@ -95,45 +97,41 @@ public class ChipController : Singleton<ChipController>
 
 #region PLACE ON BOARD
 
-    public void DrawStartArray()
+    private void DrawStartArray()
     {
-        StartCoroutine(DrawStartArrayRoutine(_gameManager.ChipsOnStartNumber));
-    }
-
-
-    private IEnumerator DrawStartArrayRoutine(int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            CreateChip();
-
-            yield return null;
-        }
+        DrawStartArrayAsync(_gameManager.ChipsOnStartNumber).Forget();
 
         GameManager.Instance.StartGame();
     }
 
 
-    public void CloneInGameChips()
+    private async UniTaskVoid DrawStartArrayAsync(int count)
     {
-        StartCoroutine(CloneInGameChipsRoutine());
+        for (int i = 0; i < count; i++)
+        {
+            CreateChip();
+
+            await UniTask.Delay(chipDelay);
+        }
+
+        await UniTask.Yield();
     }
 
 
-    private IEnumerator CloneInGameChipsRoutine()
+    public async UniTask<List<Chip>> CloneInGameChipsAsync()
     {
-        AddedChips.Clear();
+        List<Chip> added = new();
 
         var chips = ChipRegistry.Instance.ActiveChips;
 
         foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex)))
         {
-            AddedChips.Add(newChip);
+            added.Add(newChip);
 
-            yield return null;
+            await UniTask.Yield();
         }
 
-        OnChipsAdded?.Invoke(AddedChips);
+        return added;
     }
 
 
@@ -236,8 +234,7 @@ public class ChipController : Singleton<ChipController>
     }
 
 #endregion
-    
-    
+
 #region ENABLE / DISABLE
 
     private void OnEnable()

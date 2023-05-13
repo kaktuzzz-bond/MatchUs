@@ -6,18 +6,8 @@ using UnityEngine;
 public class ChipFiniteStateMachine : MonoBehaviour
 {
     [ShowInInspector]
-    public IChipState CurrentState { get; private set; } = new EnabledChipState();
-
-    private readonly EnabledChipState _enabledChipState = new();
-
-    private readonly FadedOutChipState _fadedOutChipState = new();
-
-    private readonly FadedInChipState _fadedInChipState = new();
-
-    private readonly DisabledChipState _disabledChipState = new();
-
-    private readonly SelfDestroyableChipState _selfDestroyableChipState = new();
-
+    public IChipState CurrentState { get; private set; }
+    
     public Chip Chip { get; private set; }
 
 
@@ -32,7 +22,7 @@ public class ChipFiniteStateMachine : MonoBehaviour
     {
         gameObject.SetActive(false);
 
-        CurrentState = _enabledChipState;
+        CurrentState = new EnabledChipState();
 
         CurrentState.Enter(Chip);
 
@@ -41,22 +31,22 @@ public class ChipFiniteStateMachine : MonoBehaviour
 
    private void SetEnabledState()
     {
-        SetState(_enabledChipState);
+        SetState(new EnabledChipState());
     }
 
     public void SetFadedOutState()
     {
-        SetState(_fadedOutChipState);
+        SetState(new FadedOutChipState());
     }
 
     public void SetFadedInState()
     {
-        SetState(_fadedInChipState);
+        SetState(new FadedInChipState());
     }
 
     public void SetSelfDestroyableState()
     {
-        SetState(_selfDestroyableChipState);
+        SetState(new SelfDestroyableChipState());
     }
 
     public void SetRestoredState()
@@ -76,7 +66,7 @@ public class ChipFiniteStateMachine : MonoBehaviour
     
     private void SetDisabledState()
     {
-        SetState(_disabledChipState);
+        SetState(new DisabledChipState());
     }
 
 

@@ -9,6 +9,15 @@ public class CommandLogger
     private readonly WaitForSeconds _wait = new(0.2f);
 
 
+
+    public void ExecuteAndAdd(ICommand command)
+    {
+        AddCommand(command);
+        
+        command.Execute();
+    }
+    
+    
     public void AddCommand(ICommand command)
     {
         Debug.Log($"Adding {command}");
@@ -18,8 +27,6 @@ public class CommandLogger
 
     public IEnumerator UndoCommand()
     {
-        //if(!GameManager.Instance.AllowInput) yield break;
-
         if (Stack.Count == 0)
         {
             Debug.Log("Stack is empty");
@@ -27,10 +34,6 @@ public class CommandLogger
             yield break;
         }
 
-        // Add
-        // Fade Out
-        // Remove Single Line 
-        // Special
         ICommand command;
 
         do

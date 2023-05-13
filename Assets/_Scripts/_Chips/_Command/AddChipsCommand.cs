@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AddChipsCommand : ICommand
@@ -6,15 +8,11 @@ public class AddChipsCommand : ICommand
     private List<Chip> _addedChips;
 
 
-    public AddChipsCommand()
-    {
-        ChipController.Instance.OnChipsAdded += RecordAdded;
-    }
-
-
     public void Execute()
     {
-        ChipController.Instance.CloneInGameChips();
+        RecordAdded().Forget();
+
+        ChipRegistry.Instance.CheckBoardCapacity();
 
         ChipController.Instance.Log.AddCommand(this);
     }
@@ -23,17 +21,11 @@ public class AddChipsCommand : ICommand
     public void Undo()
     {
         _addedChips.Reverse();
-        
+
         ChipController.Instance.RemoveChips(_addedChips);
     }
 
 
-    private void RecordAdded(List<Chip> added)
-    {
-        _addedChips = new List<Chip>(added);
-
-        ChipRegistry.Instance.CheckBoardCapacity();
-
-        ChipController.Instance.OnChipsAdded -= RecordAdded;
-    }
+    private async UniTask RecordAdded() =>
+            _addedChips = await ChipController.Instance.CloneInGameChipsAsync();
 }
