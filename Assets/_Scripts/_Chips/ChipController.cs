@@ -52,29 +52,21 @@ public class ChipController : Singleton<ChipController>
 
     public void AddChips()
     {
-        //if (!GameManager.Instance.AllowInput) return;
-
         PointerController.Instance.HidePointers();
 
         _comparer.ClearStorage();
 
-        ICommand command = new AddChipsCommand();
-
-        command.Execute();
+        Log.ExecuteAndAdd(new AddChipsCommand());
     }
 
 
     public void ShuffleChips()
     {
-        //if (!GameManager.Instance.AllowInput) return;
-
         PointerController.Instance.HidePointers();
 
         _comparer.ClearStorage();
 
-        ICommand command = new ShuffleCommand();
-
-        command.Execute();
+        Log.ExecuteAndAdd(new ShuffleCommand());
     }
 
 

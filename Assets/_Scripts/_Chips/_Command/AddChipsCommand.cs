@@ -13,8 +13,6 @@ public class AddChipsCommand : ICommand
         RecordAdded().Forget();
 
         ChipRegistry.Instance.CheckBoardCapacity();
-
-        ChipController.Instance.Log.AddCommand(this);
     }
 
 

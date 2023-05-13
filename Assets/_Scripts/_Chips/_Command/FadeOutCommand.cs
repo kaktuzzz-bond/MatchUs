@@ -26,8 +26,6 @@ public class FadeOutCommand : ICommand
         _second.ChipFiniteStateMachine.SetFadedOutState();
 
         GameManager.Instance.AddScore(_score);
-        
-        _chipController.Log.AddCommand(this);
     }
 
 

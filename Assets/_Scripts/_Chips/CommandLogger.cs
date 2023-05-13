@@ -16,9 +16,9 @@ public class CommandLogger
         
         command.Execute();
     }
-    
-    
-    public void AddCommand(ICommand command)
+
+
+    private void AddCommand(ICommand command)
     {
         Debug.Log($"Adding {command}");
         Stack.Push(command);

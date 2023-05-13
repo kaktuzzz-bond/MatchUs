@@ -166,9 +166,7 @@ public class Board : Singleton<Board>
     public void ProcessMatched(Chip first, Chip second)
     {
         // fade out chips
-        ICommand command = new FadeOutCommand(first, second);
-
-        command.Execute();
+        ChipController.Instance.Log.ExecuteAndAdd(new FadeOutCommand(first, second));
 
         // lines cash
         int firstLine = first.BoardPosition.y;
@@ -205,9 +203,7 @@ public class Board : Singleton<Board>
 
         if (states == null) return;
 
-        ICommand command = new RemoveSingleLineCommand(states);
-
-        command.Execute();
+        ChipController.Instance.Log.ExecuteAndAdd(new RemoveSingleLineCommand(states));
 
         OnLineRemoved?.Invoke(boardLine);
     }

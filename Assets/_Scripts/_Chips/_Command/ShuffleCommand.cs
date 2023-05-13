@@ -16,8 +16,6 @@ public class ShuffleCommand : ICommand
         var modified = inGameChips.Shuffle();
 
         SendChipsToNewPositions(inGameChips, modified);
-
-        ChipController.Instance.Log.AddCommand(this);
     }
 
 
