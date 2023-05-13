@@ -236,4 +236,20 @@ public class ChipController : Singleton<ChipController>
     }
 
 #endregion
+    
+    
+#region ENABLE / DISABLE
+
+    private void OnEnable()
+    {
+        CameraController.Instance.OnCameraSetup += DrawStartArray;
+    }
+
+
+    private void OnDisable()
+    {
+        CameraController.Instance.OnCameraSetup -= DrawStartArray;
+    }
+
+#endregion
 }

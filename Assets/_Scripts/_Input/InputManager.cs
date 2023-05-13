@@ -38,6 +38,7 @@ public class InputManager : Singleton<InputManager>
 
     private float _endTouchTime;
 
+    [SerializeField]
     private bool _isInputAllowed;
     private void Awake()
     {

@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -124,23 +125,17 @@ public class GameGUI : Singleton<GameGUI>
     }
 
 
-    public void ShowInfo()
-    {
-        infoPanel.Show();
-    }
+    public void ShowInfo() => infoPanel.Show();
 
 
-    public void HideInfo()
-    {
-        infoPanel.Hide();
-    }
+    public void HideInfo() => infoPanel.Hide();
 
 
-    private void SetupGUI()
+    public async UniTask SetupGUIAndFadeOut()
     {
         Init();
 
-        fader.FadeOutEffect(ChipController.Instance.DrawStartArray);
+        await fader.FadeOutEffect();
     }
 
 #endregion
@@ -156,21 +151,6 @@ public class GameGUI : Singleton<GameGUI>
     public void UpdateTime(float timeCounter)
     {
         timer.text = Timer.FormatTime(timeCounter);
-    }
-
-#endregion
-
-#region ENABLE / DISABLE
-
-    private void OnEnable()
-    {
-        CameraController.Instance.OnCameraSetup += SetupGUI;
-    }
-
-
-    private void OnDisable()
-    {
-        CameraController.Instance.OnCameraSetup -= SetupGUI;
     }
 
 #endregion

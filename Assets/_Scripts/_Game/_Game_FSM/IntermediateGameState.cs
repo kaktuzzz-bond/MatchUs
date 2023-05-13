@@ -34,8 +34,6 @@ public class IntermediateGameState : IGameState
 
         await SceneManager.LoadSceneAsync(LoadingSceneIndex);
 
-        await UniTask.Delay(1000);
-
         GameFiniteStateMachine.Instance.Active();
     }
 
@@ -45,14 +43,12 @@ public class IntermediateGameState : IGameState
         Debug.Log("Saving --> MAIN MENU ");
 
         InputManager.Instance.DisablePlayerInput();
-        
+
         GameManager.Instance.DisableTimer();
-        
+
         DOTween.KillAll();
 
         await SceneManager.LoadSceneAsync(LoadingSceneIndex);
-        
-        await UniTask.Delay(1000);
 
         GameFiniteStateMachine.Instance.Initial();
     }

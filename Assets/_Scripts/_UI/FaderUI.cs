@@ -1,41 +1,45 @@
-using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class FaderUI : MonoBehaviour
 {
+    [MinValue(0)]
+    public float fadeTime = 1f;
+    
+    [PropertyRange(0, 1)]
+    public float maxFadeValue = 0.8f;
+
     [SerializeField]
     private Image fade;
 
 
     private void Awake()
     {
-        fade.DOFade(1f, 0);
+        fade.gameObject.SetActive(true);
     }
 
 
-    public void FadeOutEffect(Action action)
+    public async UniTask FadeOutEffect()
     {
-        fade
-                .DOFade(0, 0.2f)
+        await fade
+                .DOFade(0, fadeTime)
                 .SetEase(Ease.InCubic)
-                .onComplete += () =>
-        {
-            action?.Invoke();
+                .ToUniTask();
 
-            fade.gameObject.SetActive(false);
-        };
+        fade.gameObject.SetActive(false);
     }
 
 
-    public void FadeInEffect(Action action)
+    public async UniTask FadeInEffect()
     {
         fade.gameObject.SetActive(true);
 
-        fade
-                .DOFade(0.8f, 0.2f)
+        await fade
+                .DOFade(maxFadeValue, fadeTime)
                 .SetEase(Ease.InCubic)
-                .onComplete += () => { action?.Invoke(); };
+                .ToUniTask();
     }
 }

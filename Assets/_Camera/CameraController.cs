@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -59,8 +58,6 @@ public class CameraController : Singleton<CameraController>
     private Vector3 _bottomBoundPoint;
 
     private float _camToNextPositionDistance;
-
-    private WaitForEndOfFrame _wait = new();
 
 #endregion
 
@@ -198,6 +195,8 @@ public class CameraController : Singleton<CameraController>
 
         await SetInitialPositionAsync();
 
+        await GameGUI.Instance.SetupGUIAndFadeOut();
+        
         OnCameraSetup?.Invoke();
     }
 
