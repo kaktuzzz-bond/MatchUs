@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -85,7 +86,7 @@ public class CameraController : Singleton<CameraController>
         PointerController.Instance.CheckForHints();
 
         GameGUI.Instance.HideInfo();
-        
+
         _isStopMovement = Mathf.Abs(_camera.velocity.y) > cameraVelocityThreshold;
 
         _camera.transform.DOKill();
@@ -189,37 +190,29 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private void SetupCamera()
+    public async UniTaskVoid SetupCameraAsync()
     {
-        StartCoroutine(SetupCameraRoutine());
-    }
+        await SetOrthographicSizeAsync();
 
+        await SetBoundsAsync();
 
-    private IEnumerator SetupCameraRoutine()
-    {
-        SetOrthographicSize();
-
-        yield return _wait;
-
-        SetBounds();
-
-        SetInitialPosition();
-
-        yield return _wait;
+        await SetInitialPositionAsync();
 
         OnCameraSetup?.Invoke();
     }
 
 
-    private void SetOrthographicSize()
+    private async UniTask SetOrthographicSizeAsync()
     {
         float aspectRatio = (float)Screen.height / Screen.width;
 
         _camera.orthographicSize = (_board.Width + 0.5f) * aspectRatio * 0.5f;
+
+        await UniTask.WaitForEndOfFrame(this);
     }
 
 
-    private void SetBounds()
+    private async UniTask SetBoundsAsync()
     {
         var rectHeader = _gameGUI.GetHeaderCorners();
 
@@ -240,6 +233,8 @@ public class CameraController : Singleton<CameraController>
         _bottomBoundPoint = _topBoundPoint;
 
         CalculateBottomBound();
+
+        await UniTask.Yield();
     }
 
 
@@ -258,9 +253,11 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private void SetInitialPosition()
+    private async UniTask SetInitialPositionAsync()
     {
         _camera.transform.position = _bottomBoundPoint;
+
+        await UniTask.Yield();
     }
 
 #endregion
@@ -269,8 +266,6 @@ public class CameraController : Singleton<CameraController>
 
     private void OnEnable()
     {
-        _board.OnTilesGenerated += SetupCamera;
-
         _inputManager.OnTouchStarted += DoOnStartTouch;
 
         _inputManager.OnPressed += MovementOnHoldTouch;
@@ -283,8 +278,6 @@ public class CameraController : Singleton<CameraController>
 
     private void OnDisable()
     {
-        _board.OnTilesGenerated -= SetupCamera;
-
         _inputManager.OnTouchStarted -= DoOnStartTouch;
 
         _inputManager.OnPressed -= MovementOnHoldTouch;

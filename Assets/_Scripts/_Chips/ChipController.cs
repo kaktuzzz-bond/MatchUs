@@ -142,18 +142,19 @@ public class ChipController : Singleton<ChipController>
         StartCoroutine(RemoveChipsRoutine(chips));
     }
 
+
     private IEnumerator RemoveChipsRoutine(List<Chip> chips)
     {
         foreach (Chip chip in chips)
         {
             chip.ChipFiniteStateMachine.SetSelfDestroyableState();
-            
+
             yield return null;
         }
 
         ChipRegistry.Instance.CheckBoardCapacity();
     }
-    
+
 #endregion
 
 #region CHIP CREATION
@@ -179,8 +180,6 @@ public class ChipController : Singleton<ChipController>
         Transform instance = Instantiate(chipPrefab, worldPos, Quaternion.identity, _board.chipParent);
 
         if (!instance.TryGetComponent(out Chip chip)) return null;
-
-        chip = instance.GetComponent<Chip>();
 
         chip.Init(shapeIndex, colorIndex);
 

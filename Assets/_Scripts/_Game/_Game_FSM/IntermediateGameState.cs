@@ -46,6 +46,8 @@ public class IntermediateGameState : IGameState
 
         InputManager.Instance.DisablePlayerInput();
         
+        GameManager.Instance.DisableTimer();
+        
         DOTween.KillAll();
 
         await SceneManager.LoadSceneAsync(LoadingSceneIndex);

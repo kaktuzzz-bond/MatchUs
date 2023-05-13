@@ -10,8 +10,6 @@ public class Board : Singleton<Board>
 {
 #region EVENTS
 
-    public event Action OnTilesGenerated;
-
     public event Action<int> OnLineRemoved;
 
 #endregion
@@ -55,7 +53,7 @@ public class Board : Singleton<Board>
     private int Height => height;
 
     public int BoardCapacity { get; private set; }
-    
+
     public List<int> ShapeIndexes { get; private set; }
 
     public List<int> ColorIndexes { get; private set; }
@@ -98,7 +96,6 @@ public class Board : Singleton<Board>
 
 #endregion
 
-
 #region BOARD CREATION
 
     private void Start()
@@ -132,7 +129,7 @@ public class Board : Singleton<Board>
             DrawDot(x, y);
         }
 
-        OnTilesGenerated?.Invoke();
+        CameraController.Instance.SetupCameraAsync().Forget();
     }
 
 
@@ -272,8 +269,7 @@ public class Board : Singleton<Board>
         {
             if (!hit.collider.TryGetComponent(out Chip chip)) continue;
 
-            if (other != null &&
-                chip.Equals(other))
+            if (chip.Equals(other))
             {
                 continue;
             }
@@ -290,5 +286,4 @@ public class Board : Singleton<Board>
     }
 
 #endregion
-
 }
