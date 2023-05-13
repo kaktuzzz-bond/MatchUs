@@ -5,14 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(GameFiniteStateMachine))]
 public class GameManager : Singleton<GameManager>
 {
-    public event Action OnGameStarted;
-
-    public event Action OnGamePaused;
-
-    public event Action OnGameResumed;
-
-    public event Action OnGameOver;
-
     private DifficultyLevel _difficultyLevel;
 
     private GameFiniteStateMachine _gameFiniteStateMachine;
@@ -21,10 +13,11 @@ public class GameManager : Singleton<GameManager>
 
     public float ChanceForRandom => GameConfig.GetChanceForRandom(_difficultyLevel);
 
-    [ShowInInspector]
-    public bool AllowInput { get; private set; }
-
     private int _score;
+
+    private float _timerCounter;
+
+    private bool _isTimerOn;
 
     private int Score
     {
@@ -34,6 +27,12 @@ public class GameManager : Singleton<GameManager>
             _score = value;
             GameGUI.Instance.UpdateScore(_score);
         }
+    }
+
+
+    private void Update()
+    {
+        CountTime();
     }
 
 
@@ -51,7 +50,7 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    public void StartLoading(DifficultyLevel difficultyLevel)
+    public void SetDifficultyAndLoad(DifficultyLevel difficultyLevel)
     {
         _difficultyLevel = difficultyLevel;
 
@@ -63,11 +62,11 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME STARTED!");
 
-        Score = 0;
-        
-        AllowInput = true;
+        ResetGameStats();
 
-        OnGameStarted?.Invoke();
+        EnableTimer();
+
+        InputManager.Instance.EnablePlayerInput();
     }
 
 
@@ -75,21 +74,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME PAUSED");
 
-        AllowInput = false;
-        
         _gameFiniteStateMachine.Pause();
-        
-        OnGamePaused?.Invoke();
-    }
-
-
-    public void ResumeGame()
-    {
-        Debug.LogWarning("GAME RESUMED!");
-
-        AllowInput = true;
-        
-        OnGameResumed?.Invoke();
     }
 
 
@@ -97,15 +82,38 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME OVER!");
 
-        AllowInput = false;
-        
-        OnGameOver?.Invoke();
+        InputManager.Instance.DisablePlayerInput();
+
+        DisableTimer();
     }
 
 
     public void ExitGame()
     {
-        AllowInput = false;
         _gameFiniteStateMachine.Loading();
+    }
+
+
+    public void EnableTimer() => _isTimerOn = true;
+
+
+    public void DisableTimer() => _isTimerOn = false;
+
+
+    private void ResetGameStats()
+    {
+        Score = 0;
+
+        _timerCounter = 0;
+    }
+
+
+    private void CountTime()
+    {
+        if (!_isTimerOn) return;
+
+        _timerCounter += Time.deltaTime;
+
+        GameGUI.Instance.UpdateTime(_timerCounter);
     }
 }

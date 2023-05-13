@@ -44,6 +44,8 @@ public class IntermediateGameState : IGameState
     {
         Debug.Log("Saving --> MAIN MENU ");
 
+        InputManager.Instance.DisablePlayerInput();
+        
         DOTween.KillAll();
 
         await SceneManager.LoadSceneAsync(LoadingSceneIndex);

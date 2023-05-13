@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,12 +23,25 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
     {
         _gameManager = GameManager.Instance;
 
-        easyMode.onClick.AddListener(() => _gameManager.StartLoading(DifficultyLevel.Easy));
+        easyMode.onClick.AddListener(() =>
+        {
+            _gameManager.SetDifficultyAndLoad(DifficultyLevel.Easy);
+            
+        });
 
-        normalMode.onClick.AddListener(() => _gameManager.StartLoading(DifficultyLevel.Normal));
+        normalMode.onClick.AddListener(() =>
+        {
+            _gameManager.SetDifficultyAndLoad(DifficultyLevel.Normal);
+        });
 
-        hardMode.onClick.AddListener(() => _gameManager.StartLoading(DifficultyLevel.Hard));
+        hardMode.onClick.AddListener(() =>
+        {
+            _gameManager.SetDifficultyAndLoad(DifficultyLevel.Hard);
+        });
 
-        testMode.onClick.AddListener(() => _gameManager.StartLoading(DifficultyLevel.Test));
+        testMode.onClick.AddListener(() =>
+        {
+            _gameManager.SetDifficultyAndLoad(DifficultyLevel.Test);
+        });
     }
 }

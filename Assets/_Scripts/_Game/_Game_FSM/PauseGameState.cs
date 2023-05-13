@@ -4,21 +4,23 @@ using UnityEngine;
 
 public class PauseGameState : IGameState
 {
-    public event Action<bool> OnPauseGameStateChanged;
-            
-    
     public void Enter(GameFiniteStateMachine context)
     {
         Debug.Log("Pause Game State Entered ");
+
+        InputManager.Instance.DisablePlayerInput();
         
-        OnPauseGameStateChanged?.Invoke(false);
+        GameManager.Instance.DisableTimer();
+        
     }
 
 
     public void Exit(GameFiniteStateMachine context)
     {
         Debug.Log("Resume The Game");
+
+        InputManager.Instance.EnablePlayerInput();
         
-        OnPauseGameStateChanged?.Invoke(true);
+        GameManager.Instance.EnableTimer();
     }
 }
