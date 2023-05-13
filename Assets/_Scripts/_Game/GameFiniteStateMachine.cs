@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
 {
@@ -12,18 +11,18 @@ public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
 
     public bool IsExitGame { get; private set; }
 
-    private readonly IGameState _initial = new InitialGameState();
+    private readonly InitialGameState _initial = new ();
 
-    private readonly IGameState _loading = new LoadingGameState();
+    private readonly LoadingGameState _loading = new ();
 
-    private readonly IGameState _active = new ActiveGameState();
+    public ActiveGameState ActiveGame { get; } = new ();
 
-    private readonly IGameState _pause = new PauseGameState();
+    public PauseGameState PauseGame { get; } = new ();
 
 
     private void Start()
     {
-        Initial();
+        CurrentGameState = _initial;
     }
 
 
@@ -43,7 +42,7 @@ public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
 
     public void Active()
     {
-        SetState(_active);
+        SetState(ActiveGame);
 
         IsExitGame = true;
     }
@@ -51,12 +50,14 @@ public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
 
     public void Pause()
     {
-        SetState(_pause);
+        SetState(PauseGame);
     }
 
 
     private void SetState(IGameState newGameState)
     {
+        CurrentGameState.Exit(this);
+
         CurrentGameState = newGameState;
 
         CurrentGameState.Enter(this);

@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -12,30 +13,22 @@ public class LoadingGameState : IGameState
     {
         if (context.IsExitGame)
         {
-            LoadMainMenuScreen().Forget();
+            LoadMainMenuScreenAsync().Forget();
         }
         else
         {
-           LoadGameScreen().Forget();
+            LoadGameScreenAsync().Forget();
         }
     }
 
 
-    private static async UniTaskVoid LoadMainMenuScreen()
+    public void Exit(GameFiniteStateMachine context)
     {
-        Debug.Log("Loading --> MAIN MENU ");
-
-        DOTween.KillAll();
-
-        await UniTask.Delay(1000);
-
-        await SceneManager.LoadSceneAsync(LoadingSceneIndex);
-
-        GameFiniteStateMachine.Instance.Initial();
+        //throw new System.NotImplementedException();
     }
 
 
-    private static async UniTaskVoid LoadGameScreen()
+    private static async UniTaskVoid LoadGameScreenAsync()
     {
         Debug.Log("Loading --> GAME ");
 
@@ -44,5 +37,19 @@ public class LoadingGameState : IGameState
         await UniTask.Delay(1000);
 
         GameFiniteStateMachine.Instance.Active();
+    }
+
+
+    private static async UniTaskVoid LoadMainMenuScreenAsync()
+    {
+        Debug.Log("Saving --> MAIN MENU ");
+
+        DOTween.KillAll();
+
+        await SceneManager.LoadSceneAsync(LoadingSceneIndex);
+        
+        await UniTask.Delay(1000);
+
+        GameFiniteStateMachine.Instance.Initial();
     }
 }

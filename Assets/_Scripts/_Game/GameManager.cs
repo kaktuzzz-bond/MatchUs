@@ -26,6 +26,16 @@ public class GameManager : Singleton<GameManager>
 
     private int _score;
 
+    private int Score
+    {
+        get => _score;
+        set
+        {
+            _score = value;
+            GameGUI.Instance.UpdateScore(_score);
+        }
+    }
+
 
     private void Awake()
     {
@@ -37,16 +47,12 @@ public class GameManager : Singleton<GameManager>
 
     public void AddScore(int score)
     {
-        _score += score;
-
-        GameGUI.Instance.UpdateScore(_score);
+        Score += score;
     }
 
 
     public void StartLoading(DifficultyLevel difficultyLevel)
     {
-        Debug.LogWarning("LOADING>>>");
-
         _difficultyLevel = difficultyLevel;
 
         _gameFiniteStateMachine.Loading();
@@ -57,9 +63,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME STARTED!");
 
-        _score = 0;
-
-        GameGUI.Instance.UpdateScore(0);
+        Score = 0;
         
         AllowInput = true;
 
@@ -72,6 +76,8 @@ public class GameManager : Singleton<GameManager>
         Debug.LogWarning("GAME PAUSED");
 
         AllowInput = false;
+        
+        _gameFiniteStateMachine.Pause();
         
         OnGamePaused?.Invoke();
     }

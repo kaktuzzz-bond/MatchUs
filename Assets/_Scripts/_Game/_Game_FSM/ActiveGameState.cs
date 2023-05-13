@@ -12,11 +12,17 @@ public class ActiveGameState : IGameState
 
     public void Enter(GameFiniteStateMachine context)
     {
-        Activate().Forget();
+        LoadAsync().Forget();
     }
 
 
-    private static async UniTaskVoid Activate()
+    public void Exit(GameFiniteStateMachine context)
+    {
+        //throw new System.NotImplementedException();
+    }
+
+
+    private static async UniTaskVoid LoadAsync()
     {
         Debug.Log("Active Game State entered ");
 
