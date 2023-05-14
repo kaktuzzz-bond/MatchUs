@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class CommandLogger
@@ -13,37 +14,39 @@ public class CommandLogger
     public void AddCommand(ICommand command)
     {
         Debug.Log($"Adding {command}");
-        
+
         _stack.Push(command);
 
         command.Execute();
-        
+
         CheckStackCount();
     }
-    
 
-    public IEnumerator UndoCommand()
+
+    public async UniTaskVoid UndoCommand()
     {
         if (_stack.Count == 0)
         {
             Debug.Log("Log is empty!");
-            
-            yield break;
+
+            return;
         }
-        
+
         ICommand command;
+
+        List<UniTask> tasks = new();
 
         do
         {
             command = _stack.Pop();
 
-            Debug.Log($"Undo {command}");
-
-            command.Undo();
-
-            yield return _wait;
+            tasks.Add(command.Undo());
         } while (command.GetType() == typeof(RemoveSingleLineCommand));
-        
+
+        Debug.Log($"Undo ({tasks.Count}) commands");
+
+        await UniTask.WhenAll(tasks);
+
         CheckStackCount();
     }
 

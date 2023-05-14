@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DisabledChipState : IChipState
 {
-    public void Enter(Chip chip)
+    public async UniTask Enter(Chip chip)
     {
         Vector3 initPos = chip.transform.position;
 
@@ -11,16 +11,11 @@ public class DisabledChipState : IChipState
 
         chip.Fade(0f);
 
-        VerticalShift(chip, targetPos.y).Forget();
-    }
-
-
-    private async UniTaskVoid VerticalShift(Chip chip, float targetY)
-    {
-        await chip.VerticalShiftTo(targetY);
+        await chip.VerticalShiftAsync(targetPos.y);
 
         chip.Activate(false);
 
         ChipController.Instance.ChipRegistry.Unregister(chip);
     }
+    
 }

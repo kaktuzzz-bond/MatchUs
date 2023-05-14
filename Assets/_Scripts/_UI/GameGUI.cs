@@ -95,11 +95,11 @@ public class GameGUI : Singleton<GameGUI>
 
         SpecialButton = special.GetComponent<GameButton>();
 
-        hint.onClick.AddListener(ChipController.Instance.PointerController.ShowHints);
+        hint.onClick.AddListener(ChipController.Instance.ShowHints);
 
         HintButton = hint.GetComponent<GameButton>();
 
-        undo.onClick.AddListener(() => StartCoroutine(ChipController.Instance.Log.UndoCommand()));
+        undo.onClick.AddListener(ChipController.Instance.UndoCommand);
 
         UndoButton = undo.GetComponent<GameButton>();
 

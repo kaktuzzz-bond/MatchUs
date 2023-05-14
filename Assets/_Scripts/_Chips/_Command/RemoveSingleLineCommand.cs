@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class RemoveSingleLineCommand : ICommand
@@ -31,10 +32,22 @@ public class RemoveSingleLineCommand : ICommand
     }
 
 
-    public void Undo()
+    public async UniTask Undo()
     {
+        Debug.LogWarning($"Restore line : ({_removedLine})");
+        
         Board.Instance.RestoreLine(_removedLine);
 
+        await RestoreLine();
+
+        GameManager.Instance.AddScore(-_score);
+    }
+
+
+    private async UniTask RestoreLine()
+    {
+        List<UniTask> tasks = new();
+        
         foreach (ChipFiniteStateMachine state in _chipStates)
         {
             Vector3 chipPos = state.transform.position;
@@ -43,9 +56,9 @@ public class RemoveSingleLineCommand : ICommand
 
             state.transform.position = chipPos;
 
-            state.SetRestoredState();
+            tasks.Add(state.SetRestoredState());
         }
 
-        GameManager.Instance.AddScore(-_score);
+        await UniTask.WhenAll(tasks);
     }
 }

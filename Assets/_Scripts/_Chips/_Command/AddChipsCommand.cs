@@ -14,11 +14,15 @@ public class AddChipsCommand : ICommand
     }
 
 
-    public void Undo()
+    public async UniTask Undo()
     {
         GameGUI.Instance.SetButtonPressPermission(false);
 
-        RestoreChips().Forget();
+        _addedChips.Reverse();
+
+        await ChipController.Instance.RemoveChipsAsync(_addedChips);
+
+        GameGUI.Instance.SetButtonPressPermission(true);
     }
 
 
@@ -32,12 +36,4 @@ public class AddChipsCommand : ICommand
     }
 
 
-    private async UniTaskVoid RestoreChips()
-    {
-        _addedChips.Reverse();
-
-        await ChipController.Instance.RemoveChipsAsync(_addedChips);
-
-        GameGUI.Instance.SetButtonPressPermission(true);
-    }
 }

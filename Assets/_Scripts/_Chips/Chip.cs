@@ -8,8 +8,6 @@ using UnityEngine;
 [RequireComponent(typeof(ChipFiniteStateMachine))]
 public class Chip : MonoBehaviour
 {
-    public event Action OnInitialized;
-
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
@@ -53,7 +51,7 @@ public class Chip : MonoBehaviour
 
         SetAppearance();
 
-        OnInitialized?.Invoke();
+        ChipFiniteStateMachine.Launch().Forget();
     }
 
 
@@ -84,7 +82,7 @@ public class Chip : MonoBehaviour
     public void Activate(bool isActive) => gameObject.SetActive(isActive);
 
 
-    public async UniTask VerticalShiftTo(float targetY)
+    public async UniTask VerticalShiftAsync(float targetY)
     {
         await transform
                 .DOMoveY(targetY, FadeTime)
@@ -93,7 +91,7 @@ public class Chip : MonoBehaviour
     }
 
 
-    public async UniTask MoveTo(Vector2Int boardPos)
+    public async UniTask MoveToAsync(Vector2Int boardPos)
     {
         Vector3 worldPos = _board[boardPos.x, boardPos.y].position;
 

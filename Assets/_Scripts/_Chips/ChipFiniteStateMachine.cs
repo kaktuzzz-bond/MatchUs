@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class ChipFiniteStateMachine : MonoBehaviour
 {
     [ShowInInspector]
     public IChipState CurrentState { get; private set; }
-    
+
     public Chip Chip { get; private set; }
 
 
@@ -18,7 +19,7 @@ public class ChipFiniteStateMachine : MonoBehaviour
 
 
     //[Button("Launch")]
-    private void Launch()
+    public async UniTask Launch()
     {
         gameObject.SetActive(false);
 
@@ -26,69 +27,60 @@ public class ChipFiniteStateMachine : MonoBehaviour
 
         CurrentState.Enter(Chip);
 
-        SetFadedInState();
+        await SetFadedInState();
     }
 
-   private void SetEnabledState()
+
+    private async UniTask SetEnabledState()
     {
-        SetState(new EnabledChipState());
+        await SetState(new EnabledChipState());
     }
 
-    public void SetFadedOutState()
+
+    public async UniTask SetFadedOutState()
     {
-        SetState(new FadedOutChipState());
+        await SetState(new FadedOutChipState());
     }
 
-    public void SetFadedInState()
+
+    public async UniTask SetFadedInState()
     {
-        SetState(new FadedInChipState());
+        await SetState(new FadedInChipState());
     }
 
-    public void SetSelfDestroyableState()
+
+    public async UniTask SetSelfDestroyableState()
     {
-        SetState(new SelfDestroyableChipState());
+        await SetState(new SelfDestroyableChipState());
     }
 
-    public void SetRestoredState()
+
+    public async UniTask SetRestoredState()
     {
-        SetFadedOutState();
+        await SetFadedOutState();
 
-        SetEnabledState();
+        await SetEnabledState();
     }
+
 
     public static void DisableChips(List<ChipFiniteStateMachine> states)
     {
         foreach (ChipFiniteStateMachine state in states)
         {
-            state.SetDisabledState();
+            state.SetDisabledState().Forget();
         }
     }
-    
-    private void SetDisabledState()
+
+
+    private async UniTask SetDisabledState()
     {
-        SetState(new DisabledChipState());
+        await SetState(new DisabledChipState());
     }
 
 
-    private void SetState(IChipState newState)
+    private async UniTask SetState(IChipState newState)
     {
         CurrentState = newState;
-        CurrentState.Enter(Chip);
+        await CurrentState.Enter(Chip);
     }
-
-
-#region ENABLE / DISABLE
-
-    private void OnEnable()
-    {
-        Chip.OnInitialized += Launch;
-    }
-
-
-    private void OnDisable()
-    {
-        Chip.OnInitialized -= Launch;
-    }
-
-#endregion
 }

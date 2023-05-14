@@ -17,6 +17,7 @@ public class ChipController : Singleton<ChipController>
     [SerializeField]
     private float delayOnDrawChipsInSeconds = 0.08f;
 
+    
     public Vector2Int NextBoardPosition =>
             new(ChipRegistry.Counter % Board.Instance.Width, ChipRegistry.Counter / Board.Instance.Width);
 
@@ -66,6 +67,17 @@ public class ChipController : Singleton<ChipController>
         Log.AddCommand(new ShuffleCommand());
     }
 
+    public void ShowHints()
+    {
+        PointerController.ShowHints();
+    }
+    
+    public void UndoCommand()
+    {
+        Debug.LogWarning($"ChipController Undo");
+        
+        Log.UndoCommand().Forget();
+    }
 
     public void ProcessTappedChip(Chip chip)
     {

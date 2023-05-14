@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SelfDestroyableChipState : IChipState
 {
-    public void Enter(Chip chip)
+    public async UniTask Enter(Chip chip)
     {
         Vector3 initPos = chip.transform.position;
 
@@ -11,13 +11,7 @@ public class SelfDestroyableChipState : IChipState
 
         chip.Fade(0f);
 
-        VerticalShift(chip, targetPos.y).Forget();
-    }
-
-
-    private async UniTaskVoid VerticalShift(Chip chip, float targetY)
-    {
-        await chip.VerticalShiftTo(targetY);
+        await chip.VerticalShiftAsync(targetPos.y);
 
         ChipController.Instance.ChipRegistry.UnregisterAndDestroy(chip);
     }

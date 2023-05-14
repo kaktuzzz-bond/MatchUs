@@ -16,11 +16,19 @@ public class ShuffleCommand : ICommand
     }
 
 
-    public void Undo()
+    public async UniTask Undo()
     {
         GameGUI.Instance.SetButtonPressPermission(false);
 
-        SendChipsToOriginalPositions().Forget();
+        var tasks = Enumerable
+                .Select(
+                        _original,
+                        pair => pair.Value.MoveToAsync(pair.Key))
+                .ToList();
+
+        await UniTask.WhenAll(tasks);
+
+        GameGUI.Instance.SetButtonPressPermission(true);
     }
 
 
@@ -35,25 +43,12 @@ public class ShuffleCommand : ICommand
         var tasks = Enumerable
                 .Select(
                         inGameChips,
-                        (t, i) => modified[i].MoveTo(t.BoardPosition))
+                        (t, i) => modified[i].MoveToAsync(t.BoardPosition))
                 .ToList();
 
         await UniTask.WhenAll(tasks);
 
         GameGUI.Instance.SetButtonPressPermission(true);
     }
-
-
-    private async UniTaskVoid SendChipsToOriginalPositions()
-    {
-        var tasks = Enumerable
-                .Select(
-                        _original,
-                        pair => pair.Value.MoveTo(pair.Key))
-                .ToList();
-
-        await UniTask.WhenAll(tasks);
-
-        GameGUI.Instance.SetButtonPressPermission(true);
-    }
+    
 }

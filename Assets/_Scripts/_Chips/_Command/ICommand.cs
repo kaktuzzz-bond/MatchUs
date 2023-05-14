@@ -1,7 +1,9 @@
+using Cysharp.Threading.Tasks;
+
 public interface ICommand
 {
     void Execute();
 
 
-    void Undo();
+    UniTask Undo();
 }

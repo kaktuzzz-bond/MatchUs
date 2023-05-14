@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnabledChipState : IChipState
 {
-    public void Enter(Chip chip)
+    public async UniTask Enter(Chip chip)
     {
         Vector3 targetPos = Board.Instance[chip.BoardPosition.x, chip.BoardPosition.y].position;
 
@@ -15,6 +15,6 @@ public class EnabledChipState : IChipState
 
         chip.Activate(true);
 
-        chip.VerticalShiftTo(targetPos.y).Forget();
+        await chip.VerticalShiftAsync(targetPos.y);
     }
 }

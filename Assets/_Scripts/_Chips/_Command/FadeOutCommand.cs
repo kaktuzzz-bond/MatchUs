@@ -1,3 +1,6 @@
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+
 public class FadeOutCommand : ICommand
 {
     private readonly Chip _first;
@@ -22,19 +25,21 @@ public class FadeOutCommand : ICommand
 
     public void Execute()
     {
-        _first.ChipFiniteStateMachine.SetFadedOutState();
+        _first.ChipFiniteStateMachine.SetFadedOutState().Forget();
 
-        _second.ChipFiniteStateMachine.SetFadedOutState();
+        _second.ChipFiniteStateMachine.SetFadedOutState().Forget();
 
         GameManager.Instance.AddScore(_score);
     }
 
 
-    public void Undo()
+    public async UniTask Undo()
     {
-        _first.ChipFiniteStateMachine.SetFadedInState();
+        Debug.LogWarning("Undo FADE OUT");
+        
+        await _first.ChipFiniteStateMachine.SetFadedInState();
 
-        _second.ChipFiniteStateMachine.SetFadedInState();
+       await _second.ChipFiniteStateMachine.SetFadedInState();
 
         GameManager.Instance.AddScore(-_score);
     }

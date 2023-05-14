@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class ShowHintsCommand : ICommand
@@ -35,5 +36,8 @@ public class ShowHintsCommand : ICommand
     }
 
 
-    public void Undo() { }
+    public async UniTask Undo()
+    {
+        await UniTask.Yield();
+    }
 }
