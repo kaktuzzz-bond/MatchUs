@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,30 +10,27 @@ public class CommandLogger
     private readonly WaitForSeconds _wait = new(0.2f);
 
 
-    public void ExecuteAndAdd(ICommand command)
-    {
-        AddCommand(command);
-
-        command.Execute();
-    }
-
-
-    private void AddCommand(ICommand command)
+    public void AddCommand(ICommand command)
     {
         Debug.Log($"Adding {command}");
+        
         _stack.Push(command);
-    }
 
+        command.Execute();
+        
+        CheckStackCount();
+    }
+    
 
     public IEnumerator UndoCommand()
     {
         if (_stack.Count == 0)
         {
-            Debug.Log("Stack is empty");
-
+            Debug.Log("Log is empty!");
+            
             yield break;
         }
-
+        
         ICommand command;
 
         do
@@ -45,5 +43,13 @@ public class CommandLogger
 
             yield return _wait;
         } while (command.GetType() == typeof(RemoveSingleLineCommand));
+        
+        CheckStackCount();
+    }
+
+
+    public void CheckStackCount()
+    {
+        GameGUI.Instance.UndoButton.SetInteractivity(_stack.Count > 0);
     }
 }

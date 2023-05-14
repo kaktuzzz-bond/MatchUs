@@ -69,13 +69,6 @@ public class ChipRegistry
     {
         int emptyCells = Board.Instance.BoardCapacity - InGameChips.Count;
 
-        if (emptyCells < Counter)
-        {
-            GameGUI.Instance.AddButton.Disable();
-        }
-        else
-        {
-            GameGUI.Instance.AddButton.Enable();
-        }
+        GameGUI.Instance.AddButton.SetInteractivity(emptyCells >= Counter);
     }
 }

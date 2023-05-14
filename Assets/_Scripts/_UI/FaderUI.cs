@@ -8,7 +8,7 @@ public class FaderUI : MonoBehaviour
 {
     [MinValue(0)]
     public float fadeTime = 1f;
-    
+
     [PropertyRange(0, 1)]
     public float maxFadeValue = 0.8f;
 

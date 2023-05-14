@@ -16,7 +16,7 @@ public class GamePointer : MonoBehaviour
 
     private void Awake()
     {
-        _pointerController = PointerController.Instance;
+        _pointerController = ChipController.Instance.PointerController;
     }
 
 

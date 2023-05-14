@@ -80,7 +80,7 @@ public class CameraController : Singleton<CameraController>
 
     private void DoOnStartTouch(Vector3 position)
     {
-        PointerController.Instance.CheckForHints();
+        ChipController.Instance.PointerController.CheckForHints();
 
         GameGUI.Instance.HideInfo();
 

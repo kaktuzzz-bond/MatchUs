@@ -16,21 +16,14 @@ public class GameButton : MonoBehaviour
     private void SetAbility(bool isEnabled)
     {
         _button.enabled = isEnabled;
-
-        //_button.interactable = isInteractable;
     }
 
 
-    public void Enable()
+    public void SetInteractivity(bool isInteractable)
     {
-        _button.interactable = true;
+        _button.interactable = isInteractable;
     }
-
-
-    public void Disable()
-    {
-        _button.interactable = false;
-    }
+    
 
 
 #region ENABLE / DISABLE

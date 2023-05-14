@@ -22,7 +22,7 @@ public class ChipComparer
         //case: Storage is empty
         if (_storage == null)
         {
-            PointerController.Instance.ShowPointer(PointerController.Selector, chip.BoardPosition);
+            ChipController.Instance.PointerController.ShowPointer(PointerController.Selector, chip.BoardPosition);
 
             _storage = chip;
 
@@ -36,7 +36,7 @@ public class ChipComparer
 
             _storage = null;
 
-            PointerController.Instance.HidePointers();
+            ChipController.Instance.PointerController.HidePointers();
 
             return null;
         }
@@ -48,14 +48,14 @@ public class ChipComparer
 
             _storage = null;
 
-            PointerController.Instance.HidePointers();
+            ChipController.Instance.PointerController.HidePointers();
 
             return new[] { chip, other };
         }
 
-        PointerController.Instance.HidePointers();
+        ChipController.Instance.PointerController.HidePointers();
 
-        PointerController.Instance.ShowPointer(PointerController.Selector, chip.BoardPosition);
+        ChipController.Instance.PointerController.ShowPointer(PointerController.Selector, chip.BoardPosition);
 
         _storage = chip;
 

@@ -31,6 +31,8 @@ public class Board : Singleton<Board>
     [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform dotPrefab;
 
+   
+
     [SerializeField] [FoldoutGroup("Parents")]
     private Transform tileParent;
 
@@ -168,7 +170,7 @@ public class Board : Singleton<Board>
     public void ProcessMatched(Chip first, Chip second)
     {
         // fade out chips
-        ChipController.Instance.Log.ExecuteAndAdd(new FadeOutCommand(first, second));
+        ChipController.Instance.Log.AddCommand(new FadeOutCommand(first, second));
 
         // lines cash
         int firstLine = first.BoardPosition.y;
@@ -205,7 +207,7 @@ public class Board : Singleton<Board>
 
         if (states == null) return;
 
-        ChipController.Instance.Log.ExecuteAndAdd(new RemoveSingleLineCommand(states));
+        ChipController.Instance.Log.AddCommand(new RemoveSingleLineCommand(states));
 
         OnLineRemoved?.Invoke(boardLine);
     }

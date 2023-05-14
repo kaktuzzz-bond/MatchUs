@@ -1,13 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 
 public class ChipController : Singleton<ChipController>
 {
-    [SerializeField]
+    [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform chipPrefab;
 
-    private const float DelayOnDrawChipsInSeconds = 0.08f;
+    [SerializeField] [FoldoutGroup("Prefabs")]
+    private Transform selectorPrefab;
+
+    [SerializeField] [FoldoutGroup("Prefabs")]
+    private Transform hintPrefab;
+    
+    [SerializeField]
+    private float delayOnDrawChipsInSeconds = 0.08f;
 
     public Vector2Int NextBoardPosition =>
             new(ChipRegistry.Counter % Board.Instance.Width, ChipRegistry.Counter / Board.Instance.Width);
@@ -16,11 +24,13 @@ public class ChipController : Singleton<ChipController>
 
     public CommandLogger Log { get; private set; }
 
+    public PointerController PointerController { get; private set; }
+
     private ChipComparer _comparer;
 
     private ChipRandomizer _randomizer;
 
-    private int DelayOnDrawChips => (int)(DelayOnDrawChipsInSeconds * 1000);
+    private int DelayOnDrawChips => (int)(delayOnDrawChipsInSeconds * 1000);
 
 
     private void Awake()
@@ -29,29 +39,31 @@ public class ChipController : Singleton<ChipController>
 
         Log = new CommandLogger();
 
+        PointerController = new PointerController(selectorPrefab, hintPrefab);
+        
         _randomizer = new ChipRandomizer(ChipRegistry, Board.Instance);
 
-        _comparer = new ChipComparer(PointerController.Instance);
+        _comparer = new ChipComparer(PointerController);
     }
 
 
     public void AddChips()
     {
-        PointerController.Instance.HidePointers();
+        PointerController.HidePointers();
 
         _comparer.ClearStorage();
 
-        Log.ExecuteAndAdd(new AddChipsCommand());
+        Log.AddCommand(new AddChipsCommand());
     }
 
 
     public void ShuffleChips()
     {
-        PointerController.Instance.HidePointers();
+        PointerController.HidePointers();
 
         _comparer.ClearStorage();
 
-        Log.ExecuteAndAdd(new ShuffleCommand());
+        Log.AddCommand(new ShuffleCommand());
     }
 
 
@@ -73,6 +85,8 @@ public class ChipController : Singleton<ChipController>
         DrawStartArrayAsync(GameManager.Instance.ChipsOnStartNumber).Forget();
 
         GameManager.Instance.StartGame();
+        
+        Log.CheckStackCount();
     }
 
 

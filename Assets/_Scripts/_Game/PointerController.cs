@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class PointerController : Singleton<PointerController>
+public class PointerController
 {
     public event Action OnPointersHidden;
 
@@ -11,27 +10,12 @@ public class PointerController : Singleton<PointerController>
 
     private const string Hint = "Hint";
 
-    [SerializeField] [FoldoutGroup("Prefabs")]
-    private Transform selectorPrefab;
-
-    [SerializeField] [FoldoutGroup("Prefabs")]
-    private Transform hintPrefab;
-
-    [ShowInInspector]
     private Dictionary<string, ObjectPool> _pools;
-
-    private Board _board;
 
     private bool _isHintShown;
 
 
-    private void Awake()
-    {
-        _board = Board.Instance;
-    }
-
-
-    private void Start()
+    public PointerController(Transform selectorPrefab, Transform hintPrefab)
     {
         _pools = new Dictionary<string, ObjectPool>
         {
@@ -44,7 +28,7 @@ public class PointerController : Singleton<PointerController>
     public void ShowHints()
     {
         HidePointers();
-        
+
         ShowHintsCommand hintsCommand = new();
 
         hintsCommand.OnHintFound += (first, second) =>
@@ -53,7 +37,7 @@ public class PointerController : Singleton<PointerController>
             ShowPointer(Hint, second);
 
             CameraController.Instance.MoveToBoardPosition(Mathf.Max(first.y, second.y));
-            
+
             _isHintShown = true;
         };
 
@@ -67,8 +51,8 @@ public class PointerController : Singleton<PointerController>
                 .Get()
                 .GetComponent<GamePointer>()
                 .SetName()
-                .SetPosition(_board[boardPosition.x, boardPosition.y].position)
-                .SetParent(_board.pointerParent)
+                .SetPosition(Board.Instance[boardPosition.x, boardPosition.y].position)
+                .SetParent(Board.Instance.pointerParent)
                 .Subscribe()
                 .Show();
     }

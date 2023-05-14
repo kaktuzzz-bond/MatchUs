@@ -2513,7 +2513,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1936172045}
   - component: {fileID: 1936172051}
-  - component: {fileID: 1936172053}
   - component: {fileID: 1936172050}
   - component: {fileID: 1936172048}
   - component: {fileID: 1936172047}
@@ -2539,7 +2538,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minSwipeDistance: 0.5
   minTouchDuration: 0.2
-  _isInputAllowed: 0
 --- !u!4 &1936172045
 Transform:
   m_ObjectHideFlags: 0
@@ -2649,21 +2647,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chipPrefab: {fileID: 6589025527896620549, guid: 558fbdc173c62400d9c7d1c0d7d31dc0, type: 3}
-  chipDelay: 10
---- !u!114 &1936172053
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1936172043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc0d65d563ea4187807e094853c0ea08, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   selectorPrefab: {fileID: 8430510590976786998, guid: 8d33d803af66b4539945b05a9bc9b990, type: 3}
   hintPrefab: {fileID: 8430510590976786998, guid: 171981802ad44495ea0fc51201298dc1, type: 3}
+  delayOnDrawChipsInSeconds: 0.08
 --- !u!1 &2013384046
 GameObject:
   m_ObjectHideFlags: 0

@@ -95,7 +95,7 @@ public class GameGUI : Singleton<GameGUI>
 
         SpecialButton = special.GetComponent<GameButton>();
 
-        hint.onClick.AddListener(PointerController.Instance.ShowHints);
+        hint.onClick.AddListener(ChipController.Instance.PointerController.ShowHints);
 
         HintButton = hint.GetComponent<GameButton>();
 
