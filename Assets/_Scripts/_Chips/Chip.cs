@@ -133,8 +133,10 @@ public class Chip : MonoBehaviour
 
     private void MoveDown(int boardLine)
     {
-        if (BoardPosition.y < boardLine ||
-            ChipFiniteStateMachine.CurrentState.GetType() == typeof(DisabledChipState)) return;
+        if (BoardPosition.y < boardLine) return;
+        
+        // if (BoardPosition.y < boardLine ||
+        //     ChipFiniteStateMachine.CurrentState.GetType() == typeof(DisabledChipState)) return;
 
         Debug.Log($"Move down in ({boardLine})");
 

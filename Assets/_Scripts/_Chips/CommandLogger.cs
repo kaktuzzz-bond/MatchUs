@@ -34,18 +34,14 @@ public class CommandLogger
 
         ICommand command;
 
-        List<UniTask> tasks = new();
-
         do
         {
             command = _stack.Pop();
 
-            tasks.Add(command.Undo());
+            await command.Undo();
+
+            await UniTask.WaitForFixedUpdate();
         } while (command.GetType() == typeof(RemoveSingleLineCommand));
-
-        Debug.Log($"Undo ({tasks.Count}) commands");
-
-        await UniTask.WhenAll(tasks);
 
         CheckStackCount();
     }
