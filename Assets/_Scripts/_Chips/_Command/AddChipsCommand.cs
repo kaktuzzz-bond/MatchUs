@@ -20,7 +20,7 @@ public class AddChipsCommand : ICommand
     {
         _addedChips.Reverse();
 
-        ChipController.Instance.RemoveChips(_addedChips);
+        ChipController.Instance.RemoveChipsAsync(_addedChips).Forget();
     }
 
 

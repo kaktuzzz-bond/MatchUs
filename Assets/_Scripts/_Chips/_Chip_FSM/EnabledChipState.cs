@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class EnabledChipState : IChipState
@@ -10,10 +11,10 @@ public class EnabledChipState : IChipState
 
         chip.transform.position = initPos;
 
+        ChipController.Instance.ChipRegistry.Register(chip);
+
         chip.Activate(true);
 
-        ChipController.Instance.ChipRegistry.Register(chip);
-        
-        chip.VerticalShiftTo(targetPos.y);
+        chip.VerticalShiftTo(targetPos.y).Forget();
     }
 }

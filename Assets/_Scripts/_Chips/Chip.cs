@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -20,7 +21,7 @@ public class Chip : MonoBehaviour
 
     private const float MoveTime = 0.3f;
 
-    private const float ShuffleTime = 0.3f;
+    private const float ShuffleTime = 0.6f;
 
     public ChipFiniteStateMachine ChipFiniteStateMachine { get; private set; }
 
@@ -80,24 +81,15 @@ public class Chip : MonoBehaviour
     }
 
 
-    [Button("Activate")]
     public void Activate(bool isActive) => gameObject.SetActive(isActive);
 
 
-    public void VerticalShiftTo(float targetY)
+    public async UniTask VerticalShiftTo(float targetY)
     {
-        transform
+        await transform
                 .DOMoveY(targetY, FadeTime)
-                .SetEase(Ease.Linear);
-    }
-
-
-    public void VerticalShiftTo(float targetY, TweenCallback doOnComplete)
-    {
-        transform
-                .DOMoveY(targetY, FadeTime)
-                .SetEase(Ease.Linear)
-                .OnComplete(doOnComplete);
+                .SetEase(Ease.OutCubic)
+                .ToUniTask();
     }
 
 

@@ -1,4 +1,4 @@
-using DG.Tweening;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class SelfDestroyableChipState : IChipState
@@ -11,8 +11,14 @@ public class SelfDestroyableChipState : IChipState
 
         chip.Fade(0f);
 
-        chip.VerticalShiftTo(
-                targetPos.y,
-                () =>  ChipController.Instance.ChipRegistry.UnregisterAndDestroy(chip));
+        VerticalShift(chip, targetPos.y).Forget();
+    }
+
+
+    private async UniTaskVoid VerticalShift(Chip chip, float targetY)
+    {
+        await chip.VerticalShiftTo(targetY);
+
+        ChipController.Instance.ChipRegistry.UnregisterAndDestroy(chip);
     }
 }

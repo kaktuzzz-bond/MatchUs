@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 
 public class ChipController : Singleton<ChipController>
@@ -10,7 +7,7 @@ public class ChipController : Singleton<ChipController>
     [SerializeField]
     private Transform chipPrefab;
 
-    private const int DelayOnDrawChips = 500;
+    private const int DelayOnDrawChips = 80;
 
     public Vector2Int NextBoardPosition =>
             new(ChipRegistry.Counter % Board.Instance.Width, ChipRegistry.Counter / Board.Instance.Width);
@@ -137,22 +134,25 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public void RemoveChips(List<Chip> chips)
+    public async UniTaskVoid RemoveChipsAsync(List<Chip> chips)
     {
-        StartCoroutine(RemoveChipsRoutine(chips));
-    }
+        int line = chips[0].BoardPosition.y;
 
-
-    private IEnumerator RemoveChipsRoutine(List<Chip> chips)
-    {
         foreach (Chip chip in chips)
         {
-            chip.ChipFiniteStateMachine.SetSelfDestroyableState();
+            if (chip.BoardPosition.y != line)
+            {
+                await UniTask.Delay(DelayOnDrawChips);
 
-            yield return null;
+                line = chip.BoardPosition.y;
+
+                ChipRegistry.CheckBoardCapacity();
+            }
+
+            chip.ChipFiniteStateMachine.SetSelfDestroyableState();
         }
 
-        ChipRegistry.CheckBoardCapacity();
+        await UniTask.Yield();
     }
 
 #endregion

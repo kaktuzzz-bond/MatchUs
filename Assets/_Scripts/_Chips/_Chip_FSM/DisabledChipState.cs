@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class DisabledChipState : IChipState
@@ -10,12 +11,16 @@ public class DisabledChipState : IChipState
 
         chip.Fade(0f);
 
-        chip.VerticalShiftTo(
-                targetPos.y,
-                () =>
-                {
-                    chip.Activate(false);
-                    ChipController.Instance.ChipRegistry.Unregister(chip);
-                });
+        VerticalShift(chip, targetPos.y).Forget();
+    }
+
+
+    private async UniTaskVoid VerticalShift(Chip chip, float targetY)
+    {
+        await chip.VerticalShiftTo(targetY);
+
+        chip.Activate(false);
+
+        ChipController.Instance.ChipRegistry.Unregister(chip);
     }
 }
