@@ -7,12 +7,10 @@ using Cysharp.Threading.Tasks;
 
 public class ChipController : Singleton<ChipController>
 {
-  
-
     [SerializeField]
     private Transform chipPrefab;
 
-    private const int DelayOnDrawChips = 50;
+    private const int DelayOnDrawChips = 500;
 
     public Vector2Int NextBoardPosition =>
             new(ChipRegistry.Counter % Board.Instance.Width, ChipRegistry.Counter / Board.Instance.Width);
@@ -58,9 +56,6 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-   
-
-
     public void ProcessTappedChip(Chip chip)
     {
         var matched = _comparer.IsMatching(chip);
@@ -92,14 +87,12 @@ public class ChipController : Singleton<ChipController>
 
             Vector2Int boardPos = NextBoardPosition;
 
-            if (boardPos.y != line)
+            if (NextLine(ref line, boardPos.y))
             {
-                line = boardPos.y;
-                
                 await UniTask.Delay(DelayOnDrawChips);
             }
 
-            CreateChip(data.shapeIndex, data.colorIndex, boardPos);
+            DrawChip(data.shapeIndex, data.colorIndex, boardPos);
         }
 
         await UniTask.Yield();
@@ -112,14 +105,35 @@ public class ChipController : Singleton<ChipController>
 
         var chips = ChipRegistry.ActiveChips;
 
-        foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex, NextBoardPosition)))
-        {
-            added.Add(newChip);
+        int line = NextBoardPosition.y;
 
-            await UniTask.Yield();
+        foreach (Chip chip in chips)
+        {
+            Vector2Int boardPos = NextBoardPosition;
+
+            if (NextLine(ref line, boardPos.y))
+            {
+                await UniTask.Delay(DelayOnDrawChips);
+            }
+
+            Chip newChip = DrawChip(chip.ShapeIndex, chip.ColorIndex, boardPos);
+
+            added.Add(newChip);
         }
 
+        await UniTask.Yield();
+
         return added;
+    }
+
+
+    private bool NextLine(ref int line, int boardPosY)
+    {
+        if (boardPosY == line) return false;
+
+        line = boardPosY;
+
+        return true;
     }
 
 
@@ -144,7 +158,7 @@ public class ChipController : Singleton<ChipController>
 #endregion
 
 
-    private Chip CreateChip(int shapeIndex, int colorIndex, Vector2Int boardPosition)
+    private Chip DrawChip(int shapeIndex, int colorIndex, Vector2Int boardPosition)
     {
         Vector3 worldPos = Board.Instance[boardPosition.x, boardPosition.y].position;
 
