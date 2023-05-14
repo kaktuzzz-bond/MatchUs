@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class ShuffleCommand : ICommand
@@ -9,30 +10,50 @@ public class ShuffleCommand : ICommand
 
     public void Execute()
     {
+        GameGUI.Instance.SetButtonPressPermission(false);
+
+        SendChipsToNewPositions().Forget();
+    }
+
+
+    public void Undo()
+    {
+        GameGUI.Instance.SetButtonPressPermission(false);
+
+        SendChipsToOriginalPositions().Forget();
+    }
+
+
+    private async UniTaskVoid SendChipsToNewPositions()
+    {
         var inGameChips = ChipController.Instance.ChipRegistry.ActiveChips;
 
         _original = inGameChips.ToDictionary(chip => chip.BoardPosition);
 
         var modified = inGameChips.Shuffle();
 
-        SendChipsToNewPositions(inGameChips, modified);
+        var tasks = Enumerable
+                .Select(
+                        inGameChips,
+                        (t, i) => modified[i].MoveTo(t.BoardPosition))
+                .ToList();
+
+        await UniTask.WhenAll(tasks);
+
+        GameGUI.Instance.SetButtonPressPermission(true);
     }
 
 
-    public void Undo()
+    private async UniTaskVoid SendChipsToOriginalPositions()
     {
-        foreach (var pair in _original)
-        {
-            pair.Value.MoveTo(pair.Key);
-        }
-    }
+        var tasks = Enumerable
+                .Select(
+                        _original,
+                        pair => pair.Value.MoveTo(pair.Key))
+                .ToList();
 
+        await UniTask.WhenAll(tasks);
 
-    private static void SendChipsToNewPositions(IReadOnlyList<Chip> original, IReadOnlyList<Chip> modified)
-    {
-        for (int i = 0; i < original.Count; i++)
-        {
-            modified[i].MoveTo(original[i].BoardPosition);
-        }
+        GameGUI.Instance.SetButtonPressPermission(true);
     }
 }

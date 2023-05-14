@@ -93,13 +93,14 @@ public class Chip : MonoBehaviour
     }
 
 
-    public void MoveTo(Vector2Int boardPos)
+    public async UniTask MoveTo(Vector2Int boardPos)
     {
         Vector3 worldPos = _board[boardPos.x, boardPos.y].position;
 
-        transform
+        await transform
                 .DOMove(worldPos, ShuffleTime)
-                .SetEase(Ease.OutCubic);
+                .SetEase(Ease.OutCubic)
+                .ToUniTask();
     }
 
 
