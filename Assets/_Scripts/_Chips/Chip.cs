@@ -19,7 +19,7 @@ public class Chip : MonoBehaviour
     private const float FadeTime = 0.2f;
 
     private const float MoveTime = 0.3f;
-    
+
     private const float ShuffleTime = 0.3f;
 
     public ChipFiniteStateMachine ChipFiniteStateMachine { get; private set; }
@@ -34,8 +34,6 @@ public class Chip : MonoBehaviour
 
     private Board _board;
 
-    private ChipController _chipController;
-
     private Tween _tween;
 
 #region INITIALIZATION
@@ -43,7 +41,6 @@ public class Chip : MonoBehaviour
     private void Awake()
     {
         _board = Board.Instance;
-        _chipController = ChipController.Instance;
 
         ChipFiniteStateMachine = GetComponent<ChipFiniteStateMachine>();
     }
@@ -120,12 +117,6 @@ public class Chip : MonoBehaviour
     }
 
 #endregion
-
-    // public void Shake()
-    // {
-    //     Vector3 shakeStrength = new Vector3(0.2f, 0.2f, 0f);
-    //     transform.DOShakePosition(1f, shakeStrength, 20);
-    // }
 
 #region MOVING
 
@@ -241,14 +232,14 @@ public class Chip : MonoBehaviour
     private void OnEnable()
     {
         _board.OnLineRemoved += MoveUp;
-        _chipController.OnLineRestored += MoveDown;
+        _board.OnLineRestored += MoveDown;
     }
 
 
     private void OnDisable()
     {
         _board.OnLineRemoved -= MoveUp;
-        _chipController.OnLineRestored -= MoveDown;
+        _board.OnLineRestored -= MoveDown;
     }
 
 #endregion

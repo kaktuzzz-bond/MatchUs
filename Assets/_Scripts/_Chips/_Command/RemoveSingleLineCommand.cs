@@ -33,7 +33,7 @@ public class RemoveSingleLineCommand : ICommand
 
     public void Undo()
     {
-        ChipController.Instance.RestoreLine(_removedLine);
+        Board.Instance.RestoreLine(_removedLine);
 
         foreach (ChipFiniteStateMachine state in _chipStates)
         {

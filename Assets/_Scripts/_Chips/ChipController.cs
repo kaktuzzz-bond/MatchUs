@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 public class ChipController : Singleton<ChipController>
 {
-    public event Action<int> OnLineRestored;
+  
 
     [SerializeField]
     private Transform chipPrefab;
@@ -58,10 +58,7 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public void RestoreLine(int boardLine)
-    {
-        OnLineRestored?.Invoke(boardLine);
-    }
+   
 
 
     public void ProcessTappedChip(Chip chip)
