@@ -133,26 +133,26 @@ public class Chip : MonoBehaviour
 
     private void MoveDown(int boardLine)
     {
-        if (BoardPosition.y < boardLine) return;
-        
-        // if (BoardPosition.y < boardLine ||
-        //     ChipFiniteStateMachine.CurrentState.GetType() == typeof(DisabledChipState)) return;
+        if (BoardPosition.y < boardLine ||
+            ChipFiniteStateMachine.CurrentState.GetType() == typeof(DisabledChipState)) return;
 
-        Debug.Log($"Move down in ({boardLine})");
+        //Debug.Log($"Move down in ({boardLine})");
 
         if (_tween.IsActive())
         {
             _tween.onComplete += () =>
             {
                 _tween = transform
-                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, FadeTime);
+                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime * 0.5f)
+                        .SetEase(Ease.OutCubic);
             };
 
             return;
         }
 
         _tween = transform
-                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime);
+                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime * 0.5f)
+                .SetEase(Ease.OutCubic);
     }
 
 #endregion

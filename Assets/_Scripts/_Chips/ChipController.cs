@@ -74,8 +74,6 @@ public class ChipController : Singleton<ChipController>
     
     public void UndoCommand()
     {
-        Debug.LogWarning($"ChipController Undo");
-        
         Log.UndoCommand().Forget();
     }
 

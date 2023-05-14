@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -13,8 +11,6 @@ public class CommandLogger
 
     public void AddCommand(ICommand command)
     {
-        Debug.Log($"Adding {command}");
-
         _stack.Push(command);
 
         command.Execute();

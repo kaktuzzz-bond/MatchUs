@@ -24,8 +24,6 @@ public class RemoveSingleLineCommand : ICommand
 
     public void Execute()
     {
-        Debug.Log($"Removed single line in ({_removedLine})");
-
         ChipFiniteStateMachine.DisableChips(_chipStates);
 
         GameManager.Instance.AddScore(_score);
@@ -34,8 +32,6 @@ public class RemoveSingleLineCommand : ICommand
 
     public async UniTask Undo()
     {
-        Debug.LogWarning($"Restore line : ({_removedLine})");
-        
         Board.Instance.RestoreLine(_removedLine);
 
         await RestoreLine();
@@ -47,7 +43,7 @@ public class RemoveSingleLineCommand : ICommand
     private async UniTask RestoreLine()
     {
         List<UniTask> tasks = new();
-        
+
         foreach (ChipFiniteStateMachine state in _chipStates)
         {
             Vector3 chipPos = state.transform.position;

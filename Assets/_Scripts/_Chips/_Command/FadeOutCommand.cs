@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 public class FadeOutCommand : ICommand
 {
@@ -35,11 +34,9 @@ public class FadeOutCommand : ICommand
 
     public async UniTask Undo()
     {
-        Debug.LogWarning("Undo FADE OUT");
-        
         await _first.ChipFiniteStateMachine.SetFadedInState();
 
-       await _second.ChipFiniteStateMachine.SetFadedInState();
+        await _second.ChipFiniteStateMachine.SetFadedInState();
 
         GameManager.Instance.AddScore(-_score);
     }
