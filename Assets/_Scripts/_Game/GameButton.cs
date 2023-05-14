@@ -1,5 +1,3 @@
-using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,9 +16,11 @@ public class GameButton : MonoBehaviour
     private void SetAbility(bool isEnabled)
     {
         _button.enabled = isEnabled;
+
         //_button.interactable = isInteractable;
     }
-    
+
+
     public void Enable()
     {
         _button.interactable = true;

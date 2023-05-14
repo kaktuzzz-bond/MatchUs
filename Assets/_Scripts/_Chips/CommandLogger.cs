@@ -9,11 +9,10 @@ public class CommandLogger
     private readonly WaitForSeconds _wait = new(0.2f);
 
 
-
     public void ExecuteAndAdd(ICommand command)
     {
         AddCommand(command);
-        
+
         command.Execute();
     }
 

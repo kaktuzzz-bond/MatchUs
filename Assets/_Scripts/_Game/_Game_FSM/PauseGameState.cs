@@ -1,5 +1,3 @@
-using System;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class PauseGameState : IGameState
@@ -9,9 +7,8 @@ public class PauseGameState : IGameState
         Debug.Log("Pause Game State Entered ");
 
         GameGUI.Instance.SetButtonPressPermission(false);
-        
+
         GameManager.Instance.DisableTimer();
-        
     }
 
 
@@ -20,7 +17,7 @@ public class PauseGameState : IGameState
         Debug.Log("Resume The Game");
 
         GameGUI.Instance.SetButtonPressPermission(true);
-        
+
         GameManager.Instance.EnableTimer();
     }
 }

@@ -13,7 +13,7 @@ public class Board : Singleton<Board>
     public event Action<int> OnLineRemoved;
 
     public event Action<int> OnLineRestored;
-    
+
 #endregion
 
 #region BOARD SETUP
@@ -284,7 +284,8 @@ public class Board : Singleton<Board>
     }
 
 #endregion
-    
+
+
     public void RestoreLine(int boardLine)
     {
         OnLineRestored?.Invoke(boardLine);

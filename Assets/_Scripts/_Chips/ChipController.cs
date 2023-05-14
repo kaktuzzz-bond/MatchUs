@@ -21,7 +21,8 @@ public class ChipController : Singleton<ChipController>
     private ChipRandomizer _randomizer;
 
     private int DelayOnDrawChips => (int)(DelayOnDrawChipsInSeconds * 1000);
-    
+
+
     private void Awake()
     {
         ChipRegistry = new ChipRegistry();

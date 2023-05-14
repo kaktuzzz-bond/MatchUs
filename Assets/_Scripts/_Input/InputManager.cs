@@ -38,8 +38,9 @@ public class InputManager : Singleton<InputManager>
 
     private float _endTouchTime;
 
-    [SerializeField]
     private bool _isInputAllowed;
+
+
     private void Awake()
     {
         _input = new PlayerInput();
@@ -50,10 +51,11 @@ public class InputManager : Singleton<InputManager>
 
     public void SetPlayerInput(bool isEnabled) => _isInputAllowed = isEnabled;
 
+
     private void StartTouch(InputAction.CallbackContext context)
     {
         if (!_isInputAllowed) return;
-        
+
         Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
 
         _startTouchPosition = Utils.ScreenToWorldPosition(_camera, touch);
@@ -84,7 +86,7 @@ public class InputManager : Singleton<InputManager>
     private void EndTouch(InputAction.CallbackContext context)
     {
         if (!_isInputAllowed) return;
-        
+
         Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
 
         _endTouchPosition = Utils.ScreenToWorldPosition(_camera, touch);
@@ -144,7 +146,7 @@ public class InputManager : Singleton<InputManager>
 
         _input.Touch.Press.started += StartTouch;
         _input.Touch.Press.canceled += EndTouch;
-        
+
         GameGUI.Instance.OnButtonPressPermission += SetPlayerInput;
     }
 
@@ -155,7 +157,7 @@ public class InputManager : Singleton<InputManager>
         _input.Touch.Press.canceled -= EndTouch;
 
         GameGUI.Instance.OnButtonPressPermission -= SetPlayerInput;
-        
+
         _input.Disable();
     }
 

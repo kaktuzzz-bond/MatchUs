@@ -10,7 +10,7 @@ public class ShowHintsCommand : ICommand
 
     public void Execute()
     {
-        var inGameChips =  ChipController.Instance.ChipRegistry.ActiveChips;
+        var inGameChips = ChipController.Instance.ChipRegistry.ActiveChips;
 
         int count = inGameChips.Count;
 
@@ -36,6 +36,4 @@ public class ShowHintsCommand : ICommand
 
 
     public void Undo() { }
-    
-    
 }

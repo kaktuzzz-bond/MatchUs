@@ -17,8 +17,8 @@ public class ChipRegistry
             .ToList();
 
     private readonly List<Chip> _allChips = new();
-    
-    
+
+
     public void Register(Chip chip)
     {
         if (!_allChips.Contains(chip))
