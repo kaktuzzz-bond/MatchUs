@@ -9,7 +9,7 @@ public class ShuffleCommand : ICommand
 
     public void Execute()
     {
-        var inGameChips = ChipRegistry.Instance.ActiveChips;
+        var inGameChips = ChipController.Instance.ChipRegistry.ActiveChips;
 
         _original = inGameChips.ToDictionary(chip => chip.BoardPosition);
 

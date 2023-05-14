@@ -2,50 +2,38 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Sirenix.OdinInspector;
 
-[RequireComponent(typeof(ChipRegistry))]
 public class ChipController : Singleton<ChipController>
 {
     public event Action<int> OnLineRestored;
 
-    public event Action<List<Chip>> OnChipsAdded;
-
     [SerializeField]
     private Transform chipPrefab;
 
-    [SerializeField]
-    private int chipDelay = 10;
+    private const int DelayOnDrawChips = 50;
 
     public Vector2Int NextBoardPosition =>
-            new(_chipRegistry.Counter % _board.Width, _chipRegistry.Counter / _board.Width);
+            new(ChipRegistry.Counter % Board.Instance.Width, ChipRegistry.Counter / Board.Instance.Width);
 
-    [ShowInInspector]
-    public Stack<ICommand> LogStack => Log.Stack;
+    public ChipRegistry ChipRegistry { get; private set; }
 
-    public CommandLogger Log { get; } = new();
+    public CommandLogger Log { get; private set; }
 
     private ChipComparer _comparer;
 
-#region COMPONENTS LINKS
-
-    private Board _board;
-
-    private GameManager _gameManager;
-
-    private ChipRegistry _chipRegistry;
-
-#endregion
+    private ChipRandomizer _randomizer;
 
 
     private void Awake()
     {
-        _board = Board.Instance;
-        _gameManager = GameManager.Instance;
-        _chipRegistry = ChipRegistry.Instance;
+        ChipRegistry = new ChipRegistry();
+
+        Log = new CommandLogger();
+
+        _randomizer = new ChipRandomizer(ChipRegistry, Board.Instance);
+
         _comparer = new ChipComparer(PointerController.Instance);
     }
 
@@ -91,7 +79,7 @@ public class ChipController : Singleton<ChipController>
 
     private void DrawStartArray()
     {
-        DrawStartArrayAsync(_gameManager.ChipsOnStartNumber).Forget();
+        DrawStartArrayAsync(GameManager.Instance.ChipsOnStartNumber).Forget();
 
         GameManager.Instance.StartGame();
     }
@@ -99,11 +87,22 @@ public class ChipController : Singleton<ChipController>
 
     private async UniTaskVoid DrawStartArrayAsync(int count)
     {
+        int line = NextBoardPosition.y;
+
         for (int i = 0; i < count; i++)
         {
-            CreateChip();
+            ChipData data = _randomizer.GetChipDataByChance();
 
-            await UniTask.Delay(chipDelay);
+            Vector2Int boardPos = NextBoardPosition;
+
+            if (boardPos.y != line)
+            {
+                line = boardPos.y;
+                
+                await UniTask.Delay(DelayOnDrawChips);
+            }
+
+            CreateChip(data.shapeIndex, data.colorIndex, boardPos);
         }
 
         await UniTask.Yield();
@@ -114,9 +113,9 @@ public class ChipController : Singleton<ChipController>
     {
         List<Chip> added = new();
 
-        var chips = ChipRegistry.Instance.ActiveChips;
+        var chips = ChipRegistry.ActiveChips;
 
-        foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex)))
+        foreach (Chip newChip in chips.Select(chip => CreateChip(chip.ShapeIndex, chip.ColorIndex, NextBoardPosition)))
         {
             added.Add(newChip);
 
@@ -142,32 +141,17 @@ public class ChipController : Singleton<ChipController>
             yield return null;
         }
 
-        ChipRegistry.Instance.CheckBoardCapacity();
+        ChipRegistry.CheckBoardCapacity();
     }
 
 #endregion
 
-#region CHIP CREATION
 
-    private Chip CreateChip(int shapeIndex, int colorIndex)
+    private Chip CreateChip(int shapeIndex, int colorIndex, Vector2Int boardPosition)
     {
-        return CreateNewChip(shapeIndex, colorIndex, NextBoardPosition);
-    }
+        Vector3 worldPos = Board.Instance[boardPosition.x, boardPosition.y].position;
 
-
-    private Chip CreateChip()
-    {
-        ChipData data = GetChipDataByChance();
-
-        return CreateNewChip(data.shapeIndex, data.colorIndex, NextBoardPosition);
-    }
-
-
-    private Chip CreateNewChip(int shapeIndex, int colorIndex, Vector2Int boardPosition)
-    {
-        Vector3 worldPos = _board[boardPosition.x, boardPosition.y].position;
-
-        Transform instance = Instantiate(chipPrefab, worldPos, Quaternion.identity, _board.chipParent);
+        Transform instance = Instantiate(chipPrefab, worldPos, Quaternion.identity, Board.Instance.chipParent);
 
         if (!instance.TryGetComponent(out Chip chip)) return null;
 
@@ -178,54 +162,6 @@ public class ChipController : Singleton<ChipController>
         return chip;
     }
 
-#endregion
-
-#region CHIP DATA
-
-    private ChipData GetChipDataByChance()
-    {
-        return Random.value <= _gameManager.ChanceForRandom
-                ? GetRandomChipData()
-                : GetChipDataForHardLevel();
-    }
-
-
-    private ChipData GetRandomChipData()
-    {
-        int shapeIndex = Random.Range(0, _board.ShapePalletLength);
-
-        int colorIndex = Random.Range(0, _board.ColorPalletLength);
-
-        return new ChipData(shapeIndex, colorIndex);
-    }
-
-
-    private ChipData GetChipDataForHardLevel()
-    {
-        List<int> shapeIndexes = new(_board.ShapeIndexes);
-        List<int> colorIndexes = new(_board.ColorIndexes);
-
-        if (_chipRegistry.Counter > 0)
-        {
-            shapeIndexes.Remove(_chipRegistry.InGameChips.Last().ShapeIndex);
-            colorIndexes.Remove(_chipRegistry.InGameChips.Last().ColorIndex);
-
-            if (_chipRegistry.Counter >= _board.Width)
-            {
-                Chip chip = _chipRegistry.InGameChips[^_board.Width];
-
-                shapeIndexes.Remove(chip.ShapeIndex);
-                colorIndexes.Remove(chip.ColorIndex);
-            }
-        }
-
-        int shapeIndex = shapeIndexes[Random.Range(0, shapeIndexes.Count)];
-        int colorIndex = colorIndexes[Random.Range(0, colorIndexes.Count)];
-
-        return new ChipData(shapeIndex, colorIndex);
-    }
-
-#endregion
 
 #region ENABLE / DISABLE
 

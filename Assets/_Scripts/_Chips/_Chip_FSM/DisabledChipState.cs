@@ -15,7 +15,7 @@ public class DisabledChipState : IChipState
                 () =>
                 {
                     chip.Activate(false);
-                    ChipRegistry.Instance.Unregister(chip);
+                    ChipController.Instance.ChipRegistry.Unregister(chip);
                 });
     }
 }

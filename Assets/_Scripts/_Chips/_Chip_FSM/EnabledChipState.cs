@@ -12,7 +12,7 @@ public class EnabledChipState : IChipState
 
         chip.Activate(true);
 
-        ChipRegistry.Instance.Register(chip);
+        ChipController.Instance.ChipRegistry.Register(chip);
         
         chip.VerticalShiftTo(targetPos.y);
     }

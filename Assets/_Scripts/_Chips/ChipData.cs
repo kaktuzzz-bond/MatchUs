@@ -1,8 +1,8 @@
 public struct ChipData
 {
-    public int shapeIndex;
+    public readonly int shapeIndex;
 
-    public int colorIndex;
+    public readonly int colorIndex;
 
 
     public ChipData(int shapeIndex, int colorIndex)

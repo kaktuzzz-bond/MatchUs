@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CommandLogger
 {
-    public Stack<ICommand> Stack { get; } = new();
+    private readonly Stack<ICommand> _stack = new();
 
     private readonly WaitForSeconds _wait = new(0.2f);
 
@@ -21,13 +21,13 @@ public class CommandLogger
     private void AddCommand(ICommand command)
     {
         Debug.Log($"Adding {command}");
-        Stack.Push(command);
+        _stack.Push(command);
     }
 
 
     public IEnumerator UndoCommand()
     {
-        if (Stack.Count == 0)
+        if (_stack.Count == 0)
         {
             Debug.Log("Stack is empty");
 
@@ -38,7 +38,7 @@ public class CommandLogger
 
         do
         {
-            command = Stack.Pop();
+            command = _stack.Pop();
 
             Debug.Log($"Undo {command}");
 

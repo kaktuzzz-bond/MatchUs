@@ -13,6 +13,6 @@ public class SelfDestroyableChipState : IChipState
 
         chip.VerticalShiftTo(
                 targetPos.y,
-                () => ChipRegistry.Instance.UnregisterAndDestroy(chip));
+                () =>  ChipController.Instance.ChipRegistry.UnregisterAndDestroy(chip));
     }
 }

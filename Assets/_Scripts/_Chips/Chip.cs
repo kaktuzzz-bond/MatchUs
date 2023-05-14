@@ -18,7 +18,9 @@ public class Chip : MonoBehaviour
 
     private const float FadeTime = 0.2f;
 
-    private const float MoveTime = 0.5f;
+    private const float MoveTime = 0.3f;
+    
+    private const float ShuffleTime = 0.3f;
 
     public ChipFiniteStateMachine ChipFiniteStateMachine { get; private set; }
 
@@ -107,8 +109,14 @@ public class Chip : MonoBehaviour
         Vector3 worldPos = _board[boardPos.x, boardPos.y].position;
 
         transform
-                .DOMove(worldPos, MoveTime)
+                .DOMove(worldPos, ShuffleTime)
                 .SetEase(Ease.OutCubic);
+    }
+
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
     }
 
 #endregion

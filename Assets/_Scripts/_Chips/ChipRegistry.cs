@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 
-public class ChipRegistry : Singleton<ChipRegistry>
+public class ChipRegistry
 {
     [ShowInInspector, ReadOnly]
     public int Counter => InGameChips.Count;
@@ -48,7 +48,7 @@ public class ChipRegistry : Singleton<ChipRegistry>
 
         InGameChips.Remove(chip);
 
-        Destroy(chip.gameObject);
+        chip.Destroy();
 
         CameraController.Instance.MoveToBottomBound();
 
