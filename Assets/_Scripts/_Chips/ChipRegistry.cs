@@ -71,11 +71,11 @@ public class ChipRegistry
 
         if (emptyCells < Counter)
         {
-            GameGUI.Instance.AddButton.MakeDeselectable();
+            GameGUI.Instance.AddButton.Disable();
         }
         else
         {
-            GameGUI.Instance.AddButton.MakeSelectable();
+            GameGUI.Instance.AddButton.Enable();
         }
     }
 }

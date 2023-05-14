@@ -8,6 +8,8 @@ using TMPro;
 
 public class GameGUI : Singleton<GameGUI>
 {
+    public event Action<bool> OnButtonPressPermission;
+
     public GameButton AddButton { get; private set; }
 
     public GameButton SpecialButton { get; private set; }
@@ -55,6 +57,12 @@ public class GameGUI : Singleton<GameGUI>
     private Button shop;
 
 #endregion
+
+
+    public void SetButtonPressPermission(bool isAllowed)
+    {
+        OnButtonPressPermission?.Invoke(isAllowed);
+    }
 
 
     public Vector3[] GetHeaderCorners() => Utils.GetRectWorldCorners(header);

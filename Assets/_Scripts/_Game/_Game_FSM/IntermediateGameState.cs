@@ -42,7 +42,7 @@ public class IntermediateGameState : IGameState
     {
         Debug.Log("Saving --> MAIN MENU ");
 
-        InputManager.Instance.DisablePlayerInput();
+        GameGUI.Instance.SetButtonPressPermission(false);
 
         GameManager.Instance.DisableTimer();
 

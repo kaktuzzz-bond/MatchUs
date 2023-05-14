@@ -8,7 +8,7 @@ public class PauseGameState : IGameState
     {
         Debug.Log("Pause Game State Entered ");
 
-        InputManager.Instance.DisablePlayerInput();
+        GameGUI.Instance.SetButtonPressPermission(false);
         
         GameManager.Instance.DisableTimer();
         
@@ -19,7 +19,7 @@ public class PauseGameState : IGameState
     {
         Debug.Log("Resume The Game");
 
-        InputManager.Instance.EnablePlayerInput();
+        GameGUI.Instance.SetButtonPressPermission(true);
         
         GameManager.Instance.EnableTimer();
     }

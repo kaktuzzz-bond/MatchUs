@@ -15,28 +15,36 @@ public class GameButton : MonoBehaviour
     }
 
 
-    public void MakeDeselectable()
+    private void SetAbility(bool isEnabled)
     {
-        _button.interactable = false;
+        _button.enabled = isEnabled;
+        //_button.interactable = isInteractable;
     }
-
-
-    public void MakeSelectable()
+    
+    public void Enable()
     {
         _button.interactable = true;
     }
 
 
-    public void Enable()
-    {
-        MakeSelectable();
-        _button.enabled = true;
-    }
-
-
     public void Disable()
     {
-        MakeDeselectable();
-        _button.enabled = false;
+        _button.interactable = false;
     }
+
+
+#region ENABLE / DISABLE
+
+    private void OnEnable()
+    {
+        GameGUI.Instance.OnButtonPressPermission += SetAbility;
+    }
+
+
+    private void OnDisable()
+    {
+        GameGUI.Instance.OnButtonPressPermission -= SetAbility;
+    }
+
+#endregion
 }

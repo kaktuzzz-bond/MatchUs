@@ -66,7 +66,7 @@ public class GameManager : Singleton<GameManager>
 
         EnableTimer();
 
-        InputManager.Instance.EnablePlayerInput();
+        InputManager.Instance.SetPlayerInput(true);
     }
 
 
@@ -82,7 +82,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME OVER!");
 
-        InputManager.Instance.DisablePlayerInput();
+        InputManager.Instance.SetPlayerInput(false);
 
         DisableTimer();
     }

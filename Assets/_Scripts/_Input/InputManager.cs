@@ -48,10 +48,8 @@ public class InputManager : Singleton<InputManager>
     }
 
 
-    public void EnablePlayerInput() => _isInputAllowed = true;
-    
-    public void DisablePlayerInput() => _isInputAllowed = false;
-    
+    public void SetPlayerInput(bool isEnabled) => _isInputAllowed = isEnabled;
+
     private void StartTouch(InputAction.CallbackContext context)
     {
         if (!_isInputAllowed) return;
@@ -146,6 +144,8 @@ public class InputManager : Singleton<InputManager>
 
         _input.Touch.Press.started += StartTouch;
         _input.Touch.Press.canceled += EndTouch;
+        
+        GameGUI.Instance.OnButtonPressPermission += SetPlayerInput;
     }
 
 
@@ -154,6 +154,8 @@ public class InputManager : Singleton<InputManager>
         _input.Touch.Press.started -= StartTouch;
         _input.Touch.Press.canceled -= EndTouch;
 
+        GameGUI.Instance.OnButtonPressPermission -= SetPlayerInput;
+        
         _input.Disable();
     }
 

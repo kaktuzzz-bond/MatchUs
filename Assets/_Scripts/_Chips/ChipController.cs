@@ -7,7 +7,7 @@ public class ChipController : Singleton<ChipController>
     [SerializeField]
     private Transform chipPrefab;
 
-    private const int DelayOnDrawChips = 80;
+    private const float DelayOnDrawChipsInSeconds = 0.08f;
 
     public Vector2Int NextBoardPosition =>
             new(ChipRegistry.Counter % Board.Instance.Width, ChipRegistry.Counter / Board.Instance.Width);
@@ -20,7 +20,8 @@ public class ChipController : Singleton<ChipController>
 
     private ChipRandomizer _randomizer;
 
-
+    private int DelayOnDrawChips => (int)(DelayOnDrawChipsInSeconds * 1000);
+    
     private void Awake()
     {
         ChipRegistry = new ChipRegistry();
@@ -134,7 +135,7 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public async UniTaskVoid RemoveChipsAsync(List<Chip> chips)
+    public async UniTask RemoveChipsAsync(List<Chip> chips)
     {
         int line = chips[0].BoardPosition.y;
 

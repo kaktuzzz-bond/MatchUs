@@ -10,20 +10,36 @@ public class AddChipsCommand : ICommand
 
     public void Execute()
     {
-        RecordAdded().Forget();
+        GameGUI.Instance.SetButtonPressPermission(false);
 
-        ChipController.Instance.ChipRegistry.CheckBoardCapacity();
+        RecordChips().Forget();
     }
 
 
     public void Undo()
     {
-        _addedChips.Reverse();
+        GameGUI.Instance.SetButtonPressPermission(false);
 
-        ChipController.Instance.RemoveChipsAsync(_addedChips).Forget();
+        RestoreChips().Forget();
     }
 
 
-    private async UniTask RecordAdded() =>
-            _addedChips = await ChipController.Instance.CloneInGameChipsAsync();
+    private async UniTaskVoid RecordChips()
+    {
+        _addedChips = await ChipController.Instance.CloneInGameChipsAsync();
+
+        ChipController.Instance.ChipRegistry.CheckBoardCapacity();
+
+        GameGUI.Instance.SetButtonPressPermission(true);
+    }
+
+
+    private async UniTaskVoid RestoreChips()
+    {
+        _addedChips.Reverse();
+
+        await ChipController.Instance.RemoveChipsAsync(_addedChips);
+
+        GameGUI.Instance.SetButtonPressPermission(true);
+    }
 }
