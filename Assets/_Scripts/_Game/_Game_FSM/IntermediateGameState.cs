@@ -33,7 +33,7 @@ public class IntermediateGameState : IGameState
 
         await SceneManager.LoadSceneAsync(LoadingSceneIndex);
 
-        GameFiniteStateMachine.Instance.Active();
+        GameManager.Instance.GameFiniteStateMachine.Active();
     }
 
 
@@ -49,6 +49,6 @@ public class IntermediateGameState : IGameState
 
         await SceneManager.LoadSceneAsync(LoadingSceneIndex);
 
-        GameFiniteStateMachine.Instance.Initial();
+        GameManager.Instance.GameFiniteStateMachine.Initial();
     }
 }

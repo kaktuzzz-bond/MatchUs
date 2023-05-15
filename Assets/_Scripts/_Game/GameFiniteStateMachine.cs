@@ -1,8 +1,6 @@
-using Sirenix.OdinInspector;
 
-public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
+public class GameFiniteStateMachine
 {
-    [ShowInInspector]
     public IGameState CurrentGameState { get; private set; }
 
     public bool IsExitGame { get; private set; }
@@ -16,7 +14,7 @@ public class GameFiniteStateMachine : Singleton<GameFiniteStateMachine>
     private readonly PauseGameState _pause = new();
 
 
-    private void Start()
+    public GameFiniteStateMachine()
     {
         CurrentGameState = _initial;
     }

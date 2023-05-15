@@ -1,11 +1,14 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
-[RequireComponent(typeof(GameFiniteStateMachine))]
 public class GameManager : Singleton<GameManager>
 {
     private DifficultyLevel _difficultyLevel;
 
-    private GameFiniteStateMachine _gameFiniteStateMachine;
+    [ShowInInspector]
+    public IGameState CurrentGameState => GameFiniteStateMachine.CurrentGameState;
+
+    public GameFiniteStateMachine GameFiniteStateMachine { get; } = new();
 
     public int ChipsOnStartNumber => GameConfig.GetChipsOnStart(_difficultyLevel);
 
@@ -37,8 +40,6 @@ public class GameManager : Singleton<GameManager>
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
-
-        _gameFiniteStateMachine = GameFiniteStateMachine.Instance;
     }
 
 
@@ -52,7 +53,7 @@ public class GameManager : Singleton<GameManager>
     {
         _difficultyLevel = difficultyLevel;
 
-        _gameFiniteStateMachine.Loading();
+        GameFiniteStateMachine.Loading();
     }
 
 
@@ -72,7 +73,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME PAUSED");
 
-        _gameFiniteStateMachine.Pause();
+        GameFiniteStateMachine.Pause();
     }
 
 
@@ -88,7 +89,7 @@ public class GameManager : Singleton<GameManager>
 
     public void ExitGame()
     {
-        _gameFiniteStateMachine.Loading();
+        GameFiniteStateMachine.Loading();
     }
 
 

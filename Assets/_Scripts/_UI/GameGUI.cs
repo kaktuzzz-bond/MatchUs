@@ -83,18 +83,12 @@ public class GameGUI : Singleton<GameGUI>
     }
 
 
-    private void OnDestroy()
-    {
-        DOTween.KillAll();
-    }
-
-
 #region INITIALIZATION
 
     private void Init()
     {
         // game buttons
-        add.onClick.AddListener( ChipController.Instance.AddChips);
+        add.onClick.AddListener(ChipController.Instance.AddChips);
 
         AddButton = add.GetComponent<GameButton>();
 
@@ -122,7 +116,6 @@ public class GameGUI : Singleton<GameGUI>
 
 #region ACTIONS
 
-    
     private void PauseClicked()
     {
         Debug.LogWarning("PAUSE");
@@ -155,7 +148,6 @@ public class GameGUI : Singleton<GameGUI>
 
 #endregion
 
-    
 #region TEXT
 
     public void UpdateScore(int scoreValue)
