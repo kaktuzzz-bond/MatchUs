@@ -38,6 +38,8 @@ public class ShowHintsCommand : ICommand
 
     public async UniTask Undo()
     {
+        GameGUI.Instance.HideInfo();
+        
         await UniTask.Yield();
     }
 }

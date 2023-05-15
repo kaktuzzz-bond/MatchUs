@@ -12,6 +12,8 @@ public class ShuffleCommand : ICommand
     {
         GameGUI.Instance.SetButtonPressPermission(false);
 
+        GameGUI.Instance.HideInfo();
+                
         SendChipsToNewPositions().Forget();
     }
 

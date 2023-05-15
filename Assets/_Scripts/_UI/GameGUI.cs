@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -82,12 +83,18 @@ public class GameGUI : Singleton<GameGUI>
     }
 
 
+    private void OnDestroy()
+    {
+        DOTween.KillAll();
+    }
+
+
 #region INITIALIZATION
 
     private void Init()
     {
         // game buttons
-        add.onClick.AddListener(ChipController.Instance.AddChips);
+        add.onClick.AddListener( ChipController.Instance.AddChips);
 
         AddButton = add.GetComponent<GameButton>();
 
@@ -115,6 +122,7 @@ public class GameGUI : Singleton<GameGUI>
 
 #region ACTIONS
 
+    
     private void PauseClicked()
     {
         Debug.LogWarning("PAUSE");
@@ -132,10 +140,10 @@ public class GameGUI : Singleton<GameGUI>
     }
 
 
-    public void ShowInfo() => infoPanel.Show();
+    public void ShowInfo() => infoPanel.Show().Forget();
 
 
-    public void HideInfo() => infoPanel.Hide();
+    public void HideInfo() => infoPanel.Hide().Forget();
 
 
     public async UniTask SetupGUIAndFadeOut()
@@ -147,6 +155,7 @@ public class GameGUI : Singleton<GameGUI>
 
 #endregion
 
+    
 #region TEXT
 
     public void UpdateScore(int scoreValue)

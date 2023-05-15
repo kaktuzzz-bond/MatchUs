@@ -25,7 +25,7 @@ public class ChipFiniteStateMachine : MonoBehaviour
 
         CurrentState = new EnabledChipState();
 
-        CurrentState.Enter(Chip);
+        await CurrentState.Enter(Chip);
 
         await SetFadedInState();
     }

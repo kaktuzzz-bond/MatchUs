@@ -38,6 +38,8 @@ public class FadeOutCommand : ICommand
 
         await _second.ChipFiniteStateMachine.SetFadedInState();
 
+        CameraController.Instance.MoveToBoardPosition(_second.BoardPosition.y);
+
         GameManager.Instance.AddScore(-_score);
     }
 }

@@ -28,7 +28,7 @@ public class ChipRegistry
 
         InGameChips.Add(chip);
 
-        CameraController.Instance.MoveToBottomBound();
+        //CameraController.Instance.MoveToBottomBound();
     }
 
 
@@ -36,7 +36,7 @@ public class ChipRegistry
     {
         InGameChips.Remove(chip);
 
-        CameraController.Instance.MoveToBottomBound();
+        //CameraController.Instance.MoveToBottomBound();
 
         CheckCounter();
     }
@@ -50,7 +50,7 @@ public class ChipRegistry
 
         chip.Destroy();
 
-        CameraController.Instance.MoveToBottomBound();
+        //CameraController.Instance.MoveToBottomBound();
 
         CheckCounter();
     }

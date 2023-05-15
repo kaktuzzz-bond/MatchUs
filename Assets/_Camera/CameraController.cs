@@ -82,7 +82,8 @@ public class CameraController : Singleton<CameraController>
     {
         ChipController.Instance.PointerController.CheckForHints();
 
-        GameGUI.Instance.HideInfo();
+        //TODO uncomment if it's necessary 
+        //GameGUI.Instance.HideInfo();
 
         _isStopMovement = Mathf.Abs(_camera.velocity.y) > cameraVelocityThreshold;
 

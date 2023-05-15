@@ -13,11 +13,10 @@ public class ChipController : Singleton<ChipController>
 
     [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform hintPrefab;
-    
+
     [SerializeField]
     private float delayOnDrawChipsInSeconds = 0.08f;
 
-    
     public Vector2Int NextBoardPosition =>
             new(ChipRegistry.Counter % Board.Instance.Width, ChipRegistry.Counter / Board.Instance.Width);
 
@@ -41,7 +40,7 @@ public class ChipController : Singleton<ChipController>
         Log = new CommandLogger();
 
         PointerController = new PointerController(selectorPrefab, hintPrefab);
-        
+
         _randomizer = new ChipRandomizer(ChipRegistry, Board.Instance);
 
         _comparer = new ChipComparer(PointerController);
@@ -67,15 +66,18 @@ public class ChipController : Singleton<ChipController>
         Log.AddCommand(new ShuffleCommand());
     }
 
+
     public void ShowHints()
     {
         PointerController.ShowHints();
     }
-    
+
+
     public void UndoCommand()
     {
         Log.UndoCommand().Forget();
     }
+
 
     public void ProcessTappedChip(Chip chip)
     {
@@ -95,7 +97,7 @@ public class ChipController : Singleton<ChipController>
         DrawStartArrayAsync(GameManager.Instance.ChipsOnStartNumber).Forget();
 
         GameManager.Instance.StartGame();
-        
+
         Log.CheckStackCount();
     }
 
@@ -137,14 +139,14 @@ public class ChipController : Singleton<ChipController>
             if (NextLine(ref line, boardPos.y))
             {
                 await UniTask.Delay(DelayOnDrawChips);
+
+                CameraController.Instance.MoveToBottomBound();
             }
 
             Chip newChip = DrawChip(chip.ShapeIndex, chip.ColorIndex, boardPos);
 
             added.Add(newChip);
         }
-
-        await UniTask.Yield();
 
         return added;
     }
@@ -166,19 +168,17 @@ public class ChipController : Singleton<ChipController>
 
         foreach (Chip chip in chips)
         {
-            if (chip.BoardPosition.y != line)
+            if (NextLine(ref line, chip.BoardPosition.y))
             {
                 await UniTask.Delay(DelayOnDrawChips);
 
-                line = chip.BoardPosition.y;
-
-                ChipRegistry.CheckBoardCapacity();
+                CameraController.Instance.MoveToBottomBound();
             }
 
-            chip.ChipFiniteStateMachine.SetSelfDestroyableState();
-        }
+            chip.ChipFiniteStateMachine.SetSelfDestroyableState().Forget();
 
-        await UniTask.Yield();
+            ChipRegistry.CheckBoardCapacity();
+        }
     }
 
 #endregion

@@ -39,6 +39,8 @@ public class CommandLogger
             await UniTask.WaitForFixedUpdate();
         } while (command.GetType() == typeof(RemoveSingleLineCommand));
 
+        GameGUI.Instance.HideInfo();
+                
         CheckStackCount();
     }
 

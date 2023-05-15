@@ -10,6 +10,8 @@ public class AddChipsCommand : ICommand
     {
         GameGUI.Instance.SetButtonPressPermission(false);
 
+        GameGUI.Instance.HideInfo();
+        
         RecordChips().Forget();
     }
 
@@ -34,6 +36,4 @@ public class AddChipsCommand : ICommand
 
         GameGUI.Instance.SetButtonPressPermission(true);
     }
-
-
 }

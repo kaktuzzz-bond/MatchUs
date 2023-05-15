@@ -1,9 +1,10 @@
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
 public class InfoPanel : MonoBehaviour
 {
-    private bool _isShown;
+    public bool IsShown { get; private set; }
 
     private const float InfoJump = 2f;
 
@@ -22,35 +23,40 @@ public class InfoPanel : MonoBehaviour
     }
 
 
-    public void Show()
+    public async UniTask Show()
     {
-        if (_isShown) return;
+        if (IsShown) return;
+
+        GameGUI.Instance.HintButton.SetInteractivity(false);
 
         Debug.Log("Show Info");
 
         gameObject.SetActive(true);
 
-        _isShown = true;
+        IsShown = true;
 
-        transform
+        await transform
                 .DOMoveY(_showedPositionY, InfoJumpDuration)
-                .SetEase(Ease.OutBack);
+                .SetEase(Ease.OutBack)
+                .ToUniTask();
     }
 
 
-    public void Hide()
+    public async UniTask Hide()
     {
-        if (!_isShown) return;
+        if (!IsShown) return;
 
         Debug.Log("Hide Info");
 
-        transform
+        await transform
                 .DOMoveY(_hiddenPositionY, InfoJumpDuration)
                 .SetEase(Ease.InBack)
-                .onComplete += () =>
-        {
-            gameObject.SetActive(false);
-            _isShown = false;
-        };
+                .ToUniTask();
+
+        gameObject.SetActive(false);
+
+        IsShown = false;
+
+        GameGUI.Instance.HintButton.SetInteractivity(true);
     }
 }
