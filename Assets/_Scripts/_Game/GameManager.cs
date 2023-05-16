@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -17,6 +18,7 @@ public class GameManager : Singleton<GameManager>
 
     private int _score;
 
+    [SerializeField]
     private float _timerCounter;
 
     private bool _isTimerOn;
@@ -34,10 +36,10 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
-        // if (Instance && Instance != this)
-        // {
-        //     Destroy(gameObject);
-        // }
+        if (Instance && Instance != this)
+        {
+            Destroy(gameObject);
+        }
 
         DontDestroyOnLoad(gameObject);
     }
@@ -109,17 +111,28 @@ public class GameManager : Singleton<GameManager>
 
     private async UniTaskVoid CountTimeAsync()
     {
+        if (CurrentGameState.GetType() != typeof(ActiveGameState)) return;
+
         Debug.Log("Timer starts");
 
         _isTimerOn = true;
 
         while (_isTimerOn)
         {
-            _timerCounter += Time.deltaTime;
+            _timerCounter++;
 
-            GameGUI.Instance.UpdateTime(_timerCounter);
+            try
+            {
+                GameGUI.Instance.UpdateTime(_timerCounter);
+            }
+            catch (NullReferenceException e)
+            {
+                Debug.LogWarning(e);
 
-            await UniTask.Yield();
+                DisableTimer();
+            }
+
+            await UniTask.Delay(1000);
         }
 
         Debug.Log("Timer stopped");

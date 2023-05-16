@@ -7,10 +7,12 @@ public class GameButton : MonoBehaviour
 {
     private Button _button;
 
+    private GameGUI _gameGUI;
 
     private void Awake()
     {
         _button = GetComponent<Button>();
+        _gameGUI = GameGUI.Instance;
     }
 
 
@@ -30,13 +32,13 @@ public class GameButton : MonoBehaviour
 
     private void OnEnable()
     {
-        GameGUI.Instance.OnButtonPressPermission += SetAbility;
+       _gameGUI.OnButtonPressPermission += SetAbility;
     }
 
 
     private void OnDisable()
     {
-        GameGUI.Instance.OnButtonPressPermission -= SetAbility;
+        _gameGUI.OnButtonPressPermission -= SetAbility;
     }
 
 #endregion
