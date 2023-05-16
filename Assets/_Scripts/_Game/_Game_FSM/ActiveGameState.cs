@@ -7,18 +7,19 @@ using UnityEngine.SceneManagement;
 
 public class ActiveGameState : IGameState
 {
-    private const int LoadingSceneIndex = 2;
-
-
     public void Enter(GameFiniteStateMachine context)
     {
-        LoadAsync().Forget();
+        Board.Instance.StartingBoard();
     }
 
 
     public void Exit(GameFiniteStateMachine context)
     {
-        //throw new System.NotImplementedException();
+        GameManager.Instance.DisableTimer();
+
+        DOTween.KillAll();
+
+        LoadAsync().Forget();
     }
 
 
@@ -26,8 +27,8 @@ public class ActiveGameState : IGameState
     {
         Debug.Log("Active Game State entered ");
 
-        DOTween.SetTweensCapacity(5000, 1000);
+        DOTween.SetTweensCapacity(2500, 500);
 
-        await SceneManager.LoadSceneAsync(LoadingSceneIndex);
+        await SceneManager.LoadSceneAsync(1);
     }
 }

@@ -7,7 +7,7 @@ public class GameFiniteStateMachine
 
     private readonly InitialGameState _initial = new();
 
-    private readonly IntermediateGameState _intermediate = new();
+    private readonly LoadingGameState _loading = new();
 
     private readonly ActiveGameState _active = new();
 
@@ -30,7 +30,7 @@ public class GameFiniteStateMachine
 
     public void Loading()
     {
-        SetState(_intermediate);
+        SetState(_loading);
     }
 
 

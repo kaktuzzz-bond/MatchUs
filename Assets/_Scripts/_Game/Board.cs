@@ -103,7 +103,7 @@ public class Board : Singleton<Board>
 
 #region BOARD CREATION
 
-    private void Start()
+    public void StartingBoard()
     {
         ShapeIndexes = Utils.GetIndexes(ShapePalletLength);
         ColorIndexes = Utils.GetIndexes(ColorPalletLength);

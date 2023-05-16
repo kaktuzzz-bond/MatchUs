@@ -1,13 +1,12 @@
+using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class IntermediateGameState : IGameState
+public class LoadingGameState : IGameState
 {
-    private const int LoadingSceneIndex = 1;
-
-
+  
     public void Enter(GameFiniteStateMachine context)
     {
         if (context.IsExitGame)
@@ -23,7 +22,7 @@ public class IntermediateGameState : IGameState
 
     public void Exit(GameFiniteStateMachine context)
     {
-        //throw new System.NotImplementedException();
+      
     }
 
 
@@ -31,7 +30,7 @@ public class IntermediateGameState : IGameState
     {
         Debug.Log("Loading --> GAME ");
 
-        await SceneManager.LoadSceneAsync(LoadingSceneIndex);
+        await SceneManager.LoadSceneAsync(2);
 
         GameManager.Instance.GameFiniteStateMachine.Active();
     }
@@ -41,13 +40,7 @@ public class IntermediateGameState : IGameState
     {
         Debug.Log("Saving --> MAIN MENU ");
 
-        GameGUI.Instance.SetButtonPressPermission(false);
-
-        GameManager.Instance.DisableTimer();
-
-        DOTween.KillAll();
-
-        await SceneManager.LoadSceneAsync(LoadingSceneIndex);
+        await SceneManager.LoadSceneAsync(0);
 
         GameManager.Instance.GameFiniteStateMachine.Initial();
     }
