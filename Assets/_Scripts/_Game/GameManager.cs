@@ -34,6 +34,11 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
+        // if (Instance && Instance != this)
+        // {
+        //     Destroy(gameObject);
+        // }
+
         DontDestroyOnLoad(gameObject);
     }
 
@@ -107,7 +112,7 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("Timer starts");
 
         _isTimerOn = true;
-        
+
         while (_isTimerOn)
         {
             _timerCounter += Time.deltaTime;

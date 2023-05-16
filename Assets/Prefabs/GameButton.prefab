@@ -222,9 +222,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7312951560503216207}
   - component: {fileID: 7262331583382497227}
+  - component: {fileID: 2464594778419598987}
   - component: {fileID: 9184972316402651321}
   - component: {fileID: 9039022707156962392}
-  - component: {fileID: 2464594778419598987}
   m_Layer: 5
   m_Name: GameButton
   m_TagString: Untagged
@@ -262,6 +262,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6777269834428943040}
   m_CullTransparentMesh: 1
+--- !u!114 &2464594778419598987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777269834428943040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab5535da297f04b91aaeaea030a3cb51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &9184972316402651321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,7 +296,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 461ce39f381de4e7a8b16ca913d6383e, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -336,18 +348,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2464594778419598987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6777269834428943040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab5535da297f04b91aaeaea030a3cb51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8300459758146739814
 GameObject:
   m_ObjectHideFlags: 0

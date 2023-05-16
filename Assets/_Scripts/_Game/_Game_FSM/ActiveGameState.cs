@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,11 +21,11 @@ public class ActiveGameState : IGameState
     }
 
 
-    private static async UniTaskVoid LoadAsync()
+    private async UniTaskVoid LoadAsync()
     {
         Debug.Log("Active Game State entered ");
 
-        DOTween.SetTweensCapacity(2500, 500);
+        DOTween.SetTweensCapacity((int)(Board.Instance.BoardCapacity * 0.5f), 100);
 
         await SceneManager.LoadSceneAsync(1);
     }

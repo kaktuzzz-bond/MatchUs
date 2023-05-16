@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +24,6 @@ public class GameButton : MonoBehaviour
     {
         _button.interactable = isInteractable;
     }
-    
 
 
 #region ENABLE / DISABLE

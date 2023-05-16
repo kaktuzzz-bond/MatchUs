@@ -1,6 +1,5 @@
 using System;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -81,8 +80,7 @@ public class GameGUI : Singleton<GameGUI>
 
         return checkX && checkY;
     }
-
-
+    
 #region INITIALIZATION
 
     private void Init()
@@ -146,6 +144,7 @@ public class GameGUI : Singleton<GameGUI>
         await fader.FadeOutEffect();
     }
 
+
 #endregion
 
 #region TEXT
@@ -162,4 +161,5 @@ public class GameGUI : Singleton<GameGUI>
     }
 
 #endregion
+    
 }

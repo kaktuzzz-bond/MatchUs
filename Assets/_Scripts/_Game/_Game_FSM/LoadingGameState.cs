@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class LoadingGameState : IGameState
 {
-  
     public void Enter(GameFiniteStateMachine context)
     {
         if (context.IsExitGame)
@@ -20,10 +19,7 @@ public class LoadingGameState : IGameState
     }
 
 
-    public void Exit(GameFiniteStateMachine context)
-    {
-      
-    }
+    public void Exit(GameFiniteStateMachine context) { }
 
 
     private static async UniTaskVoid LoadGameScreenAsync()
