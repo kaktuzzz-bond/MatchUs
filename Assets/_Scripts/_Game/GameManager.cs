@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -28,12 +29,6 @@ public class GameManager : Singleton<GameManager>
             _score = value;
             GameGUI.Instance.UpdateScore(_score);
         }
-    }
-
-
-    private void Update()
-    {
-        CountTime();
     }
 
 
@@ -93,7 +88,7 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    public void EnableTimer() => _isTimerOn = true;
+    public void EnableTimer() => CountTimeAsync().Forget();
 
 
     public void DisableTimer() => _isTimerOn = false;
@@ -107,12 +102,21 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    private void CountTime()
+    private async UniTaskVoid CountTimeAsync()
     {
-        if (!_isTimerOn) return;
+        Debug.Log("Timer starts");
 
-        _timerCounter += Time.deltaTime;
+        _isTimerOn = true;
+        
+        while (_isTimerOn)
+        {
+            _timerCounter += Time.deltaTime;
 
-        GameGUI.Instance.UpdateTime(_timerCounter);
+            GameGUI.Instance.UpdateTime(_timerCounter);
+
+            await UniTask.Yield();
+        }
+
+        Debug.Log("Timer stopped");
     }
 }
