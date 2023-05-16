@@ -16,9 +16,10 @@ public class GameManager : Singleton<GameManager>
 
     public float ChanceForRandom => GameConfig.GetChanceForRandom(_difficultyLevel);
 
+    public bool IsGameActive { get; private set; }
+
     private int _score;
 
-    [SerializeField]
     private float _timerCounter;
 
     private bool _isTimerOn;
@@ -75,9 +76,15 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME PAUSED");
 
-        GameFiniteStateMachine.Pause();
+        DisableTimer();
     }
 
+    public void ResumeGame()
+    {
+        Debug.LogWarning("GAME RESUMED");
+
+        EnableTimer();
+    }
 
     public void EndGame()
     {
@@ -95,7 +102,7 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    public void EnableTimer() => CountTimeAsync().Forget();
+    private void EnableTimer() => CountTimeAsync().Forget();
 
 
     public void DisableTimer() => _isTimerOn = false;

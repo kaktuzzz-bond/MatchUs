@@ -143,7 +143,7 @@ public class Chip : MonoBehaviour
             _tween.onComplete += () =>
             {
                 _tween = transform
-                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime * 0.5f)
+                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime)
                         .SetEase(Ease.OutCubic);
             };
 
@@ -151,7 +151,7 @@ public class Chip : MonoBehaviour
         }
 
         _tween = transform
-                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime * 0.5f)
+                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime)
                 .SetEase(Ease.OutCubic);
     }
 

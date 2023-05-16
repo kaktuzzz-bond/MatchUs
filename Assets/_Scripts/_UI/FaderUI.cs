@@ -7,10 +7,10 @@ using UnityEngine.UI;
 public class FaderUI : MonoBehaviour
 {
     [MinValue(0)]
-    public float fadeTime = 1f;
+    public float fadeTime = 0.3f;
 
     [PropertyRange(0, 1)]
-    public float maxFadeValue = 0.8f;
+    public float maxFadeValue = 0.7f;
 
     [SerializeField]
     private Image fade;
@@ -35,6 +35,8 @@ public class FaderUI : MonoBehaviour
 
     public async UniTask FadeInEffect()
     {
+        Debug.Log("Fade In Effect");
+        
         fade.gameObject.SetActive(true);
 
         await fade

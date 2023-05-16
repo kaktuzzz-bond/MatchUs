@@ -1,4 +1,3 @@
-
 public class GameFiniteStateMachine
 {
     public IGameState CurrentGameState { get; private set; }
@@ -10,8 +9,6 @@ public class GameFiniteStateMachine
     private readonly LoadingGameState _loading = new();
 
     private readonly ActiveGameState _active = new();
-
-    private readonly PauseGameState _pause = new();
 
 
     public GameFiniteStateMachine()
@@ -39,12 +36,6 @@ public class GameFiniteStateMachine
         SetState(_active);
 
         IsExitGame = true;
-    }
-
-
-    public void Pause()
-    {
-        SetState(_pause);
     }
 
 
