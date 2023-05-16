@@ -15,6 +15,8 @@ public class EnabledChipState : IChipState
 
         chip.Activate(true);
 
-        await chip.VerticalShiftAsync(targetPos.y);
+        chip.VerticalShiftAsync(targetPos.y).Forget();
+        
+        await UniTask.Yield();
     }
 }
