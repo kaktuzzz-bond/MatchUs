@@ -92,7 +92,7 @@ public class ChipController : Singleton<ChipController>
 
 #region PLACE ON BOARD
 
-    private void DrawStartArray()
+    public void DrawStartArray()
     {
         DrawStartArrayAsync(GameManager.Instance.ChipsOnStartNumber).Forget();
 

@@ -27,7 +27,7 @@ public class PausePopup : Popup
 
         home.onClick.AddListener(() => GoHomeAsync().Forget());
 
-        restart.onClick.AddListener(Restart);
+        restart.onClick.AddListener(() => Restart().Forget());
 
         _gameGUI = GameGUI.Instance;
 
@@ -55,9 +55,15 @@ public class PausePopup : Popup
     }
 
 
-    private void Restart()
+    private async UniTaskVoid Restart()
     {
-        Debug.Log("RESTART");
+        await ChipController.Instance.ChipRegistry.ResetRegistry();
+
+        await HidePopupAsync();
+        
+        await _gameGUI.Fader.FadeOutEffect();
+        
+        ChipController.Instance.DrawStartArray();
     }
 
 

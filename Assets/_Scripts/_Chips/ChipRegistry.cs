@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 
 public class ChipRegistry
@@ -50,9 +51,29 @@ public class ChipRegistry
 
         chip.Destroy();
 
-        //CameraController.Instance.MoveToBottomBound();
-
         CheckCounter();
+    }
+
+
+    public async UniTask ResetRegistry()
+    {
+        async UniTask ChipDestroy(Chip c)
+
+        {
+            c.Destroy();
+
+            await UniTask.Yield();
+        }
+
+        var tasks = Enumerable
+                .Select(_allChips, ChipDestroy)
+                .ToList();
+
+        await UniTask.WhenAll(tasks);
+
+        InGameChips.Clear();
+
+        _allChips.Clear();
     }
 
 
