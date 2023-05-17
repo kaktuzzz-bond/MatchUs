@@ -34,6 +34,9 @@ public class GameGUI : Singleton<GameGUI>
     [SerializeField]
     private PausePopup pausePopup;
 
+    [SerializeField]
+    private GameOverPopup gameOverPopup;
+
     [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button add;
 
@@ -60,7 +63,20 @@ public class GameGUI : Singleton<GameGUI>
 
     public FaderUI Fader => fader;
 
+    public string GameTime => timer.text;
+
+    public string GameScore => score.text;
+
+
+    private GameManager _gameManager;
+    
 #endregion
+
+
+    private void Awake()
+    {
+        _gameManager = GameManager.Instance;
+    }
 
 
     public void SetButtonPressPermission(bool isAllowed)
@@ -120,6 +136,12 @@ public class GameGUI : Singleton<GameGUI>
 
 #region ACTIONS
 
+    private void GameOver()
+    {
+        gameOverPopup.ShowPopupAsync().Forget();
+    }
+
+
     private async UniTaskVoid PauseClickedAsync()
     {
         Debug.LogWarning("PAUSE");
@@ -127,10 +149,10 @@ public class GameGUI : Singleton<GameGUI>
         //SetButtonPressPermission(false);
 
         GameManager.Instance.PauseGame();
-        
+
         await Fader.FadeOutEffect();
 
-        await pausePopup.ShowPopupAsync();
+        pausePopup.ShowPopupAsync().Forget();
     }
 
 
@@ -166,6 +188,21 @@ public class GameGUI : Singleton<GameGUI>
     public void UpdateTime(float timeCounter)
     {
         timer.text = Timer.FormatTime(timeCounter);
+    }
+
+#endregion
+
+#region ENABLE / DISABLE
+
+    private void OnEnable()
+    {
+       _gameManager.OnGameOver += GameOver;
+    }
+
+
+    private void OnDisable()
+    {
+       _gameManager.OnGameOver -= GameOver;
     }
 
 #endregion

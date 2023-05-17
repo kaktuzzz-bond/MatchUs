@@ -15,8 +15,10 @@ public class ActiveGameState : IGameState
     {
         GameManager.Instance.DisableTimer();
 
-        DOTween.KillAll();
-
+        // int killed = DOTween.KillAll();
+        //
+        // Debug.LogWarning($"Killed: {killed}");
+        
         LoadAsync().Forget();
     }
 

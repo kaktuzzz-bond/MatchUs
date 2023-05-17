@@ -1,16 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
-using UnityEngine.InputSystem.HID;
 using UnityEngine.UI;
 
-public class PausePopup : MonoBehaviour
+public class PausePopup : Popup
 {
-    private const float PopDuration = 0.5f;
-
     [SerializeField]
     private Button close;
 
@@ -38,14 +31,12 @@ public class PausePopup : MonoBehaviour
 
         _gameGUI = GameGUI.Instance;
 
-        transform.localScale = Vector3.zero;
+        Init();
     }
 
 
     private async UniTask ResumeGameAsync()
     {
-        // Debug.Log("RESUME");
-
         await HidePopupAsync();
 
         await _gameGUI.Fader.FadeOutEffect();
@@ -56,19 +47,9 @@ public class PausePopup : MonoBehaviour
     }
 
 
-    private void ShowInfo()
-    {
-        Debug.Log("SHOW INFO");
-    }
-
-
     private async UniTask GoHomeAsync()
     {
-        //Debug.Log("MAIN SCREEN");
-        
         await HidePopupAsync();
-
-        await _gameGUI.Fader.FadeOutEffect();
 
         GameManager.Instance.ExitGame();
     }
@@ -80,28 +61,8 @@ public class PausePopup : MonoBehaviour
     }
 
 
-    public async UniTask ShowPopupAsync()
+    private void ShowInfo()
     {
-        await GameGUI.Instance.Fader.FadeInEffect();
-
-        gameObject.SetActive(true);
-
-        await transform.DOScale(Vector3.one, PopDuration)
-                .SetEase(Ease.OutBack)
-                .ToUniTask();
-
-        Debug.Log("Show popup completed");
-    }
-
-
-    private async UniTask HidePopupAsync()
-    {
-        await transform.DOScale(Vector3.zero, PopDuration)
-                .SetEase(Ease.InBack)
-                .ToUniTask();
-
-        await GameGUI.Instance.Fader.FadeOutEffect();
-
-        gameObject.SetActive(false);
+        Debug.Log("SHOW INFO");
     }
 }

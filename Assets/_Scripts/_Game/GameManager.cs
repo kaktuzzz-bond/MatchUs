@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    public event Action OnGameOver;
+
     private DifficultyLevel _difficultyLevel;
 
     [ShowInInspector]
@@ -90,6 +92,8 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.LogWarning("GAME OVER!");
 
+        OnGameOver?.Invoke();
+        
         InputManager.Instance.SetPlayerInput(false);
 
         DisableTimer();
