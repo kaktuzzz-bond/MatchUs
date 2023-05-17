@@ -33,7 +33,7 @@ public class GameGUI : Singleton<GameGUI>
 
     [SerializeField]
     private PausePopup pausePopup;
-    
+
     [SerializeField] [FoldoutGroup("Game Buttons")]
     private Button add;
 
@@ -59,7 +59,7 @@ public class GameGUI : Singleton<GameGUI>
     private Button shop;
 
     public FaderUI Fader => fader;
-    
+
 #endregion
 
 
@@ -85,7 +85,8 @@ public class GameGUI : Singleton<GameGUI>
 
         return checkX && checkY;
     }
-    
+
+
 #region INITIALIZATION
 
     private void Init()
@@ -108,7 +109,7 @@ public class GameGUI : Singleton<GameGUI>
         UndoButton = undo.GetComponent<GameButton>();
 
         // header buttons
-        pause.onClick.AddListener(()=> PauseClickedAsync().Forget());
+        pause.onClick.AddListener(() => PauseClickedAsync().Forget());
 
         shop.onClick.AddListener(ShopClicked);
 
@@ -123,22 +124,19 @@ public class GameGUI : Singleton<GameGUI>
     {
         Debug.LogWarning("PAUSE");
 
-        SetButtonPressPermission(false);
+        //SetButtonPressPermission(false);
 
+        GameManager.Instance.PauseGame();
+        
         await Fader.FadeOutEffect();
 
         await pausePopup.ShowPopupAsync();
-        
-        GameManager.Instance.PauseGame();
     }
 
 
     private void ShopClicked()
     {
         Debug.LogWarning("SHOP");
-
-        //TODO remove ExitState from Shop
-        GameManager.Instance.ExitGame();
     }
 
 
@@ -154,7 +152,6 @@ public class GameGUI : Singleton<GameGUI>
 
         await fader.FadeOutEffect();
     }
-
 
 #endregion
 
@@ -172,5 +169,4 @@ public class GameGUI : Singleton<GameGUI>
     }
 
 #endregion
-    
 }

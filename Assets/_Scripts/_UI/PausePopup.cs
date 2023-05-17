@@ -32,7 +32,7 @@ public class PausePopup : MonoBehaviour
 
         info.onClick.AddListener(ShowInfo);
 
-        home.onClick.AddListener(GoHome);
+        home.onClick.AddListener(() => GoHomeAsync().Forget());
 
         restart.onClick.AddListener(Restart);
 
@@ -46,11 +46,11 @@ public class PausePopup : MonoBehaviour
     {
         // Debug.Log("RESUME");
 
-        _gameGUI.SetButtonPressPermission(true);
-
         await HidePopupAsync();
 
         await _gameGUI.Fader.FadeOutEffect();
+
+        _gameGUI.SetButtonPressPermission(true);
 
         GameManager.Instance.ResumeGame();
     }
@@ -62,9 +62,15 @@ public class PausePopup : MonoBehaviour
     }
 
 
-    private void GoHome()
+    private async UniTask GoHomeAsync()
     {
-        Debug.Log("MAIN SCREEN");
+        //Debug.Log("MAIN SCREEN");
+        
+        await HidePopupAsync();
+
+        await _gameGUI.Fader.FadeOutEffect();
+
+        GameManager.Instance.ExitGame();
     }
 
 
