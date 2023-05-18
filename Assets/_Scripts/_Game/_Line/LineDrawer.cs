@@ -26,7 +26,7 @@ public class LineDrawer : Singleton<LineDrawer>
     {
         List<Vector2> points = new();
 
-        for (float x = 0f; x < 1f; x += PointStep)
+        for (float x = 0f; x <= 1f; x += PointStep)
         {
             float y = Mathf.Sin(x * 2f * Mathf.PI) * WaveHeight;
 
@@ -38,11 +38,11 @@ public class LineDrawer : Singleton<LineDrawer>
 
 
     [Button("Draw Horizontal")]
-    private void DrawRightLine(Vector3 startPoint, int length = 1)
+    private void DrawRightLine(Vector3 startPoint, int length = 9)
     {
         Line line = Instantiate(linePrefab, startPoint, Quaternion.identity, transform);
 
-        List<Vector3> newPositions = new();
+        HashSet<Vector3> newPositions = new();
 
         for (int i = 0; i < length; i++)
         {

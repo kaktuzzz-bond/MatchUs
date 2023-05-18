@@ -1,27 +1,28 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer))]
+[RequireComponent(typeof(TrailRenderer))]
 public class Line : MonoBehaviour
 {
-    private LineRenderer _lineRenderer;
+    private TrailRenderer _trailRenderer;
 
 
     private void Awake()
     {
-        _lineRenderer = GetComponent<LineRenderer>();
+        _trailRenderer = GetComponent<TrailRenderer>();
     }
 
 
-    public void SetPositions(Vector3[] positions)
+    public async UniTask SetPositions(Vector3[] positions)
     {
-        Debug.Log($"SetPositions {positions.Length}");
+        foreach (Vector3 pos in positions)
+        {
+            transform.position = pos;
 
-        _lineRenderer.positionCount = positions.Length;
-
-        _lineRenderer.SetPositions(positions);
-        
-        // _lineRenderer.Simplify(0.05f);
+            await UniTask.Yield();
+        }
     }
 }

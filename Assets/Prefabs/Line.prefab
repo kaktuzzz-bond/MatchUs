@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1944734700190505534}
   - component: {fileID: 1944734700190505532}
-  - component: {fileID: 1944734700190505535}
+  - component: {fileID: 1030878637521304967}
   m_Layer: 0
   m_Name: Line
   m_TagString: Untagged
@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 024cc27b13564f8e892fb0b6d079c366, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lineRenderer: {fileID: 1944734700190505535}
---- !u!120 &1944734700190505535
-LineRenderer:
+--- !u!96 &1030878637521304967
+TrailRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -56,7 +56,7 @@ LineRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_DynamicOccludee: 0
+  m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
@@ -84,10 +84,10 @@ LineRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 682502905
-  m_SortingLayer: 1
-  m_SortingOrder: 10
-  m_Positions: []
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Time: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -139,7 +139,8 @@ LineRenderer:
     numCapVertices: 5
     alignment: 0
     textureMode: 0
-    shadowBias: 0
+    shadowBias: 0.5
     generateLightingData: 0
-  m_UseWorldSpace: 1
-  m_Loop: 0
+  m_MinVertexDistance: 0.1
+  m_Autodestruct: 0
+  m_Emitting: 1
