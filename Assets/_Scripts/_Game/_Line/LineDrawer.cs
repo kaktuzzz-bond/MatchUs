@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -38,7 +39,7 @@ public class LineDrawer : Singleton<LineDrawer>
 
 
     [Button("Draw Horizontal")]
-    private void DrawRightLine(Vector3 startPoint, int length = 9)
+    private async UniTask DrawRightLineAsync(Vector3 startPoint, Color startColor, Color endColor, int length, float showTime = 0.4f)
     {
         Line line = Instantiate(linePrefab, startPoint, Quaternion.identity, transform);
 
@@ -54,6 +55,6 @@ public class LineDrawer : Singleton<LineDrawer>
             }
         }
 
-        line.SetPositions(newPositions.ToArray(), Color.blue, Color.cyan, 1f);
+        await line.SetPositionsAsync(newPositions.ToArray(), Color.blue, Color.cyan, showTime);
     }
 }

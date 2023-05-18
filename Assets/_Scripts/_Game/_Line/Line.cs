@@ -17,7 +17,7 @@ public class Line : MonoBehaviour
     }
 
 
-    public async UniTask SetPositions(Vector3[] positions, Color startColor, Color endColor, float showTime = 0.4f)
+    public async UniTask SetPositionsAsync(Vector3[] positions, Color startColor, Color endColor, float showTime)
     {
         _trailRenderer.startColor = startColor;
 
