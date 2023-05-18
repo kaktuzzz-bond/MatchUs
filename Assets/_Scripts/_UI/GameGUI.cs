@@ -67,9 +67,8 @@ public class GameGUI : Singleton<GameGUI>
 
     public string GameScore => score.text;
 
-
     private GameManager _gameManager;
-    
+
 #endregion
 
 
@@ -150,9 +149,9 @@ public class GameGUI : Singleton<GameGUI>
 
         GameManager.Instance.PauseGame();
 
-        await Fader.FadeOutEffect();
-
         pausePopup.ShowPopupAsync().Forget();
+
+        await Fader.FadeOutEffect();
     }
 
 
@@ -196,13 +195,13 @@ public class GameGUI : Singleton<GameGUI>
 
     private void OnEnable()
     {
-       _gameManager.OnGameOver += GameOver;
+        _gameManager.OnGameOver += GameOver;
     }
 
 
     private void OnDisable()
     {
-       _gameManager.OnGameOver -= GameOver;
+        _gameManager.OnGameOver -= GameOver;
     }
 
 #endregion
