@@ -55,6 +55,6 @@ public class LineDrawer : Singleton<LineDrawer>
             }
         }
 
-        await line.SetPositionsAsync(newPositions.ToArray(), Color.blue, Color.cyan, showTime);
+        await line.SetPositionsAsync(newPositions.ToArray(), startColor, endColor, showTime);
     }
 }
