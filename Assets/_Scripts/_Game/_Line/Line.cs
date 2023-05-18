@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -16,13 +17,21 @@ public class Line : MonoBehaviour
     }
 
 
-    public async UniTask SetPositions(Vector3[] positions)
+    public async UniTask SetPositions(Vector3[] positions, Color startColor, Color endColor, float showTime = 0.4f)
     {
+        _trailRenderer.startColor = startColor;
+
+        _trailRenderer.endColor = endColor;
+        
         foreach (Vector3 pos in positions)
         {
             transform.position = pos;
 
             await UniTask.Yield();
         }
+
+        _trailRenderer.time = showTime;
+
+        await UniTask.Yield();
     }
 }

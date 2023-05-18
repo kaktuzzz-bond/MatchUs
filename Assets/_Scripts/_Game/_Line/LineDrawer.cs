@@ -54,6 +54,6 @@ public class LineDrawer : Singleton<LineDrawer>
             }
         }
 
-        line.SetPositions(newPositions.ToArray());
+        line.SetPositions(newPositions.ToArray(), Color.blue, Color.cyan, 1f);
     }
 }
