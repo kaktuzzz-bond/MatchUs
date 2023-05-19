@@ -21,7 +21,7 @@ public class LineDrawer : Singleton<LineDrawer>
     [SerializeField]
     private Line linePrefab;
 
-    private const float PointStep = 0.1f;
+    private const float PointStep = 0.05f;
 
     private const float WaveHeight = 0.15f;
 
@@ -40,9 +40,9 @@ public class LineDrawer : Singleton<LineDrawer>
     {
         List<Vector2> points = new();
 
-        for (float x = 0f; x <= 1f; x += PointStep)
+        for (float x = -0.5f; x <= 0.5f; x += PointStep)
         {
-            float y = Mathf.Sin(x * 2f * Mathf.PI) * WaveHeight;
+            float y = Mathf.Sin(x * 2 * Mathf.PI) * WaveHeight;
 
             points.Add(new Vector2(x, y));
         }
@@ -51,67 +51,78 @@ public class LineDrawer : Singleton<LineDrawer>
     }
 
 
-    [Button("Test Right")]
-    private void TestRight()
+    // [Button("Test Right")]
+    // private void TestRight()
+    // {
+    //     CreateLineAsync(
+    //                     new Vector3(4f, 0, 0),
+    //                     Color.red,
+    //                     Color.white,
+    //                     3,
+    //                     LineDirection.Right)
+    //             .Forget();
+    // }
+    //
+    //
+    // [Button("Test Left")]
+    // private void TestLeft()
+    // {
+    //     CreateLineAsync(
+    //                     new Vector3(4f, 0, 0),
+    //                     Color.red,
+    //                     Color.white,
+    //                     1,
+    //                     LineDirection.Left)
+    //             .Forget();
+    // }
+    //
+    //
+    // [Button("Test Up")]
+    // private void TestUp()
+    // {
+    //     CreateLineAsync(
+    //                     new Vector3(4f, 0, 0),
+    //                     Color.red,
+    //                     Color.white,
+    //                     6,
+    //                     LineDirection.Up)
+    //             .Forget();
+    // }
+    //
+    //
+    // [Button("Test Down")]
+    // private void TestDown()
+    // {
+    //     CreateLineAsync(
+    //                     new Vector3(4f, 0, 0),
+    //                     Color.red,
+    //                     Color.white,
+    //                     9,
+    //                     LineDirection.Down)
+    //             .Forget();
+    // }
+
+
+    public async UniTask CreateLineAsync(Vector3[] positions, Color startColor, Color endColor)
     {
-        CreateLineAsync(
-                        new Vector3(4f, 0, 0),
-                        Color.red,
-                        Color.white,
-                        3,
-                        LineDirection.Right)
-                .Forget();
+        if(positions == null || positions.Length == 0) return;
+        
+        Line line = Instantiate(linePrefab, positions[0], Quaternion.identity, transform);
+
+        await line.DrawLineAsync(positions, startColor, endColor, ShowTime);
     }
 
 
-    [Button("Test Left")]
-    private void TestLeft()
+    public Vector3[] GetLinePoints(Vector2Int startBoardPoint, int length, LineDirection direction)
     {
-        CreateLineAsync(
-                        new Vector3(4f, 0, 0),
-                        Color.red,
-                        Color.white,
-                        1,
-                        LineDirection.Left)
-                .Forget();
+        Vector3 startPoint = Board.Instance[startBoardPoint.x, startBoardPoint.y].position;
+
+        return GetLinePoints(startPoint, length, direction);
     }
 
 
-    [Button("Test Up")]
-    private void TestUp()
+    private Vector3[] GetLinePoints(Vector3 startPoint, int length, LineDirection direction)
     {
-        CreateLineAsync(
-                        new Vector3(4f, 0, 0),
-                        Color.red,
-                        Color.white,
-                        6,
-                        LineDirection.Up)
-                .Forget();
-    }
-
-
-    [Button("Test Down")]
-    private void TestDown()
-    {
-        CreateLineAsync(
-                        new Vector3(4f, 0, 0),
-                        Color.red,
-                        Color.white,
-                        9,
-                        LineDirection.Down)
-                .Forget();
-    }
-
-
-    private async UniTask CreateLineAsync(
-            Vector3 startPoint,
-            Color startColor,
-            Color endColor,
-            int length,
-            LineDirection direction)
-    {
-        Line line = Instantiate(linePrefab, startPoint, Quaternion.identity, transform);
-
         HashSet<Vector3> newPositions = new();
 
         for (int i = 0; i < length; i++)
@@ -124,7 +135,7 @@ public class LineDrawer : Singleton<LineDrawer>
             }
         }
 
-        await line.DrawLineAsync(newPositions.ToArray(), startColor, endColor, ShowTime);
+        return newPositions.ToArray();
     }
 
 

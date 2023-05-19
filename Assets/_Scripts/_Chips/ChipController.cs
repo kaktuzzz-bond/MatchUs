@@ -81,12 +81,7 @@ public class ChipController : Singleton<ChipController>
 
     public void ProcessTappedChip(Chip chip)
     {
-        var matched = _comparer.IsMatching(chip);
-
-        if (matched != null)
-        {
-            Board.Instance.ProcessMatched(matched[0], matched[1]);
-        }
+        _comparer.TryMatching(chip);
     }
 
 

@@ -27,9 +27,9 @@ public class Line : MonoBehaviour
         {
             transform.position = pos;
 
-            await UniTask.Delay(8);
+            await UniTask.Yield();
         }
-
+        
         _trailRenderer.time = showTime;
     }
 }

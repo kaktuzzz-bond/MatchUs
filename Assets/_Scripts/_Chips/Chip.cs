@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
@@ -33,6 +34,8 @@ public class Chip : MonoBehaviour
 
     private Board _board;
 
+    private LineDrawer _lineDrawer;
+
     private Tween _tween;
 
 #region INITIALIZATION
@@ -42,6 +45,8 @@ public class Chip : MonoBehaviour
         _board = Board.Instance;
 
         ChipFiniteStateMachine = GetComponent<ChipFiniteStateMachine>();
+
+        _lineDrawer = LineDrawer.Instance;
     }
 
 
@@ -171,33 +176,43 @@ public class Chip : MonoBehaviour
     }
 
 
-    public bool CompareHorizontalPosition(Chip other)
+    public Vector3[] CompareHorizontalPosition(Chip other)
     {
-        if (BoardPosition.y != other.BoardPosition.y) return false;
+        if (BoardPosition.y != other.BoardPosition.y) return null;
 
         Vector2 direction = other.BoardPosition - BoardPosition;
 
         float distance = Mathf.Abs(direction.x);
 
-        return Board.IsPathClear(direction, distance, this, other);
+        if (!Board.IsPathClear(direction, distance, this, other)) return null;
+
+        return _lineDrawer.GetLinePoints(
+                other.BoardPosition,
+                (int)distance,
+                direction.x < 0 ? LineDrawer.LineDirection.Right : LineDrawer.LineDirection.Left);
     }
 
 
-    public bool CompareVerticalPosition(Chip other)
+    public Vector3[] CompareVerticalPosition(Chip other)
     {
-        if (BoardPosition.x != other.BoardPosition.x) return false;
+        if (BoardPosition.x != other.BoardPosition.x) return null;
 
         Vector2 direction = other.BoardPosition - BoardPosition;
 
         float distance = Mathf.Abs(direction.y);
 
-        return Board.IsPathClear(-direction, distance, this, other);
+        if (!Board.IsPathClear(-direction, distance, this, other)) return null;
+
+        return _lineDrawer.GetLinePoints(
+                other.BoardPosition,
+                (int)distance,
+                direction.y > 0 ? LineDrawer.LineDirection.Up : LineDrawer.LineDirection.Down);
     }
 
 
-    public bool CompareMultilinePosition(Chip other)
+    public List<Vector3[]> CompareMultilinePosition(Chip other)
     {
-        if (Mathf.Abs(BoardPosition.y - other.BoardPosition.y) != 1) return false;
+        if (Mathf.Abs(BoardPosition.y - other.BoardPosition.y) != 1) return null;
 
         var chips = new Chip[2];
 
@@ -212,10 +227,27 @@ public class Chip : MonoBehaviour
             chips[1] = other;
         }
 
-        bool isTopClear = Board.IsPathClear(Vector2.right, _board.Width - chips[0].BoardPosition.x, chips[0], chips[1]);
-        bool isBottomClear = Board.IsPathClear(Vector2.left, chips[1].BoardPosition.x, chips[1], chips[0]);
+        float topDistance = _board.Width - chips[0].BoardPosition.x;
 
-        return isTopClear && isBottomClear;
+        bool isTopClear = Board.IsPathClear(Vector2.right, topDistance, chips[0], chips[1]);
+
+        float bottomDistance = chips[1].BoardPosition.x;
+
+        bool isBottomClear = Board.IsPathClear(Vector2.left, bottomDistance, chips[1], chips[0]);
+
+        if (!(isTopClear && isBottomClear)) return null;
+
+        var topLine = _lineDrawer.GetLinePoints(
+                chips[0].BoardPosition,
+                (int)topDistance,
+                LineDrawer.LineDirection.Right);
+
+        var bottomLine = _lineDrawer.GetLinePoints(
+                chips[1].BoardPosition,
+                (int)bottomDistance,
+                LineDrawer.LineDirection.Left);
+
+        return new List<Vector3[]> { topLine, bottomLine };
     }
 
 #endregion

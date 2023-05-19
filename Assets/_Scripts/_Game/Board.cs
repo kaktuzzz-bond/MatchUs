@@ -32,8 +32,6 @@ public class Board : Singleton<Board>
     [SerializeField] [FoldoutGroup("Prefabs")]
     private Transform dotPrefab;
 
-   
-
     [SerializeField] [FoldoutGroup("Parents")]
     private Transform tileParent;
 
@@ -168,8 +166,14 @@ public class Board : Singleton<Board>
 
 #region MATCH PROCESSING
 
-    public void ProcessMatched(Chip first, Chip second)
+    public async UniTaskVoid ProcessMatched(Chip first, Chip second, List<Vector3[]> lines)
     {
+        var tasks = Enumerable
+                .Select(lines, line => LineDrawer.Instance.CreateLineAsync(line, Color.cyan, Color.magenta))
+                .ToList();
+
+        await UniTask.WhenAll(tasks);
+
         // fade out chips
         ChipController.Instance.Log.AddCommand(new FadeOutCommand(first, second));
 
@@ -181,7 +185,7 @@ public class Board : Singleton<Board>
         // a single line
         if (firstLine == secondLine)
         {
-            CheckLine(firstLine);
+            CheckLineToRemove(firstLine);
 
             return;
         }
@@ -191,16 +195,16 @@ public class Board : Singleton<Board>
 
         int bottomLine = Mathf.Max(firstLine, secondLine);
 
-        CheckLine(bottomLine);
+        CheckLineToRemove(bottomLine);
 
-        CheckLine(topLine);
+        CheckLineToRemove(topLine);
     }
 
 #endregion
 
 #region LINE CHECKING
 
-    private void CheckLine(int boardLine)
+    private void CheckLineToRemove(int boardLine)
     {
         var hits = GetRaycastHits(boardLine);
 

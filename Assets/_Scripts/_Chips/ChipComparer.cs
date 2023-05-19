@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ChipComparer
@@ -17,7 +18,7 @@ public class ChipComparer
     }
 
 
-    public Chip[] IsMatching(Chip chip)
+    public void TryMatching(Chip chip)
     {
         //case: Storage is empty
         if (_storage == null)
@@ -26,7 +27,7 @@ public class ChipComparer
 
             _storage = chip;
 
-            return null;
+            return;
         }
 
         //case: Tap the same
@@ -38,11 +39,13 @@ public class ChipComparer
 
             ChipController.Instance.PointerController.HidePointers();
 
-            return null;
+            return;
         }
 
         // case: Compare chips
-        if (CompareChips(chip, _storage))
+        var compareResult = CompareChips(chip, _storage);
+       
+        if (compareResult != null)
         {
             Chip other = _storage;
 
@@ -50,7 +53,9 @@ public class ChipComparer
 
             ChipController.Instance.PointerController.HidePointers();
 
-            return new[] { chip, other };
+            Board.Instance.ProcessMatched(chip, other, compareResult).Forget();
+            
+            return;
         }
 
         ChipController.Instance.PointerController.HidePointers();
@@ -58,18 +63,28 @@ public class ChipComparer
         ChipController.Instance.PointerController.ShowPointer(PointerController.Selector, chip.BoardPosition);
 
         _storage = chip;
-
-        return null;
     }
 
 
-    public static bool CompareChips(Chip first, Chip second)
+    public static List<Vector3[]> CompareChips(Chip first, Chip second)
     {
-        return (first.CompareHorizontalPosition(second) ||
-                first.CompareVerticalPosition(second) ||
-                first.CompareMultilinePosition(second)) &&
-               (first.CompareShape(second) ||
-                first.CompareColor(second));
+        if (!first.CompareShape(second) &&
+            !first.CompareColor(second))
+        {
+            return null;
+        }
+
+        var horizontal = first.CompareHorizontalPosition(second);
+
+        if (horizontal != null) return new List<Vector3[]>() { horizontal };
+
+        var vertical = first.CompareVerticalPosition(second);
+
+        if (vertical != null) return new List<Vector3[]>() { vertical };
+
+        var multiline = first.CompareMultilinePosition(second);
+
+        return multiline;
     }
 
 
