@@ -7,12 +7,25 @@ using UnityEngine;
 
 public class LineDrawer : Singleton<LineDrawer>
 {
+    public enum LineDirection
+    {
+        Right,
+
+        Left,
+
+        Up,
+
+        Down
+    }
+
     [SerializeField]
     private Line linePrefab;
 
-    private const float PointStep = 0.05f;
+    private const float PointStep = 0.1f;
 
     private const float WaveHeight = 0.15f;
+
+    private const float ShowTime = 0.4f;
 
     private Vector2[] _baseValues;
 
@@ -38,8 +51,64 @@ public class LineDrawer : Singleton<LineDrawer>
     }
 
 
-    [Button("Draw Horizontal")]
-    private async UniTask DrawRightLineAsync(Vector3 startPoint, Color startColor, Color endColor, int length, float showTime = 0.4f)
+    [Button("Test Right")]
+    private void TestRight()
+    {
+        CreateLineAsync(
+                        new Vector3(4f, 0, 0),
+                        Color.red,
+                        Color.white,
+                        3,
+                        LineDirection.Right)
+                .Forget();
+    }
+
+
+    [Button("Test Left")]
+    private void TestLeft()
+    {
+        CreateLineAsync(
+                        new Vector3(4f, 0, 0),
+                        Color.red,
+                        Color.white,
+                        1,
+                        LineDirection.Left)
+                .Forget();
+    }
+
+
+    [Button("Test Up")]
+    private void TestUp()
+    {
+        CreateLineAsync(
+                        new Vector3(4f, 0, 0),
+                        Color.red,
+                        Color.white,
+                        6,
+                        LineDirection.Up)
+                .Forget();
+    }
+
+
+    [Button("Test Down")]
+    private void TestDown()
+    {
+        CreateLineAsync(
+                        new Vector3(4f, 0, 0),
+                        Color.red,
+                        Color.white,
+                        9,
+                        LineDirection.Down)
+                .Forget();
+    }
+
+
+    private async UniTask CreateLineAsync(
+            Vector3 startPoint,
+            Color startColor,
+            Color endColor,
+            int length,
+            LineDirection direction)
     {
         Line line = Instantiate(linePrefab, startPoint, Quaternion.identity, transform);
 
@@ -49,12 +118,57 @@ public class LineDrawer : Singleton<LineDrawer>
         {
             foreach (Vector2 point in _baseValues)
             {
-                float x = i + point.x;
-                float y = startPoint.y + point.y;
-                newPositions.Add(new Vector3(x, y, 0));
+                Vector3 pos = GetCoords(direction, startPoint, point, i);
+
+                newPositions.Add(pos);
             }
         }
 
-        await line.SetPositionsAsync(newPositions.ToArray(), startColor, endColor, showTime);
+        await line.DrawLineAsync(newPositions.ToArray(), startColor, endColor, ShowTime);
+    }
+
+
+    private Vector3 GetCoords(LineDirection direction, Vector3 startPoint, Vector2 basePoint, int step)
+    {
+        Vector3 coord = new();
+
+        switch (direction)
+        {
+            case LineDirection.Right:
+
+                coord.x = startPoint.x + basePoint.x + step;
+
+                coord.y = startPoint.y + basePoint.y;
+
+                return coord;
+
+            case LineDirection.Left:
+
+                coord.x = startPoint.x - (basePoint.x + step);
+
+                coord.y = startPoint.y + basePoint.y;
+
+                return coord;
+
+            case LineDirection.Up:
+
+                coord.x = startPoint.x + basePoint.y;
+
+                coord.y = startPoint.y + basePoint.x + step;
+
+                return coord;
+
+            case LineDirection.Down:
+
+                coord.x = startPoint.x + basePoint.y;
+
+                coord.y = startPoint.y - (basePoint.x + step);
+
+                return coord;
+
+            default:
+
+                throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
+        }
     }
 }

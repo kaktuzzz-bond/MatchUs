@@ -17,21 +17,19 @@ public class Line : MonoBehaviour
     }
 
 
-    public async UniTask SetPositionsAsync(Vector3[] positions, Color startColor, Color endColor, float showTime)
+    public async UniTask DrawLineAsync(Vector3[] positions, Color startColor, Color endColor, float showTime)
     {
         _trailRenderer.startColor = startColor;
 
         _trailRenderer.endColor = endColor;
-        
+
         foreach (Vector3 pos in positions)
         {
             transform.position = pos;
 
-            await UniTask.Yield();
+            await UniTask.Delay(8);
         }
 
         _trailRenderer.time = showTime;
-
-        await UniTask.Yield();
     }
 }
