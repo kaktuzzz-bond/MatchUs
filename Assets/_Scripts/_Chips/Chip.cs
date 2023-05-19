@@ -138,26 +138,30 @@ public class Chip : MonoBehaviour
 
     private void MoveDown(int boardLine)
     {
-        if (BoardPosition.y < boardLine ||
-            ChipFiniteStateMachine.CurrentState.GetType() == typeof(DisabledChipState)) return;
+        if (BoardPosition.y < boardLine) return;
+        
+        _board.AddChipTask(MoveDownAsync());
+    }
 
-        //Debug.Log($"Move down in ({boardLine})");
-
+    private async UniTask MoveDownAsync()
+    {
         if (_tween.IsActive())
         {
-            _tween.onComplete += () =>
-            {
-                _tween = transform
-                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime)
-                        .SetEase(Ease.OutCubic);
-            };
+            await _tween
+                    .ToUniTask();
+
+            await transform
+                    .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime)
+                    .SetEase(Ease.OutCubic)
+                    .ToUniTask();
 
             return;
         }
 
-        _tween = transform
+        await transform
                 .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime)
-                .SetEase(Ease.OutCubic);
+                .SetEase(Ease.OutCubic)
+                .ToUniTask();
     }
 
 #endregion
@@ -239,7 +243,7 @@ public class Chip : MonoBehaviour
 
         var topLine = _lineDrawer.GetLinePoints(
                 chips[0].BoardPosition,
-                (int)topDistance,
+                (int)topDistance - 1,
                 LineDrawer.LineDirection.Right);
 
         var bottomLine = _lineDrawer.GetLinePoints(

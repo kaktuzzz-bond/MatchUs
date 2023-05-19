@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using DG.Tweening.Core;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -99,10 +101,13 @@ public class Board : Singleton<Board>
 
 #endregion
 
+    private HashSet<UniTask> _chipTasksAll = new();
+
 #region BOARD CREATION
 
     public void StartingBoard()
     {
+        DOTween.SetTweensCapacity(5000, 200);
         ShapeIndexes = Utils.GetIndexes(ShapePalletLength);
         ColorIndexes = Utils.GetIndexes(ColorPalletLength);
 
@@ -186,7 +191,7 @@ public class Board : Singleton<Board>
         if (firstLine == secondLine)
         {
             CheckLineToRemove(firstLine);
-
+            
             return;
         }
 
@@ -196,8 +201,10 @@ public class Board : Singleton<Board>
         int bottomLine = Mathf.Max(firstLine, secondLine);
 
         CheckLineToRemove(bottomLine);
+        
 
         CheckLineToRemove(topLine);
+        
     }
 
 #endregion
@@ -295,6 +302,22 @@ public class Board : Singleton<Board>
 
     public void RestoreLine(int boardLine)
     {
+        _chipTasksAll.Clear();
+
         OnLineRestored?.Invoke(boardLine);
+    }
+
+
+    public async UniTask WaitForAllChipTasks()
+    {
+        await UniTask.WhenAll(_chipTasksAll);
+        
+        _chipTasksAll.Clear();
+    }
+
+
+    public void AddChipTask(UniTask task)
+    {
+        _chipTasksAll.Add(task);
     }
 }

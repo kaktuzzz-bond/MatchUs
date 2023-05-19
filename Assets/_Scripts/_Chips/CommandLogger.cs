@@ -36,7 +36,8 @@ public class CommandLogger
 
             await command.Undo();
 
-            await UniTask.WaitForFixedUpdate();
+            await Board.Instance.WaitForAllChipTasks();
+            
         } while (command.GetType() == typeof(RemoveSingleLineCommand));
 
         GameGUI.Instance.HideInfo();

@@ -25,7 +25,7 @@ public class LineDrawer : Singleton<LineDrawer>
 
     private const float WaveHeight = 0.15f;
 
-    private const float ShowTime = 0.4f;
+    private const float ShowTime = 0.2f;
 
     private Vector2[] _baseValues;
 
@@ -40,7 +40,7 @@ public class LineDrawer : Singleton<LineDrawer>
     {
         List<Vector2> points = new();
 
-        for (float x = -0.5f; x <= 0.5f; x += PointStep)
+        for (float x = 0f; x <= 1f; x += PointStep)
         {
             float y = Mathf.Sin(x * 2 * Mathf.PI) * WaveHeight;
 
