@@ -34,11 +34,13 @@ public class GameOverPopup : Popup
 
     public override async UniTask ShowPopupAsync()
     {
-        await base.ShowPopupAsync();
-
+       
         time.text = GameGUI.Instance.GameTime;
 
         score.text = GameGUI.Instance.GameScore;
+        
+        await base.ShowPopupAsync();
+
     }
 
 

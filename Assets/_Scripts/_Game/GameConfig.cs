@@ -9,8 +9,8 @@ public static class GameConfig
         {
                 DifficultyLevel.Test => 9,
                 DifficultyLevel.Easy => 27,
-                DifficultyLevel.Normal => 27,
-                DifficultyLevel.Hard => 45,
+                DifficultyLevel.Normal => 45,
+                DifficultyLevel.Hard => 63,
                 _ => throw new ArgumentOutOfRangeException()
         };
     }

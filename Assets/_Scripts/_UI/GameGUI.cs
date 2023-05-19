@@ -151,7 +151,7 @@ public class GameGUI : Singleton<GameGUI>
 
         pausePopup.ShowPopupAsync().Forget();
 
-        await Fader.FadeOutEffect();
+        await Fader.FadeInEffect();
     }
 
 
