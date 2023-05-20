@@ -18,7 +18,7 @@ public class RemoveSingleLineCommand : ICommand
 
         _removedLine = _chipStates.First().Chip.BoardPosition.y;
 
-        _score = GameConfig.GetScore(_removedLine);
+        _score = GameData.GetScore(_removedLine);
     }
 
 

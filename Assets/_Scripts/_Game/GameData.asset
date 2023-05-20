@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef712867958643bbab1da67130522fd1, type: 3}
+  m_Name: GameData
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  tilePrefab: {fileID: 8430510590976786998, guid: f07d43acd692a49438a9868d9d2335ba, type: 3}
+  dotPrefab: {fileID: 1925143991089153941, guid: 35692112f480e4166b55737c8da273bc, type: 3}
+  chipPrefab: {fileID: 6589025527896620549, guid: 558fbdc173c62400d9c7d1c0d7d31dc0, type: 3}
+  hintPrefab: {fileID: 8430510590976786998, guid: 171981802ad44495ea0fc51201298dc1, type: 3}
+  selectorPrefab: {fileID: 8430510590976786998, guid: 8d33d803af66b4539945b05a9bc9b990, type: 3}
+  shapes:
+  - {fileID: 21300000, guid: 2322edf517a9f4488a27e64906ce9272, type: 3}
+  - {fileID: 21300000, guid: c5b4e2840ffa54a10995a72968e350f4, type: 3}
+  - {fileID: 21300000, guid: c0bc9fd6a3ce04a6ea49aa406f092092, type: 3}
+  - {fileID: 21300000, guid: 58022ce0e3ca548fdad5677c78104218, type: 3}
+  - {fileID: 21300000, guid: 1bb011227d8dd4159a1638fbff39c7ed, type: 3}
+  - {fileID: 21300000, guid: 2d8fa04146ca7452ea08b9c732dd551a, type: 3}
+  - {fileID: 21300000, guid: 3aad1f88fc41a4987b6666fec431d354, type: 3}
+  - {fileID: 21300000, guid: 449e6013ae85d4ae88d9b7486fe30e04, type: 3}
+  - {fileID: 21300000, guid: 9370f6b43c7ed4873a58005700794eeb, type: 3}
+  - {fileID: 21300000, guid: 868f70b7dea5845aaa50cadeafdedeb8, type: 3}
+  - {fileID: 21300000, guid: b4d1451544f5249928b6f3785bdabf92, type: 3}
+  - {fileID: 21300000, guid: 34b8bf809a7b04bd29cd0dc8eb4e5d40, type: 3}
+  - {fileID: 21300000, guid: c31219a38fd434a31b74b90d517093b1, type: 3}
+  colors:
+  - {r: 1, g: 0.30980393, b: 0.29803923, a: 1}
+  - {r: 1, g: 0.6156863, b: 0.0627451, a: 1}
+  - {r: 0.6156863, g: 1, b: 0.23137257, a: 1}
+  - {r: 0.20392159, g: 0.9294118, b: 1, a: 1}
+  - {r: 1, g: 0.25882354, b: 0.85098046, a: 1}
+  - {r: 0.56078434, g: 0.3647059, b: 1, a: 1}
+  - {r: 0.8980393, g: 0.9176471, b: 0.9333334, a: 1}
+  easyMode: 27
+  easyRandom: 1
+  normalMode: 45
+  normalRandom: 0.75
+  hardMode: 63
+  hardRandom: 0.5
+  testMode: 9
+  testRandom: 0.25

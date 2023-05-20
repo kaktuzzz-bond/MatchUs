@@ -4,9 +4,13 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
-{
+{ 
     public event Action OnGameOver;
 
+
+    [SerializeField]
+    private GameData gameData;
+    
     private DifficultyLevel _difficultyLevel;
 
     [ShowInInspector]
@@ -14,9 +18,9 @@ public class GameManager : Singleton<GameManager>
 
     public GameFiniteStateMachine GameFiniteStateMachine { get; } = new();
 
-    public int ChipsOnStartNumber => GameConfig.GetChipsOnStart(_difficultyLevel);
-
-    public float ChanceForRandom => GameConfig.GetChanceForRandom(_difficultyLevel);
+    // public int ChipsOnStartNumber => GameConfig.GetChipsOnStart(_difficultyLevel);
+    //
+    // public float ChanceForRandom => GameConfig.GetChanceForRandom(_difficultyLevel);
 
     public bool IsGameActive { get; private set; }
 

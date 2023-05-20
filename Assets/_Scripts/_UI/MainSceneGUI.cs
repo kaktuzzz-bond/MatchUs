@@ -12,7 +12,6 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
 
     [SerializeField] [TabGroup("Main Menu")]
     private Button hardMode;
-
     
     [SerializeField] [TabGroup("Main Menu")]
     private Button resumeTheGame;
