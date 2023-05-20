@@ -9,8 +9,6 @@ public class GameManager : Singleton<GameManager>
 
     public GameData gameData;
 
-    private DifficultyLevel _difficultyLevel;
-
     [ShowInInspector]
     public IGameState CurrentGameState => GameFiniteStateMachine.CurrentGameState;
 
@@ -48,14 +46,7 @@ public class GameManager : Singleton<GameManager>
     {
         Score += score;
     }
-
-
-    public void SetDifficultyAndLoad(DifficultyLevel difficultyLevel)
-    {
-        _difficultyLevel = difficultyLevel;
-
-        GameFiniteStateMachine.Loading();
-    }
+    
 
 
     public void StartGame()

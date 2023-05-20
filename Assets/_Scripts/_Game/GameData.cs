@@ -61,6 +61,8 @@ public class GameData : SerializedScriptableObject
 #region DIFFICULTY SETTINGS
 
     [TitleGroup("Top", GroupName = "Game Mode Difficulty")]
+    public DifficultyLevel difficultyLevel = DifficultyLevel.Test;
+
     [BoxGroup("Top/Difficulty", ShowLabel = false)]
     [HorizontalGroup("Top/Difficulty/Split", 0.5f)]
     [BoxGroup("Top/Difficulty/Split/Chips Number"), LabelText("Easy")]
@@ -88,6 +90,32 @@ public class GameData : SerializedScriptableObject
     public float testRandom;
 
 #endregion
+
+
+    public int GetOnStartChipNumber()
+    {
+        return difficultyLevel switch
+        {
+                DifficultyLevel.Test => testMode,
+                DifficultyLevel.Easy => easyMode,
+                DifficultyLevel.Normal => normalMode,
+                DifficultyLevel.Hard => hardMode,
+                _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+
+    public float GetRandomizeValue()
+    {
+        return difficultyLevel switch
+        {
+                DifficultyLevel.Test => testRandom,
+                DifficultyLevel.Easy => easyRandom,
+                DifficultyLevel.Normal => normalRandom,
+                DifficultyLevel.Hard => hardRandom,
+                _ => throw new ArgumentOutOfRangeException()
+        };
+    }
 
 
     public IEnumerable<int> GetShapeIndexes()

@@ -5,10 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class ActiveGameState : IGameState
 {
-    
     public void Enter(GameFiniteStateMachine context)
     {
-        // Board.Instance.StartingBoard();
+        PrepareToStart().Forget();
     }
 
 
@@ -19,8 +18,18 @@ public class ActiveGameState : IGameState
         // int killed = DOTween.KillAll();
         //
         // Debug.LogWarning($"Killed: {killed}");
-        
+
         LoadAsync().Forget();
+    }
+
+
+    private async UniTaskVoid PrepareToStart()
+    {
+        await CameraController.Instance.SetInitialPositionAsync();
+
+        await CameraController.Instance.SetBoundsAsync();
+
+        await GameGUI.Instance.SetupGUIAndFadeOut();
     }
 
 

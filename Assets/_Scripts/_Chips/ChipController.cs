@@ -29,7 +29,7 @@ public class ChipController : Singleton<ChipController>
 
     private ChipComparer _comparer;
 
-    private ChipRandomizer _randomizer;
+    private StartChipGenerator _generator;
 
     private int DelayOnDrawChips => (int)(delayOnDrawChipsInSeconds * 1000);
 
@@ -44,7 +44,7 @@ public class ChipController : Singleton<ChipController>
 
         PointerController = new PointerController(selectorPrefab, hintPrefab);
 
-        _randomizer = new ChipRandomizer(ChipRegistry, Board.Instance, GameManager.Instance);
+        _generator = new StartChipGenerator(ChipRegistry, Board.Instance, GameManager.Instance);
 
         _comparer = new ChipComparer(PointerController);
 

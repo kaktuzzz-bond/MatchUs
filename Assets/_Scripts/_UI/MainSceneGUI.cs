@@ -28,18 +28,24 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
 
         easyMode.onClick.AddListener(() =>
         {
-            _gameManager.SetDifficultyAndLoad(DifficultyLevel.Easy);
-            
+            _gameManager.gameData.difficultyLevel = DifficultyLevel.Easy;
+
+            GameManager.Instance.GameFiniteStateMachine.Loading();
+
         });
 
         normalMode.onClick.AddListener(() =>
         {
-            _gameManager.SetDifficultyAndLoad(DifficultyLevel.Normal);
+            _gameManager.gameData.difficultyLevel = DifficultyLevel.Normal;
+
+            GameManager.Instance.GameFiniteStateMachine.Loading();
         });
 
         hardMode.onClick.AddListener(() =>
         {
-            _gameManager.SetDifficultyAndLoad(DifficultyLevel.Hard);
+            _gameManager.gameData.difficultyLevel = DifficultyLevel.Hard;
+
+            GameManager.Instance.GameFiniteStateMachine.Loading();
         });
         
         resumeTheGame.onClick.AddListener(() =>
@@ -49,7 +55,9 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
 
         testMode.onClick.AddListener(() =>
         {
-            _gameManager.SetDifficultyAndLoad(DifficultyLevel.Test);
+            _gameManager.gameData.difficultyLevel = DifficultyLevel.Test;
+
+            GameManager.Instance.GameFiniteStateMachine.Loading();
         });
     }
 }

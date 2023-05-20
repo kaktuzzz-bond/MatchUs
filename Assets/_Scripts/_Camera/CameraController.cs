@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 
 public class CameraController : Singleton<CameraController>
 {
-    public event Action OnCameraSetup;
+    //public event Action OnCameraSetup;
 
     [SerializeField, MinValue(0)]
     private float cameraVelocityThreshold = 1f;
@@ -175,21 +175,6 @@ public class CameraController : Singleton<CameraController>
         }
     }
 
-
-    public async UniTaskVoid SetupCameraAsync()
-    {
-        //await SetOrthographicSizeAsync();
-
-        await SetBoundsAsync();
-
-        await SetInitialPositionAsync();
-
-        await GameGUI.Instance.SetupGUIAndFadeOut();
-        
-        OnCameraSetup?.Invoke();
-    }
-
-
     public async UniTask SetOrthographicSizeAsync()
     {
         _camera.orthographicSize = _gameManager.gameData.CameraOrthographicSize;
@@ -198,7 +183,7 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private async UniTask SetBoundsAsync()
+    public async UniTask SetBoundsAsync()
     {
         var rectHeader = _gameGUI.GetHeaderCorners();
 
@@ -239,7 +224,7 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private async UniTask SetInitialPositionAsync()
+    public async UniTask SetInitialPositionAsync()
     {
         _camera.transform.position = _bottomBoundPoint;
 
