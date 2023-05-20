@@ -25,7 +25,7 @@ public class LineDrawer : Singleton<LineDrawer>
 
     private const float WaveHeight = 0.15f;
 
-    private const float ShowTime = 0.2f;
+    private const float ShowTime = 0.8f;
 
     private Vector2[] _baseValues;
 
@@ -51,62 +51,47 @@ public class LineDrawer : Singleton<LineDrawer>
     }
 
 
-    // [Button("Test Right")]
-    // private void TestRight()
-    // {
-    //     CreateLineAsync(
-    //                     new Vector3(4f, 0, 0),
-    //                     Color.red,
-    //                     Color.white,
-    //                     3,
-    //                     LineDirection.Right)
-    //             .Forget();
-    // }
-    //
-    //
-    // [Button("Test Left")]
-    // private void TestLeft()
-    // {
-    //     CreateLineAsync(
-    //                     new Vector3(4f, 0, 0),
-    //                     Color.red,
-    //                     Color.white,
-    //                     1,
-    //                     LineDirection.Left)
-    //             .Forget();
-    // }
-    //
-    //
-    // [Button("Test Up")]
-    // private void TestUp()
-    // {
-    //     CreateLineAsync(
-    //                     new Vector3(4f, 0, 0),
-    //                     Color.red,
-    //                     Color.white,
-    //                     6,
-    //                     LineDirection.Up)
-    //             .Forget();
-    // }
-    //
-    //
-    // [Button("Test Down")]
-    // private void TestDown()
-    // {
-    //     CreateLineAsync(
-    //                     new Vector3(4f, 0, 0),
-    //                     Color.red,
-    //                     Color.white,
-    //                     9,
-    //                     LineDirection.Down)
-    //             .Forget();
-    // }
+    [Button("Test Right")]
+    private void TestRight()
+    {
+        var positions = GetLinePoints(new Vector3(4f, 0, 0), 4, LineDirection.Right);
+
+        CreateLineAsync(positions, Color.red, Color.white).Forget();
+    }
+
+
+    [Button("Test Left")]
+    private void TestLeft()
+    {
+        var positions = GetLinePoints(new Vector3(4f, 0, 0), 1, LineDirection.Left);
+
+        CreateLineAsync(positions, Color.red, Color.white).Forget();
+    }
+
+
+    [Button("Test Up")]
+    private void TestUp()
+    {
+        var positions = GetLinePoints(new Vector3(4f, 0, 0), 6, LineDirection.Up);
+
+        CreateLineAsync(positions, Color.red, Color.white).Forget();
+    }
+
+
+    [Button("Test Down")]
+    private void TestDown()
+    {
+        var positions = GetLinePoints(new Vector3(4f, 0, 0), 9, LineDirection.Down);
+
+        CreateLineAsync(positions, Color.red, Color.white).Forget();
+    }
 
 
     public async UniTask CreateLineAsync(Vector3[] positions, Color startColor, Color endColor)
     {
-        if(positions == null || positions.Length == 0) return;
-        
+        if (positions == null ||
+            positions.Length == 0) return;
+
         Line line = Instantiate(linePrefab, positions[0], Quaternion.identity, transform);
 
         await line.DrawLineAsync(positions, startColor, endColor, ShowTime);

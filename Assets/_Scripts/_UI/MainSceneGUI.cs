@@ -13,6 +13,10 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
     [SerializeField] [TabGroup("Main Menu")]
     private Button hardMode;
 
+    
+    [SerializeField] [TabGroup("Main Menu")]
+    private Button resumeTheGame;
+    
     [SerializeField] [TabGroup("Main Menu")]
     private Button testMode;
 
@@ -37,6 +41,11 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
         hardMode.onClick.AddListener(() =>
         {
             _gameManager.SetDifficultyAndLoad(DifficultyLevel.Hard);
+        });
+        
+        resumeTheGame.onClick.AddListener(() =>
+        {
+            Debug.Log("Continue");
         });
 
         testMode.onClick.AddListener(() =>
