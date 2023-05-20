@@ -10,11 +10,6 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         {
             if (_instance != null) return _instance;
 
-            if (typeof(T) == typeof(GameGUI))
-            {
-                Debug.LogWarning("====== GAME GUI ======");
-            }
-
             _instance = FindObjectOfType<T>();
 
             if (_instance != null) return _instance;

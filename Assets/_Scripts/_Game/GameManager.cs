@@ -64,7 +64,7 @@ public class GameManager : Singleton<GameManager>
 
     public void StartGame()
     {
-        Debug.LogWarning("GAME STARTED!");
+        Debug.Log("GAME STARTED!");
 
         ResetGameStats();
 
@@ -76,21 +76,21 @@ public class GameManager : Singleton<GameManager>
 
     public void PauseGame()
     {
-        Debug.LogWarning("GAME PAUSED");
+        Debug.Log("GAME PAUSED");
 
         DisableTimer();
     }
 
     public void ResumeGame()
     {
-        Debug.LogWarning("GAME RESUMED");
+        Debug.Log("GAME RESUMED");
 
         EnableTimer();
     }
 
     public void EndGame()
     {
-        Debug.LogWarning("GAME OVER!");
+        Debug.Log("GAME OVER!");
 
         OnGameOver?.Invoke();
         

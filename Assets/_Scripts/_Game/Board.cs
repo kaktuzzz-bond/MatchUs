@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using DG.Tweening.Core;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -22,8 +21,8 @@ public class Board : Singleton<Board>
 #region BOARD SETUP
 
     [HorizontalGroup("Size", Title = "Board Settings")]
-    [SerializeField] [BoxGroup("Size/Width")] [HideLabel] [ReadOnly]
-    private int width = 9;
+    [SerializeField] [BoxGroup("Size/Width")] [HideLabel]
+    private int width = 11;
 
     [SerializeField] [BoxGroup("Size/Height")] [HideLabel]
     private int height = 50;
@@ -43,7 +42,7 @@ public class Board : Singleton<Board>
     [FoldoutGroup("Parents")]
     public Transform pointerParent;
 
-    [SerializeField] [FoldoutGroup("Chips")] [ColorPalette]
+    [SerializeField] [FoldoutGroup("Chips")]
     private Color[] colorPallet;
 
     [SerializeField] [FoldoutGroup("Chips")]
@@ -171,14 +170,8 @@ public class Board : Singleton<Board>
 
 #region MATCH PROCESSING
 
-    public async UniTaskVoid ProcessMatched(Chip first, Chip second, List<Vector3[]> lines)
+    public async UniTaskVoid ProcessMatched(Chip first, Chip second)
     {
-        var tasks = Enumerable
-                .Select(lines, line => LineDrawer.Instance.CreateLineAsync(line, Color.cyan, Color.magenta))
-                .ToList();
-
-        await UniTask.WhenAll(tasks);
-
         // fade out chips
         ChipController.Instance.Log.AddCommand(new FadeOutCommand(first, second));
 

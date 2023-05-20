@@ -22,7 +22,7 @@ public class ShowHintsCommand : ICommand
                 Chip first = inGameChips[i];
                 Chip second = inGameChips[j];
 
-                if (ChipComparer.CompareChips(first, second) == null) continue;
+                if (!ChipComparer.CompareChips(first, second)) continue;
 
                 OnHintFound?.Invoke(first.BoardPosition, second.BoardPosition);
 

@@ -143,7 +143,7 @@ public class GameGUI : Singleton<GameGUI>
 
     private async UniTaskVoid PauseClickedAsync()
     {
-        Debug.LogWarning("PAUSE");
+        Debug.Log("PAUSE");
 
         //SetButtonPressPermission(false);
 
@@ -157,7 +157,7 @@ public class GameGUI : Singleton<GameGUI>
 
     private void ShopClicked()
     {
-        Debug.LogWarning("SHOP");
+        Debug.Log("SHOP");
     }
 
 

@@ -43,9 +43,10 @@ public class ChipComparer
         }
 
         // case: Compare chips
-        var compareResult = CompareChips(chip, _storage);
+      
+        
        
-        if (compareResult != null)
+        if (CompareChips(chip, _storage))
         {
             Chip other = _storage;
 
@@ -53,7 +54,7 @@ public class ChipComparer
 
             ChipController.Instance.PointerController.HidePointers();
 
-            Board.Instance.ProcessMatched(chip, other, compareResult).Forget();
+            Board.Instance.ProcessMatched(chip, other).Forget();
             
             return;
         }
@@ -66,25 +67,14 @@ public class ChipComparer
     }
 
 
-    public static List<Vector3[]> CompareChips(Chip first, Chip second)
+   
+    public static bool CompareChips(Chip first, Chip second)
     {
-        if (!first.CompareShape(second) &&
-            !first.CompareColor(second))
-        {
-            return null;
-        }
-
-        var horizontal = first.CompareHorizontalPosition(second);
-
-        if (horizontal != null) return new List<Vector3[]>() { horizontal };
-
-        var vertical = first.CompareVerticalPosition(second);
-
-        if (vertical != null) return new List<Vector3[]>() { vertical };
-
-        var multiline = first.CompareMultilinePosition(second);
-
-        return multiline;
+        return (first.CompareHorizontalPosition(second) ||
+                first.CompareVerticalPosition(second) ||
+                first.CompareMultilinePosition(second)) &&
+               (first.CompareShape(second) ||
+                first.CompareColor(second));
     }
 
 
