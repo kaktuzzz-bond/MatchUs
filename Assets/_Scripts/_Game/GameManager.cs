@@ -1,18 +1,15 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
     public event Action OnGameOver;
-    
+
     public GameData gameData;
 
     private DifficultyLevel _difficultyLevel;
-
-    public GameStorage Storage { get; private set; }
 
     [ShowInInspector]
     public IGameState CurrentGameState => GameFiniteStateMachine.CurrentGameState;
@@ -44,16 +41,6 @@ public class GameManager : Singleton<GameManager>
         }
 
         DontDestroyOnLoad(gameObject);
-
-        Init();
-    }
-
-
-    private void Init()
-    {
-        Storage = transform.AddComponent<GameStorage>();
-
-        Storage.SetGameBoard();
     }
 
 

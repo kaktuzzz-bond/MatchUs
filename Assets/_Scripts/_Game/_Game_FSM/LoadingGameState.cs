@@ -28,20 +28,26 @@ public class LoadingGameState : IGameState
     {
         Debug.Log("Loading --> GAME");
         
-        GameManager.Instance.gameData.CalculateCameraOrthographicSize();
+        GameManager.Instance.gameData
+                .CalculateCameraOrthographicSize();
 
-        await SceneManager.LoadSceneAsync(2);
+        await SceneManager
+                .LoadSceneAsync(2);
 
-        Board.Instance.Init(
-                new GameBoard(
-                        GameManager.Instance.gameData.width,
-                        GameManager.Instance.gameData.height));
+        var gameBoard = new GameBoard(
+                GameManager.Instance.gameData.width,
+                GameManager.Instance.gameData.height);
         
-        await CameraController.Instance.SetOrthographicSizeAsync();
-
-        await Board.Instance.DrawBoardAsync();
+        Board.Instance.Init(gameBoard);
         
-        GameManager.Instance.GameFiniteStateMachine.Active();
+        await CameraController.Instance
+                .SetOrthographicSizeAsync();
+
+        await gameBoard
+                .DrawBoardAsync();
+        
+        GameManager.Instance.GameFiniteStateMachine
+                .Active();
     }
 
 

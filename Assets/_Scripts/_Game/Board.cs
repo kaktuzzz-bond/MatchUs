@@ -14,69 +14,81 @@ public class Board : Singleton<Board>
 
     public event Action<int> OnLineRestored;
 
-    private Transform tileParent;
-
-    public Transform chipParent;
-
-    public Transform pointerParent;
+    
 
     private HashSet<UniTask> _chipTasksAll = new();
-    
 
     private GameBoard _gameBoard;
 
     private GameManager _gameManager;
 
-
     public int Capacity => _gameBoard.Capacity;
-    
-    
-    public void Init(GameBoard gameBoard)
+
+
+    private void Awake()
     {
         _gameManager = GameManager.Instance;
+    }
+
+
+    public void Init(GameBoard gameBoard)
+    {
         _gameBoard = gameBoard;
+
+        _gameManager.gameData.tileParent = CreateParent("Tile");
+        _gameManager.gameData.chipParent = CreateParent("Chips");
+        _gameManager.gameData.pointerParent = CreateParent("Pointers");
+    }
+
+
+    private Transform CreateParent(string parentName)
+    {
+        GameObject go = new();
+
+        Transform parent = go.transform;
+
+        parent.name = parentName;
+
+        return parent;
     }
 
 
     public Vector3 this[int x, int y] => _gameBoard[x, y];
 
-
-    public async UniTask DrawBoardAsync()
-    {
-        for (int y = 0; y < _gameBoard.Height; y++)
-        {
-            for (int x = 0; x < _gameBoard.Width; x++)
-            {
-                Transform tile = Instantiate(
-                        _gameManager.gameData.tilePrefab,
-                        _gameBoard[x, y],
-                        Quaternion.identity,
-                        tileParent);
-
-                tile.name = $"Tile({x}, {y})";
-            }
-        }
-
-        //draw dots
-        foreach (Vector3 pos in _gameBoard.Dots)
-        {
-            Transform dot = Instantiate(
-                    _gameManager.gameData.tilePrefab,
-                    pos,
-                    Quaternion.identity,
-                    tileParent);
-
-            dot.name = "Dot";
-
-            SpriteRenderer sr = dot.GetComponentInChildren<SpriteRenderer>();
-
-            sr.color = _gameManager.gameData.GetRandomColor();
-        }
-
-        await UniTask.Yield();
-
-        CameraController.Instance.SetupCameraAsync().Forget();
-    }
+    // public async UniTask DrawBoardAsync()
+    // {
+    //     for (int y = 0; y < _gameBoard.Height; y++)
+    //     {
+    //         for (int x = 0; x < _gameBoard.Width; x++)
+    //         {
+    //             Transform tile = Instantiate(
+    //                     _gameManager.gameData.tilePrefab,
+    //                     _gameBoard[x, y],
+    //                     Quaternion.identity,
+    //                     tileParent);
+    //
+    //             tile.name = $"Tile({x}, {y})";
+    //         }
+    //     }
+    //
+    //     //draw dots
+    //     foreach (Vector3 pos in _gameBoard.Dots)
+    //     {
+    //         Transform dot = Instantiate(
+    //                 _gameManager.gameData.tilePrefab,
+    //                 pos,
+    //                 Quaternion.identity,
+    //                 tileParent);
+    //
+    //         dot.name = "Dot";
+    //
+    //         SpriteRenderer sr = dot.GetComponentInChildren<SpriteRenderer>();
+    //
+    //         sr.color = _gameManager.gameData.GetRandomColor();
+    //     }
+    //
+    //     await UniTask.Yield();
+    // }
 
 
     public async UniTaskVoid ProcessMatched(Chip first, Chip second)

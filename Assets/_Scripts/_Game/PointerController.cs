@@ -51,7 +51,7 @@ public class PointerController
                 .Get()
                 .SetName(pointerTag)
                 .SetPosition(Board.Instance[boardPosition.x, boardPosition.y])
-                .SetParent(Board.Instance.pointerParent)
+                .SetParent(GameManager.Instance.gameData.pointerParent)
                 .Show();
     }
 

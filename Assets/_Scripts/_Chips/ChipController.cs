@@ -188,7 +188,7 @@ public class ChipController : Singleton<ChipController>
     {
         Vector3 worldPos = Board.Instance[boardPosition.x, boardPosition.y];
 
-        Transform instance = Instantiate(chipPrefab, worldPos, Quaternion.identity, Board.Instance.chipParent);
+        Transform instance = Instantiate(chipPrefab, worldPos, Quaternion.identity, GameManager.Instance.gameData.chipParent);
 
         if (!instance.TryGetComponent(out Chip chip)) return null;
 

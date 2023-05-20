@@ -38,6 +38,19 @@ public class GameData : SerializedScriptableObject
 
 #endregion
 
+#region PARENTS
+
+    [FoldoutGroup("Board Parents"), SceneObjectsOnly]
+    public Transform tileParent;
+
+    [FoldoutGroup("Board Parents"), SceneObjectsOnly]
+    public Transform chipParent;
+
+    [FoldoutGroup("Board Parents"), SceneObjectsOnly]
+    public Transform pointerParent;
+
+#endregion
+
     [Title("Chip data")]
     [PreviewField(Alignment = ObjectFieldAlignment.Left)]
     public List<Sprite> shapes;
@@ -130,5 +143,7 @@ public class GameData : SerializedScriptableObject
         float aspectRatio = (float)Screen.height / Screen.width;
 
         CameraOrthographicSize = (width + 0.5f) * aspectRatio * 0.5f;
+
+        Debug.Log($"Camera OrthographicSizeCalculated ({CameraOrthographicSize})");
     }
 }
