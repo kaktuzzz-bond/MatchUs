@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public class GamePointer : MonoBehaviour
+public class GamePointer : LinkedPoolObject
 {
     [SerializeField]
     private SpriteRenderer spriteRenderer;
@@ -20,9 +20,11 @@ public class GamePointer : MonoBehaviour
     }
 
 
-    public void Show()
+    public override void Show()
     {
-        gameObject.SetActive(true);
+        _pointerController.OnPointersHidden += Hide;
+
+        base.Show();
 
         spriteRenderer
                 .DOFade(1f, FadeDuration);
@@ -36,37 +38,5 @@ public class GamePointer : MonoBehaviour
         spriteRenderer
                 .DOFade(0f, FadeDuration)
                 .onComplete += () => _pointerController.ReleasePointer(this);
-    }
-
-
-    public GamePointer SetPosition(Vector3 position)
-    {
-        transform.position = position;
-
-        return this;
-    }
-
-
-    public GamePointer SetParent(Transform parent)
-    {
-        transform.SetParent(parent);
-
-        return this;
-    }
-
-
-    public GamePointer SetName()
-    {
-        transform.name = transform.tag;
-
-        return this;
-    }
-
-
-    public GamePointer Subscribe()
-    {
-        _pointerController.OnPointersHidden += Hide;
-
-        return this;
     }
 }

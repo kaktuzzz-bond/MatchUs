@@ -1,25 +1,24 @@
 using System;
 using System.Collections.Generic;
-using Sirenix.Serialization;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 [Serializable]
-public class ObjectPool
+public class ObjectPool<T> where T: MonoBehaviour
 {
-    private readonly Transform _prefab;
+    private readonly T _prefab;
 
-    private readonly Queue<Transform> _queue;
+    private readonly Queue<T> _queue;
 
 
-    public ObjectPool(Transform prefab)
+    public ObjectPool(T prefab)
     {
         _prefab = prefab;
-        _queue = new Queue<Transform>();
+        _queue = new Queue<T>();
     }
 
 
-    public Transform Get()
+    public T Get()
     {
         if (_queue.Count == 0)
         {
@@ -34,7 +33,7 @@ public class ObjectPool
     {
         for (int i = 0; i < count; i++)
         {
-            Transform obj = Object.Instantiate(_prefab);
+            T obj = Object.Instantiate(_prefab);
 
             obj.gameObject.SetActive(false);
 
@@ -43,7 +42,7 @@ public class ObjectPool
     }
 
 
-    public void Release(Transform obj)
+    public void Release(T obj)
     {
         obj.gameObject.SetActive(false);
 
@@ -53,6 +52,9 @@ public class ObjectPool
 
     public void ReleaseAll()
     {
-        foreach (Transform t in _queue) Release(t);
+        foreach (T t in _queue)
+        {
+            Release(t);
+        }
     }
 }

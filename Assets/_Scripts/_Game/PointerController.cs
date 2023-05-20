@@ -10,17 +10,17 @@ public class PointerController
 
     private const string Hint = "Hint";
 
-    private Dictionary<string, ObjectPool> _pools;
+    private Dictionary<string, ObjectPool<LinkedPoolObject>> _pools;
 
     private bool _isHintShown;
 
 
-    public PointerController(Transform selectorPrefab, Transform hintPrefab)
+    public PointerController(LinkedPoolObject selectorPrefab, LinkedPoolObject hintPrefab)
     {
-        _pools = new Dictionary<string, ObjectPool>
+        _pools = new Dictionary<string, ObjectPool<LinkedPoolObject>>
         {
-                { selectorPrefab.tag, new ObjectPool(selectorPrefab) },
-                { hintPrefab.tag, new ObjectPool(hintPrefab) }
+                { selectorPrefab.tag, new ObjectPool<LinkedPoolObject>(selectorPrefab) },
+                { hintPrefab.tag, new ObjectPool<LinkedPoolObject>(hintPrefab) }
         };
     }
 
@@ -49,18 +49,16 @@ public class PointerController
     {
         _pools[pointerTag]
                 .Get()
-                .GetComponent<GamePointer>()
-                .SetName()
+                .SetName(pointerTag)
                 .SetPosition(Board.Instance[boardPosition.x, boardPosition.y].position)
                 .SetParent(Board.Instance.pointerParent)
-                .Subscribe()
                 .Show();
     }
 
 
     public void ReleasePointer(GamePointer gamePointer)
     {
-        _pools[gamePointer.transform.tag].Release(gamePointer.transform);
+        _pools[gamePointer.transform.tag].Release(gamePointer);
     }
 
 

@@ -197,7 +197,8 @@ public class Board : Singleton<Board>
         
 
         CheckLineToRemove(topLine);
-        
+
+        await UniTask.Yield();
     }
 
 #endregion

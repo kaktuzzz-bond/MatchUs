@@ -9,10 +9,10 @@ public class ChipController : Singleton<ChipController>
     private Transform chipPrefab;
 
     [SerializeField] [FoldoutGroup("Prefabs")]
-    private Transform selectorPrefab;
+    private GamePointer selectorPrefab;
 
     [SerializeField] [FoldoutGroup("Prefabs")]
-    private Transform hintPrefab;
+    private GamePointer hintPrefab;
 
     [SerializeField]
     private float delayOnDrawChipsInSeconds = 0.08f;
