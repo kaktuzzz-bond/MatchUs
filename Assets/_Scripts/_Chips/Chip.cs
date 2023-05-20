@@ -34,6 +34,8 @@ public class Chip : MonoBehaviour
 
     private Board _board;
 
+    private GameManager _gameManager;
+    
     private Tween _tween;
 
 #region INITIALIZATION
@@ -42,6 +44,8 @@ public class Chip : MonoBehaviour
     {
         _board = Board.Instance;
 
+        _gameManager = GameManager.Instance;
+        
         ChipFiniteStateMachine = GetComponent<ChipFiniteStateMachine>();
     }
 
@@ -58,9 +62,9 @@ public class Chip : MonoBehaviour
 
     private void SetAppearance()
     {
-        spriteRenderer.sprite = _board.GetShape(ShapeIndex);
+        spriteRenderer.sprite = _gameManager.gameData.GetShape(ShapeIndex);
 
-        Color color = _board.GetColor(ColorIndex);
+        Color color = _gameManager.gameData.GetColor(ColorIndex);
 
         color.a = 0f;
 
@@ -94,7 +98,7 @@ public class Chip : MonoBehaviour
 
     public async UniTask MoveToAsync(Vector2Int boardPos)
     {
-        Vector3 worldPos = _board[boardPos.x, boardPos.y].position;
+        Vector3 worldPos = _board[boardPos.x, boardPos.y];
 
         await transform
                 .DOMove(worldPos, ShuffleTime)
@@ -121,14 +125,14 @@ public class Chip : MonoBehaviour
             _tween.onComplete += () =>
             {
                 _tween = transform
-                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].position.y, FadeTime);
+                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].y, FadeTime);
             };
 
             return;
         }
 
         _tween = transform
-                .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].position.y, MoveTime);
+                .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].y, MoveTime);
     }
 
 
@@ -147,7 +151,7 @@ public class Chip : MonoBehaviour
                     .ToUniTask();
 
             await transform
-                    .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime)
+                    .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].y, MoveTime)
                     .SetEase(Ease.OutCubic)
                     .ToUniTask();
 
@@ -155,7 +159,7 @@ public class Chip : MonoBehaviour
         }
 
         await transform
-                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].position.y, MoveTime)
+                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].y, MoveTime)
                 .SetEase(Ease.OutCubic)
                 .ToUniTask();
     }
@@ -218,7 +222,7 @@ public class Chip : MonoBehaviour
             chips[1] = other;
         }
 
-        bool isTopClear = Board.IsPathClear(Vector2.right, _board.Width - chips[0].BoardPosition.x, chips[0], chips[1]);
+        bool isTopClear = Board.IsPathClear(Vector2.right, _gameManager.gameData.width - chips[0].BoardPosition.x, chips[0], chips[1]);
         bool isBottomClear = Board.IsPathClear(Vector2.left, chips[1].BoardPosition.x, chips[1], chips[0]);
 
         return isTopClear && isBottomClear;

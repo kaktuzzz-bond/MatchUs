@@ -16,7 +16,7 @@ public class FadeOutCommand : ICommand
         _first = first;
         _second = second;
 
-        _score = GameData.GetScore(first, second);
+        //_score = GameData.GetScore(first, second);
 
         _chipController = ChipController.Instance;
     }

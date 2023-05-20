@@ -19,7 +19,13 @@ public class ChipRegistry
 
     private readonly List<Chip> _allChips = new();
 
-
+    private Board _board;
+    
+    public ChipRegistry()
+    {
+        _board = Board.Instance;
+    }
+    
     public void Register(Chip chip)
     {
         if (!_allChips.Contains(chip))
@@ -88,7 +94,7 @@ public class ChipRegistry
 
     public void CheckBoardCapacity()
     {
-        int emptyCells = Board.Instance.BoardCapacity - InGameChips.Count;
+        int emptyCells = _board.Capacity - InGameChips.Count;
 
         GameGUI.Instance.AddButton.SetInteractivity(emptyCells >= Counter);
     }

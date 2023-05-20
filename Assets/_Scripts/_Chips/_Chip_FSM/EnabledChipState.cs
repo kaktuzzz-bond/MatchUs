@@ -5,7 +5,7 @@ public class EnabledChipState : IChipState
 {
     public async UniTask Enter(Chip chip)
     {
-        Vector3 targetPos = Board.Instance[chip.BoardPosition.x, chip.BoardPosition.y].position;
+        Vector3 targetPos = Board.Instance[chip.BoardPosition.x, chip.BoardPosition.y];
 
         Vector3 initPos = new(targetPos.x, targetPos.y + 0.5f, targetPos.z);
 

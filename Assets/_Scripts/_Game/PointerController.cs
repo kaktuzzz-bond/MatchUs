@@ -50,7 +50,7 @@ public class PointerController
         _pools[pointerTag]
                 .Get()
                 .SetName(pointerTag)
-                .SetPosition(Board.Instance[boardPosition.x, boardPosition.y].position)
+                .SetPosition(Board.Instance[boardPosition.x, boardPosition.y])
                 .SetParent(Board.Instance.pointerParent)
                 .Show();
     }

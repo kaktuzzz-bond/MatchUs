@@ -6,13 +6,7 @@ using Sirenix.OdinInspector;
 
 public class CameraController : Singleton<CameraController>
 {
-#region EVENTS
-
     public event Action OnCameraSetup;
-
-#endregion
-
-#region CAMERA SETUP OPTIONS
 
     [SerializeField, MinValue(0)]
     private float cameraVelocityThreshold = 1f;
@@ -29,10 +23,8 @@ public class CameraController : Singleton<CameraController>
     [SerializeField, MinValue(0)]
     private float moveToBottomBoundDuration = 1f;
 
-#endregion
-
-#region COMPONENT LINKS
-
+    private GameManager _gameManager;
+    
     private Camera _camera;
 
     private Board _board;
@@ -40,10 +32,6 @@ public class CameraController : Singleton<CameraController>
     private InputManager _inputManager;
 
     private GameGUI _gameGUI;
-
-#endregion
-
-#region VARIABLES
 
     private Vector3 _startCameraPosition;
 
@@ -59,8 +47,6 @@ public class CameraController : Singleton<CameraController>
 
     private float _camToNextPositionDistance;
 
-#endregion
-
 #region INITIALIZATION
 
     private void Awake()
@@ -70,6 +56,8 @@ public class CameraController : Singleton<CameraController>
         _inputManager = InputManager.Instance;
 
         _gameGUI = GameGUI.Instance;
+
+        _gameManager = GameManager.Instance;
 
         _camera = Camera.main;
     }
@@ -152,7 +140,7 @@ public class CameraController : Singleton<CameraController>
 
     public void MoveToBoardPosition(int boardLine)
     {
-        float targetY = _board[0, boardLine].position.y;
+        float targetY = _board[0, boardLine].y;
 
         targetY = Mathf.Clamp(targetY, _bottomBoundPoint.y, _topBoundPoint.y);
 
@@ -190,7 +178,7 @@ public class CameraController : Singleton<CameraController>
 
     public async UniTaskVoid SetupCameraAsync()
     {
-        await SetOrthographicSizeAsync();
+        //await SetOrthographicSizeAsync();
 
         await SetBoundsAsync();
 
@@ -202,12 +190,10 @@ public class CameraController : Singleton<CameraController>
     }
 
 
-    private async UniTask SetOrthographicSizeAsync()
+    public async UniTask SetOrthographicSizeAsync()
     {
-        float aspectRatio = (float)Screen.height / Screen.width;
-
-        _camera.orthographicSize = (_board.Width + 0.5f) * aspectRatio * 0.5f;
-
+        _camera.orthographicSize = _gameManager.gameData.CameraOrthographicSize;
+    
         await UniTask.WaitForEndOfFrame(this);
     }
 
@@ -219,7 +205,7 @@ public class CameraController : Singleton<CameraController>
         float headerHeight = rectHeader[1].y - rectHeader[0].y;
 
         _topBoundPoint = new Vector3(
-                x: (_board.Width - 1f) * 0.5f,
+                x: (_gameManager.gameData.width - 1f) * 0.5f,
                 y: headerHeight - _camera.orthographicSize + 0.5f,
                 z: _camera.transform.position.z);
 
@@ -242,7 +228,7 @@ public class CameraController : Singleton<CameraController>
     {
         Vector2Int nextBoardPos = ChipController.Instance.NextBoardPosition;
 
-        Vector3 worldPos = _board[nextBoardPos.x, nextBoardPos.y].position;
+        Vector3 worldPos = _board[nextBoardPos.x, nextBoardPos.y];
 
         _bottomBoundPoint.y = worldPos.y + _camToNextPositionDistance;
 

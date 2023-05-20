@@ -18,7 +18,8 @@ public class ChipController : Singleton<ChipController>
     private float delayOnDrawChipsInSeconds = 0.08f;
 
     public Vector2Int NextBoardPosition =>
-            new(ChipRegistry.Counter % Board.Instance.Width, ChipRegistry.Counter / Board.Instance.Width);
+            new(ChipRegistry.Counter % _gameManager.gameData.width, 
+                    ChipRegistry.Counter / _gameManager.gameData.width);
 
     public ChipRegistry ChipRegistry { get; private set; }
 
@@ -33,6 +34,8 @@ public class ChipController : Singleton<ChipController>
     private int DelayOnDrawChips => (int)(delayOnDrawChipsInSeconds * 1000);
 
 
+    private GameManager _gameManager;
+    
     private void Awake()
     {
         ChipRegistry = new ChipRegistry();
@@ -44,6 +47,8 @@ public class ChipController : Singleton<ChipController>
         _randomizer = new ChipRandomizer(ChipRegistry, Board.Instance);
 
         _comparer = new ChipComparer(PointerController);
+
+        _gameManager = GameManager.Instance;
     }
 
 
@@ -89,7 +94,7 @@ public class ChipController : Singleton<ChipController>
 
     public void DrawStartArray()
     {
-        DrawStartArrayAsync(GameManager.Instance.ChipsOnStartNumber).Forget();
+        //DrawStartArrayAsync(GameManager.Instance.ChipsOnStartNumber).Forget();
 
         GameManager.Instance.StartGame();
 
@@ -103,7 +108,7 @@ public class ChipController : Singleton<ChipController>
 
         for (int i = 0; i < count; i++)
         {
-            ChipData data = _randomizer.GetChipDataByChance();
+            //ChipData data = _randomizer.GetChipDataByChance();
 
             Vector2Int boardPos = NextBoardPosition;
 
@@ -112,7 +117,7 @@ public class ChipController : Singleton<ChipController>
                 await UniTask.Delay(DelayOnDrawChips);
             }
 
-            DrawChip(data.shapeIndex, data.colorIndex, boardPos);
+           // DrawChip(data.shapeIndex, data.colorIndex, boardPos);
         }
 
         await UniTask.Yield();
@@ -181,7 +186,7 @@ public class ChipController : Singleton<ChipController>
 
     private Chip DrawChip(int shapeIndex, int colorIndex, Vector2Int boardPosition)
     {
-        Vector3 worldPos = Board.Instance[boardPosition.x, boardPosition.y].position;
+        Vector3 worldPos = Board.Instance[boardPosition.x, boardPosition.y];
 
         Transform instance = Instantiate(chipPrefab, worldPos, Quaternion.identity, Board.Instance.chipParent);
 

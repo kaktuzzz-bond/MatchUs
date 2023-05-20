@@ -7,8 +7,8 @@ public class ChipRandomizer
     private readonly Board _board;
     
     private readonly ChipRegistry _chipRegistry;
-    
-    //private readonly GameManager _gameManager;
+
+    private readonly GameManager _gameManager;
     public ChipRandomizer(ChipRegistry chipRegistry, Board board)
     {
         _gameManager = GameManager.Instance;
@@ -19,35 +19,37 @@ public class ChipRandomizer
     }
     
     
-    public ChipData GetChipDataByChance()
+    public static ChipData GetChipDataByChance()
     {
-        return Random.value <= _gameManager.ChanceForRandom
-                ? GetRandomChipData()
-                : GetChipDataForHardLevel();
+        // return Random.value <= _gameManager.ChanceForRandom
+        //         ? GetRandomChipData()
+        //         : GetChipDataForHardLevel();
+
+        return new ChipData(0,0);
     }
     
     private ChipData GetRandomChipData()
     {
-        int shapeIndex = Random.Range(0, _board.ShapePalletLength);
+        int shapeIndex = _gameManager.gameData.GetRandomShapeIndex();
 
-        int colorIndex = Random.Range(0, _board.ColorPalletLength);
+        int colorIndex = _gameManager.gameData.GetRandomColorIndex();
 
         return new ChipData(shapeIndex, colorIndex);
     }
     
     private ChipData GetChipDataForHardLevel()
     {
-        List<int> shapeIndexes = new(_board.ShapeIndexes);
-        List<int> colorIndexes = new(_board.ColorIndexes);
+        List<int> shapeIndexes = new(_gameManager.gameData.GetShapeIndexes());
+        List<int> colorIndexes = new(_gameManager.gameData.GetColorIndexes());
 
         if (_chipRegistry.Counter > 0)
         {
             shapeIndexes.Remove(_chipRegistry.InGameChips.Last().ShapeIndex);
             colorIndexes.Remove(_chipRegistry.InGameChips.Last().ColorIndex);
 
-            if (_chipRegistry.Counter >= _board.Width)
+            if (_chipRegistry.Counter >= _gameManager.gameData.width)
             {
-                Chip chip = _chipRegistry.InGameChips[^_board.Width];
+                Chip chip = _chipRegistry.InGameChips[^_gameManager.gameData.width];
 
                 shapeIndexes.Remove(chip.ShapeIndex);
                 colorIndexes.Remove(chip.ColorIndex);

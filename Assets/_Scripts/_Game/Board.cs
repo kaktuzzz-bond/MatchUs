@@ -10,165 +10,74 @@ using Random = UnityEngine.Random;
 
 public class Board : Singleton<Board>
 {
-#region EVENTS
-
     public event Action<int> OnLineRemoved;
 
     public event Action<int> OnLineRestored;
 
-#endregion
-
-#region BOARD SETUP
-
-    [HorizontalGroup("Size", Title = "Board Settings")]
-    [SerializeField] [BoxGroup("Size/Width")] [HideLabel]
-    private int width = 11;
-
-    [SerializeField] [BoxGroup("Size/Height")] [HideLabel]
-    private int height = 50;
-
-    [SerializeField] [FoldoutGroup("Prefabs")]
-    private Transform tilePrefab;
-
-    [SerializeField] [FoldoutGroup("Prefabs")]
-    private Transform dotPrefab;
-
-    [SerializeField] [FoldoutGroup("Parents")]
     private Transform tileParent;
 
-    [FoldoutGroup("Parents")]
     public Transform chipParent;
 
-    [FoldoutGroup("Parents")]
     public Transform pointerParent;
 
-    [SerializeField] [FoldoutGroup("Chips")]
-    private Color[] colorPallet;
-
-    [SerializeField] [FoldoutGroup("Chips")]
-    private Sprite[] shapePallet;
-
-#endregion
-
-#region PROPERTIES
-
-    public int Width => width;
-
-    private int Height => height;
-
-    public int BoardCapacity { get; private set; }
-
-    public List<int> ShapeIndexes { get; private set; }
-
-    public List<int> ColorIndexes { get; private set; }
-
-    public int ColorPalletLength => colorPallet.Length;
-
-    public int ShapePalletLength { get => shapePallet.Length; set => throw new NotImplementedException(); }
-
-#endregion
-
-#region INDEXER & GETTERS
-
-    private Transform[,] _tiles;
-
-    public Transform this[int x, int y] => _tiles[x, y];
-
-
-    public Color GetColor(int index)
-    {
-        if (index < 0 ||
-            index >= colorPallet.Length)
-        {
-            throw new IndexOutOfRangeException($"{nameof(GetColor)}Index is out of range");
-        }
-
-        return colorPallet[index];
-    }
-
-
-    public Sprite GetShape(int index)
-    {
-        if (index < 0 ||
-            index >= shapePallet.Length)
-        {
-            throw new IndexOutOfRangeException($"{nameof(GetShape)}Index is out of range");
-        }
-
-        return shapePallet[index];
-    }
-
-#endregion
-
     private HashSet<UniTask> _chipTasksAll = new();
+    
 
-#region BOARD CREATION
+    private GameBoard _gameBoard;
 
-    public void StartingBoard()
+    private GameManager _gameManager;
+
+
+    public int Capacity => _gameBoard.Capacity;
+    
+    
+    public void Init(GameBoard gameBoard)
     {
-        DOTween.SetTweensCapacity(5000, 200);
-        ShapeIndexes = Utils.GetIndexes(ShapePalletLength);
-        ColorIndexes = Utils.GetIndexes(ColorPalletLength);
-
-        DrawBoard(Width, Height);
-
-        BoardCapacity = Width * Height;
+        _gameManager = GameManager.Instance;
+        _gameBoard = gameBoard;
     }
 
 
-    private void DrawBoard(int xSize, int ySize)
-    {
-        _tiles = new Transform[xSize, ySize];
+    public Vector3 this[int x, int y] => _gameBoard[x, y];
 
-        for (int y = 0; y < ySize; y++)
-        for (int x = 0; x < xSize; x++)
+
+    public async UniTask DrawBoardAsync()
+    {
+        for (int y = 0; y < _gameBoard.Height; y++)
         {
-            Transform tile = Instantiate(
-                    tilePrefab,
-                    new Vector3(x, -y, 0f),
+            for (int x = 0; x < _gameBoard.Width; x++)
+            {
+                Transform tile = Instantiate(
+                        _gameManager.gameData.tilePrefab,
+                        _gameBoard[x, y],
+                        Quaternion.identity,
+                        tileParent);
+
+                tile.name = $"Tile({x}, {y})";
+            }
+        }
+
+        //draw dots
+        foreach (Vector3 pos in _gameBoard.Dots)
+        {
+            Transform dot = Instantiate(
+                    _gameManager.gameData.tilePrefab,
+                    pos,
                     Quaternion.identity,
                     tileParent);
 
-            tile.name = $"Tile({x}, {y})";
+            dot.name = "Dot";
 
-            _tiles[x, y] = tile;
+            SpriteRenderer sr = dot.GetComponentInChildren<SpriteRenderer>();
 
-            DrawDot(x, y);
+            sr.color = _gameManager.gameData.GetRandomColor();
         }
+
+        await UniTask.Yield();
 
         CameraController.Instance.SetupCameraAsync().Forget();
     }
 
-
-    private void DrawDot(int x, int y)
-    {
-        if (x == Width - 1 ||
-            y == Height - 1 ||
-            Random.value > 0.15f)
-        {
-            return;
-        }
-
-        Vector3 dotPos = new(x + 0.5f, -(y + 0.5f), 0f);
-
-        Transform dot = Instantiate(
-                dotPrefab,
-                dotPos,
-                Quaternion.identity,
-                tileParent);
-
-        dot.name = "Dot";
-
-        SpriteRenderer sr = dot.GetComponentInChildren<SpriteRenderer>();
-
-        int index = Random.Range(0, colorPallet.Length);
-
-        sr.color = GetColor(index);
-    }
-
-#endregion
-
-#region MATCH PROCESSING
 
     public async UniTaskVoid ProcessMatched(Chip first, Chip second)
     {
@@ -184,7 +93,7 @@ public class Board : Singleton<Board>
         if (firstLine == secondLine)
         {
             CheckLineToRemove(firstLine);
-            
+
             return;
         }
 
@@ -194,16 +103,12 @@ public class Board : Singleton<Board>
         int bottomLine = Mathf.Max(firstLine, secondLine);
 
         CheckLineToRemove(bottomLine);
-        
 
         CheckLineToRemove(topLine);
 
         await UniTask.Yield();
     }
 
-#endregion
-
-#region LINE CHECKING
 
     private void CheckLineToRemove(int boardLine)
     {
@@ -221,13 +126,13 @@ public class Board : Singleton<Board>
 
     private RaycastHit2D[] GetRaycastHits(int boardLine)
     {
-        var hits = new RaycastHit2D[Width];
+        var hits = new RaycastHit2D[_gameManager.gameData.width];
 
         ContactFilter2D filter = new();
 
-        Vector2 origin = this[0, boardLine].position;
+        Vector2 origin = _gameBoard[0, boardLine];
 
-        int result = Physics2D.Raycast(origin, Vector2.right, filter, hits, Width);
+        int result = Physics2D.Raycast(origin, Vector2.right, filter, hits, _gameManager.gameData.width);
 
         if (result == 0)
         {
@@ -291,8 +196,6 @@ public class Board : Singleton<Board>
         return true;
     }
 
-#endregion
-
 
     public void RestoreLine(int boardLine)
     {
@@ -305,7 +208,7 @@ public class Board : Singleton<Board>
     public async UniTask WaitForAllChipTasks()
     {
         await UniTask.WhenAll(_chipTasksAll);
-        
+
         _chipTasksAll.Clear();
     }
 

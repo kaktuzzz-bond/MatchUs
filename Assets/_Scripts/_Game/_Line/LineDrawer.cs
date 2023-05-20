@@ -98,12 +98,12 @@ public class LineDrawer : Singleton<LineDrawer>
     }
 
 
-    public Vector3[] GetLinePoints(Vector2Int startBoardPoint, int length, LineDirection direction)
-    {
-        Vector3 startPoint = Board.Instance[startBoardPoint.x, startBoardPoint.y].position;
-
-        return GetLinePoints(startPoint, length, direction);
-    }
+    // public Vector3[] GetLinePoints(Vector2Int startBoardPoint, int length, LineDirection direction)
+    // {
+    //     Vector3 startPoint = Board.Instance[startBoardPoint.x, startBoardPoint.y].position;
+    //
+    //     return GetLinePoints(startPoint, length, direction);
+    // }
 
 
     private Vector3[] GetLinePoints(Vector3 startPoint, int length, LineDirection direction)

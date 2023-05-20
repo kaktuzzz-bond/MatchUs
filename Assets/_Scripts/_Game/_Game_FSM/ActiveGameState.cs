@@ -5,9 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class ActiveGameState : IGameState
 {
+    
     public void Enter(GameFiniteStateMachine context)
     {
-        Board.Instance.StartingBoard();
+        // Board.Instance.StartingBoard();
     }
 
 
@@ -27,7 +28,7 @@ public class ActiveGameState : IGameState
     {
         Debug.Log("Active Game State entered ");
 
-        DOTween.SetTweensCapacity((int)(Board.Instance.BoardCapacity * 0.5f), 100);
+        DOTween.SetTweensCapacity(50, 100);
 
         await SceneManager.LoadSceneAsync(1);
     }

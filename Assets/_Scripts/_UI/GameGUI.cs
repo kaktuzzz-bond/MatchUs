@@ -93,7 +93,7 @@ public class GameGUI : Singleton<GameGUI>
     public bool IsGameAreaPosition(Vector3 position)
     {
         bool checkX = position.x > -0.5f &&
-                      position.x < Board.Instance.Width + 0.5f;
+                      position.x < _gameManager.gameData.width + 0.5f;
 
         bool checkY = position.y < GetHeaderCorners()[0].y &&
                       position.y > GetFooterCorners()[1].y;

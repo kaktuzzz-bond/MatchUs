@@ -1,28 +1,23 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
-{ 
+{
     public event Action OnGameOver;
-
-
-    [SerializeField]
-    private GameData gameData;
     
+    public GameData gameData;
+
     private DifficultyLevel _difficultyLevel;
+
+    public GameStorage Storage { get; private set; }
 
     [ShowInInspector]
     public IGameState CurrentGameState => GameFiniteStateMachine.CurrentGameState;
 
     public GameFiniteStateMachine GameFiniteStateMachine { get; } = new();
-
-    // public int ChipsOnStartNumber => GameConfig.GetChipsOnStart(_difficultyLevel);
-    //
-    // public float ChanceForRandom => GameConfig.GetChanceForRandom(_difficultyLevel);
-
-    public bool IsGameActive { get; private set; }
 
     private int _score;
 
@@ -49,6 +44,16 @@ public class GameManager : Singleton<GameManager>
         }
 
         DontDestroyOnLoad(gameObject);
+
+        Init();
+    }
+
+
+    private void Init()
+    {
+        Storage = transform.AddComponent<GameStorage>();
+
+        Storage.SetGameBoard();
     }
 
 
@@ -85,6 +90,7 @@ public class GameManager : Singleton<GameManager>
         DisableTimer();
     }
 
+
     public void ResumeGame()
     {
         Debug.Log("GAME RESUMED");
@@ -92,12 +98,13 @@ public class GameManager : Singleton<GameManager>
         EnableTimer();
     }
 
+
     public void EndGame()
     {
         Debug.Log("GAME OVER!");
 
         OnGameOver?.Invoke();
-        
+
         InputManager.Instance.SetPlayerInput(false);
 
         DisableTimer();
