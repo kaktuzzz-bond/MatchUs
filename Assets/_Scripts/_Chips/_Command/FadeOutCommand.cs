@@ -6,8 +6,6 @@ public class FadeOutCommand : ICommand
 
     private readonly Chip _second;
 
-    private readonly ChipController _chipController;
-
     private readonly int _score;
 
 
@@ -17,8 +15,7 @@ public class FadeOutCommand : ICommand
         _second = second;
 
         //_score = GameData.GetScore(first, second);
-
-        _chipController = ChipController.Instance;
+        
     }
 
 

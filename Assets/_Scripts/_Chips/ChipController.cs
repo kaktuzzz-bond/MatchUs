@@ -44,7 +44,7 @@ public class ChipController : Singleton<ChipController>
 
         PointerController = new PointerController(selectorPrefab, hintPrefab);
 
-        _randomizer = new ChipRandomizer(ChipRegistry, Board.Instance);
+        _randomizer = new ChipRandomizer(ChipRegistry, Board.Instance, GameManager.Instance);
 
         _comparer = new ChipComparer(PointerController);
 

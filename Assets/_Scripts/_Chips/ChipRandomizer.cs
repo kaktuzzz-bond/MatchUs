@@ -9,9 +9,9 @@ public class ChipRandomizer
     private readonly ChipRegistry _chipRegistry;
 
     private readonly GameManager _gameManager;
-    public ChipRandomizer(ChipRegistry chipRegistry, Board board)
+    public ChipRandomizer(ChipRegistry chipRegistry, Board board, GameManager gameManager)
     {
-        _gameManager = GameManager.Instance;
+        _gameManager = gameManager;
         
         _board = board;
         

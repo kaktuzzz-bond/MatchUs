@@ -6,14 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class LoadingGameState : IGameState
 {
-    private readonly GameManager _gameManager;
-    
-    public LoadingGameState()
-    {
-        _gameManager = GameManager.Instance;
-        
-    }
-
+   
 
     public void Enter(GameFiniteStateMachine context)
     {
@@ -35,14 +28,14 @@ public class LoadingGameState : IGameState
     {
         Debug.Log("Loading --> GAME");
         
-        _gameManager.gameData.CalculateCameraOrthographicSize();
+        GameManager.Instance.gameData.CalculateCameraOrthographicSize();
 
         await SceneManager.LoadSceneAsync(2);
 
         Board.Instance.Init(
                 new GameBoard(
-                        _gameManager.gameData.width,
-                        _gameManager.gameData.height));
+                        GameManager.Instance.gameData.width,
+                        GameManager.Instance.gameData.height));
         
         await CameraController.Instance.SetOrthographicSizeAsync();
 
