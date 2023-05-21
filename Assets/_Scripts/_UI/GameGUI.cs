@@ -102,8 +102,6 @@ public class GameGUI : Singleton<GameGUI>
     }
 
 
-#region INITIALIZATION
-
     private void Init()
     {
         // game buttons
@@ -131,7 +129,6 @@ public class GameGUI : Singleton<GameGUI>
         infoPanel.Init();
     }
 
-#endregion
 
 #region ACTIONS
 

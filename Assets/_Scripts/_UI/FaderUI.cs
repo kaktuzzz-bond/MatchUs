@@ -7,10 +7,10 @@ using UnityEngine.UI;
 public class FaderUI : MonoBehaviour
 {
     [MinValue(0)]
-    public float fadeTime = 0.3f;
+    public float fadeTime;
 
     [PropertyRange(0, 1)]
-    public float maxFadeValue = 0.7f;
+    public float maxFadeValue;
 
     [SerializeField]
     private Image fade;

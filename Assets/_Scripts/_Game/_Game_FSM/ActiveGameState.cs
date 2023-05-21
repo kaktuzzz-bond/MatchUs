@@ -13,51 +13,53 @@ public class ActiveGameState : IGameState
 
     public void Exit(GameFiniteStateMachine context)
     {
-        GameManager.Instance.DisableTimer();
+        Debug.LogWarning("Saving system should be here");
 
-        // int killed = DOTween.KillAll();
-        //
-        // Debug.LogWarning($"Killed: {killed}");
+        GameManager.Instance.DisableTimer();
 
         LoadAsync().Forget();
     }
 
 
+    private async UniTaskVoid LoadAsync()
+    {
+        await SceneManager.LoadSceneAsync(1);
+    }
+
+
     private async UniTaskVoid PrepareToStart()
     {
-        GameBoard gameBoard = new (
+        DOTween.SetTweensCapacity(5000, 100);
+
+        GameBoard gameBoard = new(
                 GameManager.Instance.gameData.width,
                 GameManager.Instance.gameData.height);
-        
+
         Board.Instance.Init(gameBoard);
-        
+
         await CameraController.Instance
                 .SetOrthographicSizeAsync();
 
         await gameBoard
                 .DrawBoardAsync();
-        
-        await CameraController.Instance.SetBoundsAsync();
-
-        await CameraController.Instance.SetInitialPositionAsync();
 
         await CameraController.Instance.SetBoundsAsync();
 
         await CameraController.Instance.SetInitialPositionAsync();
-        
+
+        await CameraController.Instance.SetBoundsAsync();
+
+        await CameraController.Instance.SetInitialPositionAsync();
+
         await GameGUI.Instance.SetupGUIAndFadeOut();
+
+        await UniTask.Delay(200);
         
         await ChipController.Instance
                 .DrawArrayAsync(GameManager.Instance.gameData.StartArrayInfos);
-    }
 
+        await UniTask.Delay(100);
 
-    private async UniTaskVoid LoadAsync()
-    {
-        Debug.Log("Active Game State entered ");
-
-        DOTween.SetTweensCapacity(50, 100);
-
-        await SceneManager.LoadSceneAsync(1);
+        GameManager.Instance.StartGame();
     }
 }

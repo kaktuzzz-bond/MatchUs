@@ -59,16 +59,16 @@ public class GameData : SerializedScriptableObject
     public List<Color> colors;
 
     [FoldoutGroup("Chip Behaviour Values")]
-    public float chipFadeTime = 0.2f;
+    public float chipFadeTime;
 
     [FoldoutGroup("Chip Behaviour Values")]
-    public float chipMoveTime = 0.3f;
+    public float chipMoveTime;
 
     [FoldoutGroup("Chip Behaviour Values")]
-    public float chipShuffleTime = 0.6f;
-
+    public float chipShuffleTime;
+    
     [FoldoutGroup("Chip Behaviour Values")]
-    public float placeOnBoardVerticalShift = 0.4f;
+    public float placeOnBoardVerticalShift;
     [ShowInInspector]
     public List<ChipInfo> StartArrayInfos { get; private set; }
 

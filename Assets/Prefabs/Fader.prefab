@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3cf76df71a0462e85c9b0098a5e0eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeTime: 0.3
+  fadeTime: 0.5
   maxFadeValue: 0.95
   fade: {fileID: 6734247557067868802}
 --- !u!1 &6734247557067868804

@@ -1,13 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 
 public class ChipController : Singleton<ChipController>
 {
-    [SerializeField]
-    private float delayOnDrawChipsInSeconds = 0.08f;
-
     public Vector2Int NextBoardPosition =>
             new(
                     ChipRegistry.Counter % _gameManager.gameData.width,
@@ -79,28 +77,32 @@ public class ChipController : Singleton<ChipController>
         _chipComparer.TryMatching(chip);
     }
 
-    
-    
+
     public async UniTask DrawArrayAsync(List<ChipInfo> chipInfos)
     {
-        //var chips = _chipInfoGenerator.GetStartChipInfoArray();
+        int line = (int)chipInfos.First().position.y;
 
         foreach (ChipInfo info in chipInfos)
         {
+            if ((int)info.position.y != line)
+            {
+                line = (int)info.position.y;
+
+                await UniTask.Delay(100);
+            }
+
             Chip chip = CreateChip(info);
 
             ChipRegistry.Register(chip);
 
             chip.Init(info);
+
+            chip.PlaceOnBoardAsync().Forget();
         }
 
         await UniTask.Yield();
-        
-        // Log.CheckStackCount();
-        //
-        // GameManager.Instance.StartGame();
 
-      
+        Log.CheckStackCount();
     }
 
 
