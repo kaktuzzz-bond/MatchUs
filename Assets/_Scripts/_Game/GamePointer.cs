@@ -25,7 +25,7 @@ public class GamePointer : MonoBehaviour
                 .DOFade(0f, FadeDuration)
                 .ToUniTask();
 
-        Board.Instance.ReleasePointer(this);
+        gameObject.SetActive(false);
     }
 
 
@@ -40,14 +40,6 @@ public class GamePointer : MonoBehaviour
     public GamePointer SetName(string newName)
     {
         transform.name = newName;
-
-        return this;
-    }
-
-
-    public GamePointer SetParent(Transform parent)
-    {
-        transform.SetParent(parent);
 
         return this;
     }

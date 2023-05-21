@@ -19,7 +19,7 @@ public class Board : Singleton<Board>
     private GameBoard _gameBoard;
 
     private LineChecker _lineChecker;
-    
+
     private GameManager _gameManager;
 
     public int Capacity => _gameBoard.Capacity;
@@ -35,19 +35,18 @@ public class Board : Singleton<Board>
 
     public async UniTask Init()
     {
+        _gameManager.gameData.tileParent = CreateParent("Tile");
+        _gameManager.gameData.chipParent = CreateParent("Chips");
+        _gameManager.gameData.pointerParent = CreateParent("Pointers");
+
         _gameBoard = new(
                 _gameManager.gameData.width,
                 _gameManager.gameData.height);
 
         _lineChecker = new LineChecker(_gameBoard);
-        
-        _pointerPool = new PointerPool(
-                _gameManager.gameData.selectorPrefab,
-                _gameManager.gameData.hintPrefab);
 
-        _gameManager.gameData.tileParent = CreateParent("Tile");
-        _gameManager.gameData.chipParent = CreateParent("Chips");
-        _gameManager.gameData.pointerParent = CreateParent("Pointers");
+        _pointerPool = new PointerPool();
+        _pointerPool.Init();
 
         await _gameBoard.DrawBoardAsync();
     }
@@ -70,9 +69,27 @@ public class Board : Singleton<Board>
     public Vector3 this[int x, int y] => _gameBoard[x, y];
 
 
-    public void ReleasePointer(GamePointer pointer)
+    public void ShowHints(Vector3 firstPosition, Vector3 secondPosition)
     {
-        _pointerPool.ReleasePointer(pointer);
+        _pointerPool.ShowHints(firstPosition, secondPosition);
+    }
+
+
+    public void HideHints()
+    {
+        _pointerPool.HideHints();
+    }
+
+
+    public void ShowSelector(Vector3 position)
+    {
+        _pointerPool.ShowSelector(position);
+    }
+
+
+    public void HideSelector()
+    {
+        _pointerPool.HideSelector();
     }
 
 
@@ -99,13 +116,10 @@ public class Board : Singleton<Board>
 
         int bottomLine = Mathf.Max(firstLine, secondLine);
 
-       
         // CheckLineToRemove(bottomLine);
         //
         // CheckLineToRemove(topLine);
     }
-
-
 
 
     // private void CheckLineToRemove(int boardLine)

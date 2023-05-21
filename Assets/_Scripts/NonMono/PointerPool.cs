@@ -1,60 +1,75 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class PointerPool
 {
-    public static  string selector = "Selector";
+    private GamePointer _selector;
 
-    public static  string hint = "Hint";
+    private GamePointer[] _hints;
 
-    private readonly Dictionary<string, ObjectPool<GamePointer>> _pools;
-    
+    private GameManager _gameManager;
+
+    private int _selectorCounter;
 
 
-    public PointerPool(Transform selectorPrefab, Transform hintPrefab)
+    public void Init()
     {
-        selector = selectorPrefab.tag;
+        _gameManager = GameManager.Instance;
 
-        hint = hintPrefab.tag;
+        Transform selector = Object.Instantiate(
+                _gameManager.gameData.selectorPrefab,
+                _gameManager.gameData.pointerParent);
+
+        selector.gameObject.SetActive(false);
+
+        _selector = selector.GetComponent<GamePointer>();
+
+        _selector.SetName(_selector.tag);
+
+        _hints = new GamePointer[2];
+
+        for (int i = 0; i < 2; i++)
+        {
+            Transform hint = Object.Instantiate(
+                    _gameManager.gameData.hintPrefab,
+                    _gameManager.gameData.pointerParent);
+
+            hint.gameObject.SetActive(false);
+
+            _hints[i] = hint.GetComponent<GamePointer>();
+
+            _hints[i].SetName(_hints[i].tag);
+        }
+    }
+
+
+    public void ShowSelector(Vector3 position)
+    {
+        _selector.SetPosition(position).Show();
         
-        _pools = new Dictionary<string, ObjectPool<GamePointer>>
-        {
-                { selector, new ObjectPool<GamePointer>(selectorPrefab.GetComponent<GamePointer>()) },
-                { hint, new ObjectPool<GamePointer>(hintPrefab.GetComponent<GamePointer>()) }
-        };
     }
 
 
-    public void ShowHints()
+    public void HideSelector()
     {
-        ShowHintsCommand hintsCommand = new();
-
-        hintsCommand.OnHintFound += (first, second) =>
-        {
-            ShowPointer(hint, first);
-            ShowPointer(hint, second);
-
-            CameraController.Instance.MoveToBoardPosition(Mathf.Max(first.y, second.y));
-        };
-
-        hintsCommand.Execute();
+        _selector.HideAsync().Forget();
     }
 
 
-    public void ShowPointer(string pointerTag, Vector2Int boardPosition)
+    public void ShowHints(Vector3 firstPosition, Vector3 secondPosition)
     {
-        _pools[pointerTag]
-                .Get()
-                .SetName(pointerTag)
-                .SetPosition(Board.Instance[boardPosition.x, boardPosition.y])
-                .SetParent(GameManager.Instance.gameData.pointerParent)
-                .Show();
+        _hints[0].SetPosition(firstPosition).Show();
+
+        _hints[1].SetPosition(secondPosition).Show();
     }
 
 
-    public void ReleasePointer(GamePointer gamePointer)
+    public void HideHints()
     {
-        _pools[gamePointer.transform.tag].Release(gamePointer);
+        _hints[0].HideAsync().Forget();
+
+        _hints[1].HideAsync().Forget();
     }
 }

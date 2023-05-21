@@ -76,10 +76,21 @@ public class ChipController : Singleton<ChipController>
 
         if (tapped == null)
         {
+            Board.Instance.HideSelector();
+
+            return;
+        }
+
+        if (tapped.Length == 1)
+        {
+            Board.Instance.ShowSelector(chip.transform.position);
+            
             return;
         }
 
         // on matched
+        Board.Instance.HideSelector();
+
         _commandLogger.AddCommand(new FadeOutCommand(tapped[0], tapped[1]));
 
         Board.Instance.CheckLines(tapped[0], tapped[1]);
