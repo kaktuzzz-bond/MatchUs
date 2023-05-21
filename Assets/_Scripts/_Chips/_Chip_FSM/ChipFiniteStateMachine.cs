@@ -20,7 +20,7 @@ public class ChipFiniteStateMachine
     {
         _chip = chip;
         
-        CurrentState = new InGameChipState();
+        CurrentState = new RemovedChipState();
         
         SetState(chip.CurrentState);
     }

@@ -15,10 +15,10 @@ public class Chip : MonoBehaviour
         Removed
     }
 
-    public States CurrentState { get; private set; }
-
     [SerializeField]
     private SpriteRenderer spriteRenderer;
+
+    public States CurrentState { get; private set; }
 
     public int ShapeIndex { get; private set; }
 
@@ -34,25 +34,19 @@ public class Chip : MonoBehaviour
     [ShowInInspector] [BoxGroup("Position/Board Position")] [HideLabel] [ReadOnly]
     public Vector2Int BoardPosition => Utils.ConvertWorldToBoardCoordinates(transform.position);
 
-    private Board _board;
-
     private GameManager _gameManager;
-
-    private Tween _tween;
 
 
     private void Awake()
     {
-        _board = Board.Instance;
-
         _gameManager = GameManager.Instance;
+
+        Activate(false);
     }
 
 
     public void Init(ChipInfo info)
     {
-        Activate(false);
-
         ShapeIndex = info.shapeIndex;
 
         ColorIndex = info.colorIndex;
@@ -77,21 +71,15 @@ public class Chip : MonoBehaviour
     }
 
 
-    public void Activate(bool isActive) => gameObject.SetActive(isActive);
-
-
-    public async UniTask VerticalShiftAsync(float targetY)
+    public void Activate(bool isActive)
     {
-        await transform
-                .DOMoveY(targetY, _gameManager.gameData.chipFadeTime)
-                .SetEase(Ease.OutCubic)
-                .ToUniTask();
+        gameObject.SetActive(isActive);
     }
 
 
     public async UniTask MoveToAsync(Vector2Int boardPos)
     {
-        Vector3 worldPos = _board[boardPos.x, boardPos.y];
+        Vector3 worldPos = Board.Instance[boardPos.x, boardPos.y];
 
         await transform
                 .DOMove(worldPos, _gameManager.gameData.chipShuffleTime)
@@ -100,64 +88,32 @@ public class Chip : MonoBehaviour
     }
 
 
-    public void Destroy()
+    [Button("Move UP")]
+    public async UniTask MoveUpAsync()
     {
-        Destroy(gameObject);
-    }
-
-
-    private void MoveUp(int boardLine)
-    {
-        if (BoardPosition.y <= boardLine) return;
-
-        if (_tween.IsActive())
-        {
-            _tween.onComplete += () =>
-            {
-                _tween = transform
-                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].y, _gameManager.gameData.chipFadeTime);
-            };
-
-            return;
-        }
-
-        _tween = transform
-                .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].y, _gameManager.gameData.chipMoveTime);
-    }
-
-
-    private void MoveDown(int boardLine)
-    {
-        if (BoardPosition.y < boardLine) return;
-
-        _board.AddChipTask(MoveDownAsync());
-    }
-
-
-    private async UniTask MoveDownAsync()
-    {
-        if (_tween.IsActive())
-        {
-            await _tween
-                    .ToUniTask();
-
-            await transform
-                    .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].y, _gameManager.gameData.chipMoveTime)
-                    .SetEase(Ease.OutCubic)
-                    .ToUniTask();
-
-            return;
-        }
+        Vector3 startPos = transform.position;
 
         await transform
-                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].y, _gameManager.gameData.chipMoveTime)
-                .SetEase(Ease.OutCubic)
+                .DOMoveY(++startPos.y, _gameManager.gameData.chipMoveTime)
+                .SetEase(Ease.InOutCubic)
+                .ToUniTask();
+    }
+
+
+    [Button("Move DOWN")]
+    public async UniTask MoveDownAsync()
+    {
+        Vector3 startPos = transform.position;
+
+        await transform
+                .DOMoveY(--startPos.y, _gameManager.gameData.chipMoveTime)
+                .SetEase(Ease.InOutCubic)
                 .ToUniTask();
     }
 
 
     [Button("PLACE ON BOARD")]
-    private async UniTask PlaceOnBoard()
+    public async UniTask PlaceOnBoardAsync()
     {
         spriteRenderer.transform.localPosition =
                 new Vector3(0, _gameManager.gameData.placeOnBoardVerticalShift, 0);
@@ -169,13 +125,19 @@ public class Chip : MonoBehaviour
 
 
     [Button("REMOVE FROM BOARD")]
-    private async UniTask RemoveFromBoard()
+    public async UniTask RemoveFromBoardAsync()
     {
         await spriteRenderer.transform
                 .DOLocalMoveY(
                         _gameManager.gameData.placeOnBoardVerticalShift,
                         _gameManager.gameData.chipMoveTime)
                 .ToUniTask();
+    }
+
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
     }
 
 
@@ -244,20 +206,21 @@ public class Chip : MonoBehaviour
     }
 
 
-#region ENABLE / DISABLE
-
-    private void OnEnable()
-    {
-        _board.OnLineRemoved += MoveUp;
-        _board.OnLineRestored += MoveDown;
-    }
-
-
-    private void OnDisable()
-    {
-        _board.OnLineRemoved -= MoveUp;
-        _board.OnLineRestored -= MoveDown;
-    }
-
-#endregion
+//
+// #region ENABLE / DISABLE
+//
+//     private void OnEnable()
+//     {
+//         _board.OnLineRemoved += MoveUp;
+//         _board.OnLineRestored += (x) => MoveDownAsync(x).Forget();
+//     }
+//
+//
+//     private void OnDisable()
+//     {
+//         _board.OnLineRemoved -= MoveUp;
+//         _board.OnLineRestored -= MoveDown;
+//     }
+//
+// #endregion
 }

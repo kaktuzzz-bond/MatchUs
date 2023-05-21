@@ -22,7 +22,7 @@ public class AddChipsCommand : ICommand
 
         _addedChips.Reverse();
 
-        await ChipController.Instance.RemoveChipsAsync(_addedChips);
+        //await ChipController.Instance.RemoveChipsAsync(_addedChips);
 
         GameGUI.Instance.SetButtonPressPermission(true);
     }
@@ -30,7 +30,7 @@ public class AddChipsCommand : ICommand
 
     private async UniTaskVoid RecordChips()
     {
-        _addedChips = await ChipController.Instance.CloneInGameChipsAsync();
+        //_addedChips = await ChipController.Instance.CloneInGameChipsAsync();
 
         ChipController.Instance.ChipRegistry.CheckBoardCapacity();
 

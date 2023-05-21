@@ -23,6 +23,45 @@ public class ChipInfoGenerator
     }
 
 
+    // public async UniTask<List<Chip>> CloneInGameChipsAsync()
+    // {
+    //     List<Chip> added = new();
+    //
+    //     var chips = ChipRegistry.ActiveChips;
+    //
+    //     int line = NextBoardPosition.y;
+    //
+    //     foreach (Chip chip in chips)
+    //     {
+    //         Vector2Int boardPos = NextBoardPosition;
+    //
+    //         if (NextLine(ref line, boardPos.y))
+    //         {
+    //             await UniTask.Delay(1000);
+    //
+    //             CameraController.Instance.MoveToBottomBound();
+    //         }
+    //
+    //         //Chip newChip = DrawChip(chip.ShapeIndex, chip.ColorIndex, boardPos);
+    //
+    //         //added.Add(newChip);
+    //     }
+    //
+    //     return added;
+    // }
+    //
+    //
+    // private bool NextLine(ref int line, int boardPosY)
+    // {
+    //     if (boardPosY == line) return false;
+    //
+    //     line = boardPosY;
+    //
+    //     return true;
+    // }
+
+    
+    
     private ChipInfo GetChipDataByChance(float chance)
     {
         return Random.value <= chance

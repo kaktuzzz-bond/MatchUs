@@ -49,7 +49,7 @@ public class GameManager : Singleton<GameManager>
     
 
 
-    public void StartGame()
+    public void StartGameAsync()
     {
         Debug.Log("GAME STARTED!");
 

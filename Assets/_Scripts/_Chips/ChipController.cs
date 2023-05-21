@@ -80,99 +80,56 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public async UniTask DrawStartArrayAsync()
+    
+    
+    
+    
+    public async UniTask DrawArrayAsync(List<ChipInfo> chipInfos)
     {
-        var chips = _chipInfoGenerator.GetStartChipInfoArray();
+        //var chips = _chipInfoGenerator.GetStartChipInfoArray();
 
-        foreach (ChipInfo info in chips) { }
-
-        GameManager.Instance.StartGame();
-
-        Log.CheckStackCount();
-    }
-
-
-    private async UniTaskVoid DrawStartArrayAsync(int count)
-    {
-        int line = NextBoardPosition.y;
-
-        for (int i = 0; i < count; i++)
+        foreach (ChipInfo info in chipInfos)
         {
-            //ChipData data = _randomizer.GetChipDataByChance();
+            Chip chip = CreateChip(info);
 
-            Vector2Int boardPos = NextBoardPosition;
+            ChipRegistry.Register(chip);
 
-            if (NextLine(ref line, boardPos.y))
-            {
-                await UniTask.Delay(1000);
-            }
-
-            // DrawChip(data.shapeIndex, data.colorIndex, boardPos);
+            chip.Init(info);
         }
 
         await UniTask.Yield();
+        
+        // Log.CheckStackCount();
+        //
+        // GameManager.Instance.StartGame();
+
+      
     }
 
 
-    public async UniTask<List<Chip>> CloneInGameChipsAsync()
-    {
-        List<Chip> added = new();
-
-        var chips = ChipRegistry.ActiveChips;
-
-        int line = NextBoardPosition.y;
-
-        foreach (Chip chip in chips)
-        {
-            Vector2Int boardPos = NextBoardPosition;
-
-            if (NextLine(ref line, boardPos.y))
-            {
-                await UniTask.Delay(1000);
-
-                CameraController.Instance.MoveToBottomBound();
-            }
-
-            //Chip newChip = DrawChip(chip.ShapeIndex, chip.ColorIndex, boardPos);
-
-            //added.Add(newChip);
-        }
-
-        return added;
-    }
+    //
+    //
+    // public async UniTask RemoveChipsAsync(List<Chip> chips)
+    // {
+    //     int line = chips[0].BoardPosition.y;
+    //
+    //     foreach (Chip chip in chips)
+    //     {
+    //         if (NextLine(ref line, chip.BoardPosition.y))
+    //         {
+    //             await UniTask.Delay(1000);
+    //
+    //             CameraController.Instance.MoveToBottomBound();
+    //         }
+    //
+    //         //chip.ChipFiniteStateMachine.SetSelfDestroyableState().Forget();
+    //
+    //         ChipRegistry.CheckBoardCapacity();
+    //     }
+    // }
 
 
-    private bool NextLine(ref int line, int boardPosY)
-    {
-        if (boardPosY == line) return false;
-
-        line = boardPosY;
-
-        return true;
-    }
-
-
-    public async UniTask RemoveChipsAsync(List<Chip> chips)
-    {
-        int line = chips[0].BoardPosition.y;
-
-        foreach (Chip chip in chips)
-        {
-            if (NextLine(ref line, chip.BoardPosition.y))
-            {
-                await UniTask.Delay(1000);
-
-                CameraController.Instance.MoveToBottomBound();
-            }
-
-            //chip.ChipFiniteStateMachine.SetSelfDestroyableState().Forget();
-
-            ChipRegistry.CheckBoardCapacity();
-        }
-    }
-
-
-    private Chip DrawChip(ChipInfo info)
+    private Chip CreateChip(ChipInfo info)
     {
         Transform instance = Instantiate(
                 _gameManager.gameData.chipPrefab,
@@ -183,8 +140,6 @@ public class ChipController : Singleton<ChipController>
         if (!instance.TryGetComponent(out Chip chip)) return null;
 
         instance.name = $"Chip ({info.shapeIndex}, {info.colorIndex})";
-
-        chip.Init(info);
 
         return chip;
     }
