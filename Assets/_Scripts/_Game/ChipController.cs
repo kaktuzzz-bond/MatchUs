@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
-using Sirenix.OdinInspector;
 
 public class ChipController : Singleton<ChipController>
 {
@@ -123,6 +122,7 @@ public class ChipController : Singleton<ChipController>
 
         _commandLogger.CheckStackCount();
     }
+    
 
 
     //

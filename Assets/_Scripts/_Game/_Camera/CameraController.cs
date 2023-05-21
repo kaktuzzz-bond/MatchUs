@@ -95,7 +95,7 @@ public class CameraController : Singleton<CameraController>
 
         if (!hit.collider.TryGetComponent(out Chip chip)) return;
 
-        bool isChipFadedIn = chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState);
+        bool isChipFadedIn = chip.CurrentState == Chip.States.LightOn;
 
         if (isChipFadedIn)
         {
