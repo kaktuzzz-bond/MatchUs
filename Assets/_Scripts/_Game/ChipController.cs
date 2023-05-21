@@ -37,10 +37,16 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public void AddChips()
+    public async UniTask AddChips()
     {
         //PointerController.HidePointers();
 
+        var infos = _chipInfoGenerator.ExtractInfos(_chipRegistry.ActiveChips);
+        
+        var cloned = _chipInfoGenerator.GetClonedInfo(infos, _chipRegistry.Counter);
+
+        await DrawArrayAsync(cloned);
+        
         _chipComparer.ClearStorage();
 
         _commandLogger.AddCommand(new AddChipsCommand());
@@ -68,6 +74,11 @@ public class ChipController : Singleton<ChipController>
         _commandLogger.UndoCommand().Forget();
     }
 
+    
+    
+    
+    
+    
 
     public void ProcessTappedChip(Chip chip)
     {

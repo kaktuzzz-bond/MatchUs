@@ -31,8 +31,7 @@ public class ChipRegistry
 
         //CameraController.Instance.MoveToBottomBound();
     }
-
-
+    
     public void Unregister(Chip chip)
     {
         InGameChips.Remove(chip);

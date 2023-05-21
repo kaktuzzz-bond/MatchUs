@@ -10,7 +10,7 @@ public class ChipInfoGenerator
     public List<ChipInfo> GetStartChipInfoArray()
     {
         _chips.Clear();
-        
+
         int chipsOnStart = GameManager.Instance.gameData.GetOnStartChipNumber();
         float randomizer = GameManager.Instance.gameData.GetRandomizeValue();
 
@@ -25,6 +25,26 @@ public class ChipInfoGenerator
     }
 
 
+    public List<ChipInfo> GetClonedInfo(List<ChipInfo> origin, int counter)
+    {
+        var cloned = new List<ChipInfo>(origin);
+
+        for (int i = 0; i < origin.Count; i++)
+        {
+            Vector2Int boardPos = GetBoardPosition(counter + i);
+
+            cloned[i].position = Utils.ConvertBoardToWorldCoordinates(boardPos);
+        }
+
+        return cloned;
+    }
+
+    
+    public List<ChipInfo> ExtractInfos(List<Chip> origin)
+    {
+        return origin.Select(chip => chip.GetInfo()).ToList();
+    }
+    
     // public async UniTask<List<Chip>> CloneInGameChipsAsync()
     // {
     //     List<Chip> added = new();
@@ -62,8 +82,7 @@ public class ChipInfoGenerator
     //     return true;
     // }
 
-    
-    
+
     private ChipInfo GetChipDataByChance(float chance)
     {
         return Random.value <= chance
@@ -81,7 +100,7 @@ public class ChipInfoGenerator
                 state = Chip.States.LightOn
         };
 
-        Vector2Int boardPos = GetBoardPosition();
+        Vector2Int boardPos = GetBoardPosition(_chips.Count);
 
         info.position = Utils.ConvertBoardToWorldCoordinates(boardPos);
 
@@ -115,7 +134,7 @@ public class ChipInfoGenerator
                 state = Chip.States.LightOn
         };
 
-        Vector2Int boardPos = GetBoardPosition();
+        Vector2Int boardPos = GetBoardPosition(_chips.Count);
 
         info.position = Utils.ConvertBoardToWorldCoordinates(boardPos);
 
@@ -123,10 +142,8 @@ public class ChipInfoGenerator
     }
 
 
-    private Vector2Int GetBoardPosition()
+    private Vector2Int GetBoardPosition(int count)
     {
-        int count = _chips.Count;
-
         return new Vector2Int(
                 count % GameManager.Instance.gameData.width,
                 count / GameManager.Instance.gameData.width);
