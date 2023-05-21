@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
@@ -18,6 +19,7 @@ public class Chip : MonoBehaviour
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
+    [ShowInInspector]
     public States CurrentState => _chipInfo.state;
 
     public int ShapeIndex => _chipInfo.shapeIndex;
@@ -31,7 +33,6 @@ public class Chip : MonoBehaviour
     private ChipInfo _chipInfo;
 
     private GameManager _gameManager;
-
 
     private void Awake()
     {
@@ -48,15 +49,6 @@ public class Chip : MonoBehaviour
         return _chipInfo;
     }
 
-
-    public void SetState(States newState)
-    {
-        _chipInfo.state = newState;
-
-        _chipFiniteStateMachine.SetState(newState);
-    }
-
-
     public void Init(ChipInfo info)
     {
         _chipInfo = info;
@@ -66,10 +58,45 @@ public class Chip : MonoBehaviour
         spriteRenderer.color = _gameManager.gameData.GetColor(ColorIndex, 0f);
 
         _chipFiniteStateMachine = new ChipFiniteStateMachine(this);
+        
+        SetState(States.LightOn);
     }
 
-   
     
+
+    public void SetState(States newState)
+    {
+        switch (newState)
+        {
+            case States.LightOn:
+
+                _chipFiniteStateMachine.LightOn();
+
+                break;
+
+            case States.LightOff:
+
+                _chipFiniteStateMachine.LightOff();
+
+                break;
+
+            case States.Removed:
+
+                _chipFiniteStateMachine.Removed();
+
+                break;
+
+            default:
+
+                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
+        }
+
+        _chipInfo.state = newState;
+    }
+
+
+   
+
     [Button("Fade")]
     public async UniTask Fade(float endValue)
     {

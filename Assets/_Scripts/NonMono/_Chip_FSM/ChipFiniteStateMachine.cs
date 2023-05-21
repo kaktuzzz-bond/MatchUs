@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+
 public class ChipFiniteStateMachine
 {
     public IChipState CurrentState { get; private set; }
@@ -22,19 +23,29 @@ public class ChipFiniteStateMachine
         
         CurrentState = new RemovedChipState();
         
-        SetState(chip.CurrentState);
+        //SetState(chip.CurrentState);
     }
-   
 
-    public void SetState(Chip.States newState)
+
+    public void LightOn()
     {
-        CurrentState = newState switch
-        {
-                Chip.States.LightOn => _lightOn,
-                Chip.States.LightOff => _lightOff,
-                Chip.States.Removed => _removed,
-                _ => throw new ArgumentOutOfRangeException(nameof(newState), newState, null)
-        };
+        SetState(_lightOn);
+    }
+
+
+    public void LightOff()
+    {
+        SetState(_lightOff);
+    }
+
+
+    public void Removed()
+    {
+        SetState(_removed);
+    }
+    private void SetState(IChipState newState)
+    {
+        CurrentState = newState;
 
         CurrentState.Enter(_chip);
     }
