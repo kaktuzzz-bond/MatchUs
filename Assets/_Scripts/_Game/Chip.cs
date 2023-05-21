@@ -18,21 +18,17 @@ public class Chip : MonoBehaviour
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
-    public States CurrentState { get; private set; }
+    public States CurrentState => _chipInfo.state;
 
-    public int ShapeIndex { get; private set; }
+    public int ShapeIndex => _chipInfo.shapeIndex;
 
-    public int ColorIndex { get; private set; }
+    public int ColorIndex => _chipInfo.colorIndex;
 
-    public ChipFiniteStateMachine ChipFiniteStateMachine { get; private set; }
-
-    [HorizontalGroup("Appearance", Title = "Chip Settings")]
-    [ShowInInspector] [BoxGroup("Appearance/Chip data")] [HideLabel] [ReadOnly]
-    private ChipData _chipData;
-
-    [VerticalGroup("Position")]
-    [ShowInInspector] [BoxGroup("Position/Board Position")] [HideLabel] [ReadOnly]
     public Vector2Int BoardPosition => Utils.ConvertWorldToBoardCoordinates(transform.position);
+
+    private ChipFiniteStateMachine _chipFiniteStateMachine;
+
+    private ChipInfo _chipInfo;
 
     private GameManager _gameManager;
 
@@ -45,22 +41,35 @@ public class Chip : MonoBehaviour
     }
 
 
+    public ChipInfo GetInfo()
+    {
+        _chipInfo.position = transform.position;
+
+        return _chipInfo;
+    }
+
+
+    public void SetState(States newState)
+    {
+        _chipInfo.state = newState;
+
+        _chipFiniteStateMachine.SetState(newState);
+    }
+
+
     public void Init(ChipInfo info)
     {
-        ShapeIndex = info.shapeIndex;
-
-        ColorIndex = info.colorIndex;
-
-        CurrentState = info.state;
+        _chipInfo = info;
 
         spriteRenderer.sprite = _gameManager.gameData.GetShape(ShapeIndex);
 
         spriteRenderer.color = _gameManager.gameData.GetColor(ColorIndex, 0f);
 
-        ChipFiniteStateMachine = new ChipFiniteStateMachine(this);
+        _chipFiniteStateMachine = new ChipFiniteStateMachine(this);
     }
 
-
+   
+    
     [Button("Fade")]
     public async UniTask Fade(float endValue)
     {

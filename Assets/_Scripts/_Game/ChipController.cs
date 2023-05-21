@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using Cysharp.Threading.Tasks;
-using Sirenix.OdinInspector;
+using UnityEngine;
 
 public class ChipController : Singleton<ChipController>
 {
@@ -38,9 +37,15 @@ public class ChipController : Singleton<ChipController>
     }
 
 
-    public void AddChips()
+    public async UniTask AddChips()
     {
         //PointerController.HidePointers();
+
+        var infos = _chipInfoGenerator.ExtractInfos(_chipRegistry.ActiveChips);
+
+        var cloned = _chipInfoGenerator.GetClonedInfo(infos, _chipRegistry.Counter);
+
+        await DrawArrayAsync(cloned);
 
         _chipComparer.ClearStorage();
 
@@ -84,7 +89,7 @@ public class ChipController : Singleton<ChipController>
         if (tapped.Length == 1)
         {
             Board.Instance.ShowSelector(chip.transform.position);
-            
+
             return;
         }
 
@@ -118,9 +123,7 @@ public class ChipController : Singleton<ChipController>
 
             chip.PlaceOnBoardAsync().Forget();
         }
-
-        await UniTask.Yield();
-
+        
         _commandLogger.CheckStackCount();
     }
 

@@ -28,30 +28,13 @@ public class ChipFiniteStateMachine
 
     public void SetState(Chip.States newState)
     {
-        switch (newState)
+        CurrentState = newState switch
         {
-            case Chip.States.LightOn:
-
-                CurrentState = _lightOn;
-
-                break;
-
-            case Chip.States.LightOff:
-
-                CurrentState = _lightOff;
-
-                break;
-
-            case Chip.States.Removed:
-
-                CurrentState = _removed;
-
-                break;
-
-            default:
-
-                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
-        }
+                Chip.States.LightOn => _lightOn,
+                Chip.States.LightOff => _lightOff,
+                Chip.States.Removed => _removed,
+                _ => throw new ArgumentOutOfRangeException(nameof(newState), newState, null)
+        };
 
         CurrentState.Enter(_chip);
     }

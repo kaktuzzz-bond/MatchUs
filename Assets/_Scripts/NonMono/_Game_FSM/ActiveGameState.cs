@@ -29,7 +29,7 @@ public class ActiveGameState : IGameState
 
     private async UniTaskVoid PrepareToStart()
     {
-        DOTween.SetTweensCapacity(5000, 100);
+        //DOTween.SetTweensCapacity(5000, 100);
 
         await Board.Instance.Init();
 

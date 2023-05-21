@@ -45,7 +45,7 @@ public class LineChecker
                 continue;
             }
 
-            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
+            if (chip.CurrentState == Chip.States.LightOn)
             {
                 return false;
             }

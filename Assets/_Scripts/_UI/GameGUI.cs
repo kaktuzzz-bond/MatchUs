@@ -1,10 +1,9 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
-using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine;
 using TMPro;
-
 public class GameGUI : Singleton<GameGUI>
 {
     public event Action<bool> OnButtonPressPermission;
@@ -105,7 +104,7 @@ public class GameGUI : Singleton<GameGUI>
     private void Init()
     {
         // game buttons
-        add.onClick.AddListener(ChipController.Instance.AddChips);
+        add.onClick.AddListener(()=> ChipController.Instance.AddChips().Forget());
 
         AddButton = add.GetComponent<GameButton>();
 

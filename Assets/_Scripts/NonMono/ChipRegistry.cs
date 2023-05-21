@@ -12,7 +12,7 @@ public class ChipRegistry
     public List<Chip> InGameChips { get; private set; } = new();
 
     public List<Chip> ActiveChips => InGameChips
-            .Where(c => c.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
+            .Where(c => c.CurrentState == Chip.States.LightOn)
             .OrderBy(c => c.BoardPosition.y)
             .ThenBy(c => c.BoardPosition.x)
             .ToList();
@@ -31,8 +31,7 @@ public class ChipRegistry
 
         //CameraController.Instance.MoveToBottomBound();
     }
-
-
+    
     public void Unregister(Chip chip)
     {
         InGameChips.Remove(chip);
