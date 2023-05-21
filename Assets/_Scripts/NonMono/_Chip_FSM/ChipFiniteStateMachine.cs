@@ -26,7 +26,7 @@ public class ChipFiniteStateMachine
     }
    
 
-    private void SetState(Chip.States newState)
+    public void SetState(Chip.States newState)
     {
         switch (newState)
         {

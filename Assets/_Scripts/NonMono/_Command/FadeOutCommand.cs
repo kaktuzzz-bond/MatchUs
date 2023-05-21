@@ -15,15 +15,14 @@ public class FadeOutCommand : ICommand
         _second = second;
 
         //_score = GameData.GetScore(first, second);
-        
     }
 
 
     public void Execute()
     {
-        // _first.ChipFiniteStateMachine.SetFadedOutState().Forget();
-        //
-        // _second.ChipFiniteStateMachine.SetFadedOutState().Forget();
+        _first.ChipFiniteStateMachine.SetState(Chip.States.LightOff);
+
+        _second.ChipFiniteStateMachine.SetState(Chip.States.LightOff);
 
         GameManager.Instance.AddScore(_score);
     }
@@ -31,12 +30,14 @@ public class FadeOutCommand : ICommand
 
     public async UniTask Undo()
     {
-        // await _first.ChipFiniteStateMachine.SetFadedInState();
-        //
-        // await _second.ChipFiniteStateMachine.SetFadedInState();
+        _first.ChipFiniteStateMachine.SetState(Chip.States.LightOn);
+
+        _second.ChipFiniteStateMachine.SetState(Chip.States.LightOn);
 
         CameraController.Instance.MoveToBoardPosition(_second.BoardPosition.y);
 
         GameManager.Instance.AddScore(-_score);
+
+        await UniTask.Yield();
     }
 }
