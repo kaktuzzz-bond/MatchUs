@@ -1,42 +1,54 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
-public class GamePointer : LinkedPoolObject
+public class GamePointer : MonoBehaviour
 {
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
-    private PointerController _pointerController;
-
     private const float FadeDuration = 0.05f;
 
 
-    private void Awake()
+    public void Show()
     {
-        _pointerController = ChipController.Instance.PointerController;
-    }
-
-
-    public override void Show()
-    {
-        _pointerController.OnPointersHidden += Hide;
-
-        base.Show();
+        gameObject.SetActive(true);
 
         spriteRenderer
                 .DOFade(1f, FadeDuration);
     }
 
 
-    private void Hide()
+    public async UniTaskVoid HideAsync()
     {
-        _pointerController.OnPointersHidden -= Hide;
-
-        spriteRenderer
+        await spriteRenderer
                 .DOFade(0f, FadeDuration)
-                .onComplete += () => _pointerController.ReleasePointer(this);
+                .ToUniTask();
+
+        Board.Instance.ReleasePointer(this);
+    }
+
+
+    public GamePointer SetPosition(Vector3 position)
+    {
+        transform.position = position;
+
+        return this;
+    }
+
+
+    public GamePointer SetName(string newName)
+    {
+        transform.name = newName;
+
+        return this;
+    }
+
+
+    public GamePointer SetParent(Transform parent)
+    {
+        transform.SetParent(parent);
+
+        return this;
     }
 }

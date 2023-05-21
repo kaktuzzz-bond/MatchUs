@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2774de1e0ed7b475697bae5577991c2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: Hint
   spriteRenderer: {fileID: 8430510591274935093}
-  gamePointerType: 0
 --- !u!1 &8430510591274935092
 GameObject:
   m_ObjectHideFlags: 0

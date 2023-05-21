@@ -6,8 +6,6 @@ public class CommandLogger
 {
     private readonly Stack<ICommand> _stack = new();
 
-    private readonly WaitForSeconds _wait = new(0.2f);
-
 
     public void AddCommand(ICommand command)
     {

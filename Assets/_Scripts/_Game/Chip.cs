@@ -161,7 +161,7 @@ public class Chip : MonoBehaviour
 
         float distance = Mathf.Abs(direction.x);
 
-        return Board.IsPathClear(direction, distance, this, other);
+        return LineChecker.IsPathClear(direction, distance, this, other);
     }
 
 
@@ -173,7 +173,7 @@ public class Chip : MonoBehaviour
 
         float distance = Mathf.Abs(direction.y);
 
-        return Board.IsPathClear(-direction, distance, this, other);
+        return LineChecker.IsPathClear(-direction, distance, this, other);
     }
 
 
@@ -194,13 +194,13 @@ public class Chip : MonoBehaviour
             chips[1] = other;
         }
 
-        bool isTopClear = Board.IsPathClear(
+        bool isTopClear = LineChecker.IsPathClear(
                 Vector2.right,
                 _gameManager.gameData.width - chips[0].BoardPosition.x,
                 chips[0],
                 chips[1]);
 
-        bool isBottomClear = Board.IsPathClear(Vector2.left, chips[1].BoardPosition.x, chips[1], chips[0]);
+        bool isBottomClear = LineChecker.IsPathClear(Vector2.left, chips[1].BoardPosition.x, chips[1], chips[0]);
 
         return isTopClear && isBottomClear;
     }

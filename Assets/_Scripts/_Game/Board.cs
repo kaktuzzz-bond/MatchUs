@@ -18,9 +18,13 @@ public class Board : Singleton<Board>
 
     private GameBoard _gameBoard;
 
+    private LineChecker _lineChecker;
+    
     private GameManager _gameManager;
 
     public int Capacity => _gameBoard.Capacity;
+
+    private PointerPool _pointerPool;
 
 
     private void Awake()
@@ -29,13 +33,23 @@ public class Board : Singleton<Board>
     }
 
 
-    public void Init(GameBoard gameBoard)
+    public async UniTask Init()
     {
-        _gameBoard = gameBoard;
+        _gameBoard = new(
+                _gameManager.gameData.width,
+                _gameManager.gameData.height);
+
+        _lineChecker = new LineChecker(_gameBoard);
+        
+        _pointerPool = new PointerPool(
+                _gameManager.gameData.selectorPrefab,
+                _gameManager.gameData.hintPrefab);
 
         _gameManager.gameData.tileParent = CreateParent("Tile");
         _gameManager.gameData.chipParent = CreateParent("Chips");
         _gameManager.gameData.pointerParent = CreateParent("Pointers");
+
+        await _gameBoard.DrawBoardAsync();
     }
 
 
@@ -47,6 +61,8 @@ public class Board : Singleton<Board>
 
         parent.name = parentName;
 
+        parent.SetParent(transform);
+
         return parent;
     }
 
@@ -54,12 +70,14 @@ public class Board : Singleton<Board>
     public Vector3 this[int x, int y] => _gameBoard[x, y];
 
 
-    public async UniTaskVoid ProcessMatched(Chip first, Chip second)
+    public void ReleasePointer(GamePointer pointer)
     {
-        // fade out chips
-        ChipController.Instance.Log.AddCommand(new FadeOutCommand(first, second));
+        _pointerPool.ReleasePointer(pointer);
+    }
 
-        // lines cash
+
+    public void CheckLines(Chip first, Chip second)
+    {
         int firstLine = first.BoardPosition.y;
 
         int secondLine = second.BoardPosition.y;
@@ -67,7 +85,11 @@ public class Board : Singleton<Board>
         // a single line
         if (firstLine == secondLine)
         {
-            CheckLineToRemove(firstLine);
+            if (_lineChecker.IsLineEmpty(firstLine) != null)
+            {
+                // ChipController.Instance._commandLogger.
+                // AddCommand(new RemoveSingleLineCommand(states));
+            }
 
             return;
         }
@@ -77,104 +99,105 @@ public class Board : Singleton<Board>
 
         int bottomLine = Mathf.Max(firstLine, secondLine);
 
-        CheckLineToRemove(bottomLine);
-
-        CheckLineToRemove(topLine);
-
-        await UniTask.Yield();
+       
+        // CheckLineToRemove(bottomLine);
+        //
+        // CheckLineToRemove(topLine);
     }
 
 
-    private void CheckLineToRemove(int boardLine)
-    {
-        var hits = GetRaycastHits(boardLine);
-
-        var states = AreAllFadedOut(hits);
-
-        if (states == null) return;
-
-        ChipController.Instance.Log.AddCommand(new RemoveSingleLineCommand(states));
-
-        OnLineRemoved?.Invoke(boardLine);
-    }
 
 
-    private RaycastHit2D[] GetRaycastHits(int boardLine)
-    {
-        var hits = new RaycastHit2D[_gameManager.gameData.width];
-
-        ContactFilter2D filter = new();
-
-        Vector2 origin = _gameBoard[0, boardLine];
-
-        int result = Physics2D.Raycast(origin, Vector2.right, filter, hits, _gameManager.gameData.width);
-
-        if (result == 0)
-        {
-            Debug.LogError("CheckLine() caught the empty line!");
-        }
-
-        return hits;
-    }
-
-
-    private static List<ChipFiniteStateMachine> AreAllFadedOut([NotNull] RaycastHit2D[] hits)
-    {
-        if (hits == null) throw new ArgumentNullException(nameof(hits));
-
-        List<ChipFiniteStateMachine> chips = new();
-
-        foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
-        {
-            if (!hit.collider.TryGetComponent(out Chip chip)) continue;
-
-            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
-            {
-                return null;
-            }
-
-            chips.Add(chip.GetComponent<ChipFiniteStateMachine>());
-        }
-
-        return chips;
-    }
-
-
-    public static bool IsPathClear(Vector2 direction, float distance, [NotNull] Chip origin, [NotNull] Chip other)
-    {
-        ContactFilter2D filter = new();
-
-        List<RaycastHit2D> hits = new();
-
-        if (origin.TryGetComponent(out Collider2D component))
-        {
-            int count = component.Raycast(direction, filter, hits, distance);
-        }
-
-        foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
-        {
-            if (!hit.collider.TryGetComponent(out Chip chip)) continue;
-
-            if (chip.Equals(other))
-            {
-                continue;
-            }
-
-            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
-            {
-                return false;
-            }
-        }
-
-        Debug.DrawRay(origin.transform.position, direction, Color.red, 5f);
-
-        return true;
-    }
+    // private void CheckLineToRemove(int boardLine)
+    // {
+    //     var hits = GetRaycastHits(boardLine);
+    //
+    //     var states = AreAllFadedOut(hits);
+    //
+    //     if (states == null) return;
+    //
+    //     //ChipController.Instance._commandLogger.AddCommand(new RemoveSingleLineCommand(states));
+    //
+    //     OnLineRemoved?.Invoke(boardLine);
+    // }
+    //
+    //
+    // private RaycastHit2D[] GetRaycastHits(int boardLine)
+    // {
+    //     var hits = new RaycastHit2D[_gameManager.gameData.width];
+    //
+    //     ContactFilter2D filter = new();
+    //
+    //     Vector2 origin = _gameBoard[0, boardLine];
+    //
+    //     int result = Physics2D.Raycast(origin, Vector2.right, filter, hits, _gameManager.gameData.width);
+    //
+    //     if (result == 0)
+    //     {
+    //         Debug.LogError("CheckLine() caught the empty line!");
+    //     }
+    //
+    //     return hits;
+    // }
+    //
+    //
+    // private static List<ChipFiniteStateMachine> AreAllFadedOut([NotNull] RaycastHit2D[] hits)
+    // {
+    //     if (hits == null) throw new ArgumentNullException(nameof(hits));
+    //
+    //     List<ChipFiniteStateMachine> chips = new();
+    //
+    //     foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
+    //     {
+    //         if (!hit.collider.TryGetComponent(out Chip chip)) continue;
+    //
+    //         if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
+    //         {
+    //             return null;
+    //         }
+    //
+    //         chips.Add(chip.GetComponent<ChipFiniteStateMachine>());
+    //     }
+    //
+    //     return chips;
+    // }
+    //
+    //
+    // public static bool IsPathClear(Vector2 direction, float distance, [NotNull] Chip origin, [NotNull] Chip other)
+    // {
+    //     ContactFilter2D filter = new();
+    //
+    //     List<RaycastHit2D> hits = new();
+    //
+    //     if (origin.TryGetComponent(out Collider2D component))
+    //     {
+    //         int count = component.Raycast(direction, filter, hits, distance);
+    //     }
+    //
+    //     foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
+    //     {
+    //         if (!hit.collider.TryGetComponent(out Chip chip)) continue;
+    //
+    //         if (chip.Equals(other))
+    //         {
+    //             continue;
+    //         }
+    //
+    //         if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
+    //         {
+    //             return false;
+    //         }
+    //     }
+    //
+    //     //Debug.DrawRay(origin.transform.position, direction, Color.red, 5f);
+    //
+    //     return true;
+    // }
 
 
     public void RestoreLine(int boardLine)
     {
-        _chipTasksAll.Clear();
+        //_chipTasksAll.Clear();
 
         OnLineRestored?.Invoke(boardLine);
     }
@@ -182,14 +205,14 @@ public class Board : Singleton<Board>
 
     public async UniTask WaitForAllChipTasks()
     {
-        await UniTask.WhenAll(_chipTasksAll);
+        //await UniTask.WhenAll(_chipTasksAll);
 
-        _chipTasksAll.Clear();
+        //_chipTasksAll.Clear();
     }
 
 
     public void AddChipTask(UniTask task)
     {
-        _chipTasksAll.Add(task);
+        //_chipTasksAll.Add(task);
     }
 }

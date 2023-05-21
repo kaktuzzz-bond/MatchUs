@@ -31,17 +31,10 @@ public class ActiveGameState : IGameState
     {
         DOTween.SetTweensCapacity(5000, 100);
 
-        GameBoard gameBoard = new(
-                GameManager.Instance.gameData.width,
-                GameManager.Instance.gameData.height);
-
-        Board.Instance.Init(gameBoard);
+        await Board.Instance.Init();
 
         await CameraController.Instance
                 .SetOrthographicSizeAsync();
-
-        await gameBoard
-                .DrawBoardAsync();
 
         await CameraController.Instance.SetBoundsAsync();
 
@@ -54,7 +47,7 @@ public class ActiveGameState : IGameState
         await GameGUI.Instance.SetupGUIAndFadeOut();
 
         await UniTask.Delay(200);
-        
+
         await ChipController.Instance
                 .DrawArrayAsync(GameManager.Instance.gameData.StartArrayInfos);
 

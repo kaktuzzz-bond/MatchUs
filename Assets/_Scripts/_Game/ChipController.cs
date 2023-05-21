@@ -8,33 +8,31 @@ public class ChipController : Singleton<ChipController>
 {
     public Vector2Int NextBoardPosition =>
             new(
-                    ChipRegistry.Counter % _gameManager.gameData.width,
-                    ChipRegistry.Counter / _gameManager.gameData.width);
+                    _chipRegistry.Counter % _gameManager.gameData.width,
+                    _chipRegistry.Counter / _gameManager.gameData.width);
 
-    public ChipRegistry ChipRegistry { get; private set; }
-
-    public CommandLogger Log { get; private set; }
-
-    public PointerController PointerController { get; private set; }
+    public ChipRegistry ChipRegistry => _chipRegistry;
 
     private ChipComparer _chipComparer;
 
     private ChipInfoGenerator _chipInfoGenerator;
+
+    private ChipRegistry _chipRegistry;
+
+    private CommandLogger _commandLogger;
 
     private GameManager _gameManager;
 
 
     private void Awake()
     {
-        ChipRegistry = new ChipRegistry();
+        _chipRegistry = new ChipRegistry();
 
-        Log = new CommandLogger();
-
-        //PointerController = new PointerController(selectorPrefab, hintPrefab);
+        _commandLogger = new CommandLogger();
 
         _chipInfoGenerator = new ChipInfoGenerator();
 
-        _chipComparer = new ChipComparer(PointerController);
+        _chipComparer = new ChipComparer();
 
         _gameManager = GameManager.Instance;
     }
@@ -42,39 +40,49 @@ public class ChipController : Singleton<ChipController>
 
     public void AddChips()
     {
-        PointerController.HidePointers();
+        //PointerController.HidePointers();
 
         _chipComparer.ClearStorage();
 
-        Log.AddCommand(new AddChipsCommand());
+        _commandLogger.AddCommand(new AddChipsCommand());
     }
 
 
     public void ShuffleChips()
     {
-        PointerController.HidePointers();
+        //PointerController.HidePointers();
 
         _chipComparer.ClearStorage();
 
-        Log.AddCommand(new ShuffleCommand());
+        _commandLogger.AddCommand(new ShuffleCommand());
     }
 
 
     public void ShowHints()
     {
-        PointerController.ShowHints();
+        //PointerController.ShowHints();
     }
 
 
     public void UndoCommand()
     {
-        Log.UndoCommand().Forget();
+        _commandLogger.UndoCommand().Forget();
     }
 
 
     public void ProcessTappedChip(Chip chip)
     {
-        _chipComparer.TryMatching(chip);
+        var tapped = _chipComparer.HandleTap(chip);
+
+        if (tapped == null)
+        {
+            return;
+        }
+
+        // on matched
+        _commandLogger.AddCommand(new FadeOutCommand(tapped[0], tapped[1]));
+
+        Board.Instance.CheckLines(tapped[0], tapped[1]);
     }
 
 
@@ -93,7 +101,7 @@ public class ChipController : Singleton<ChipController>
 
             Chip chip = CreateChip(info);
 
-            ChipRegistry.Register(chip);
+            _chipRegistry.Register(chip);
 
             chip.Init(info);
 
@@ -102,7 +110,7 @@ public class ChipController : Singleton<ChipController>
 
         await UniTask.Yield();
 
-        Log.CheckStackCount();
+        _commandLogger.CheckStackCount();
     }
 
 

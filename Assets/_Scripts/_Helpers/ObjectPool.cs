@@ -48,13 +48,4 @@ public class ObjectPool<T> where T: MonoBehaviour
 
         _queue.Enqueue(obj);
     }
-
-
-    public void ReleaseAll()
-    {
-        foreach (T t in _queue)
-        {
-            Release(t);
-        }
-    }
 }
