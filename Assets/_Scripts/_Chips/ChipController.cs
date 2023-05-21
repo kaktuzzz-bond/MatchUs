@@ -5,20 +5,12 @@ using Sirenix.OdinInspector;
 
 public class ChipController : Singleton<ChipController>
 {
-    [SerializeField] [FoldoutGroup("Prefabs")]
-    private Transform chipPrefab;
-
-    [SerializeField] [FoldoutGroup("Prefabs")]
-    private GamePointer selectorPrefab;
-
-    [SerializeField] [FoldoutGroup("Prefabs")]
-    private GamePointer hintPrefab;
-
     [SerializeField]
     private float delayOnDrawChipsInSeconds = 0.08f;
 
     public Vector2Int NextBoardPosition =>
-            new(ChipRegistry.Counter % _gameManager.gameData.width, 
+            new(
+                    ChipRegistry.Counter % _gameManager.gameData.width,
                     ChipRegistry.Counter / _gameManager.gameData.width);
 
     public ChipRegistry ChipRegistry { get; private set; }
@@ -27,26 +19,24 @@ public class ChipController : Singleton<ChipController>
 
     public PointerController PointerController { get; private set; }
 
-    private ChipComparer _comparer;
+    private ChipComparer _chipComparer;
 
-    private StartChipGenerator _generator;
-
-    private int DelayOnDrawChips => (int)(delayOnDrawChipsInSeconds * 1000);
-
+    private ChipInfoGenerator _chipInfoGenerator;
 
     private GameManager _gameManager;
-    
+
+
     private void Awake()
     {
         ChipRegistry = new ChipRegistry();
 
         Log = new CommandLogger();
 
-        PointerController = new PointerController(selectorPrefab, hintPrefab);
+        //PointerController = new PointerController(selectorPrefab, hintPrefab);
 
-        _generator = new StartChipGenerator(ChipRegistry, Board.Instance, GameManager.Instance);
+        _chipInfoGenerator = new ChipInfoGenerator();
 
-        _comparer = new ChipComparer(PointerController);
+        _chipComparer = new ChipComparer(PointerController);
 
         _gameManager = GameManager.Instance;
     }
@@ -56,7 +46,7 @@ public class ChipController : Singleton<ChipController>
     {
         PointerController.HidePointers();
 
-        _comparer.ClearStorage();
+        _chipComparer.ClearStorage();
 
         Log.AddCommand(new AddChipsCommand());
     }
@@ -66,7 +56,7 @@ public class ChipController : Singleton<ChipController>
     {
         PointerController.HidePointers();
 
-        _comparer.ClearStorage();
+        _chipComparer.ClearStorage();
 
         Log.AddCommand(new ShuffleCommand());
     }
@@ -86,15 +76,15 @@ public class ChipController : Singleton<ChipController>
 
     public void ProcessTappedChip(Chip chip)
     {
-        _comparer.TryMatching(chip);
+        _chipComparer.TryMatching(chip);
     }
 
 
-#region PLACE ON BOARD
-
-    public void DrawStartArray()
+    public async UniTask DrawStartArrayAsync()
     {
-        //DrawStartArrayAsync(GameManager.Instance.ChipsOnStartNumber).Forget();
+        var chips = _chipInfoGenerator.GetStartChipInfoArray();
+
+        foreach (ChipInfo info in chips) { }
 
         GameManager.Instance.StartGame();
 
@@ -114,10 +104,10 @@ public class ChipController : Singleton<ChipController>
 
             if (NextLine(ref line, boardPos.y))
             {
-                await UniTask.Delay(DelayOnDrawChips);
+                await UniTask.Delay(1000);
             }
 
-           // DrawChip(data.shapeIndex, data.colorIndex, boardPos);
+            // DrawChip(data.shapeIndex, data.colorIndex, boardPos);
         }
 
         await UniTask.Yield();
@@ -138,14 +128,14 @@ public class ChipController : Singleton<ChipController>
 
             if (NextLine(ref line, boardPos.y))
             {
-                await UniTask.Delay(DelayOnDrawChips);
+                await UniTask.Delay(1000);
 
                 CameraController.Instance.MoveToBottomBound();
             }
 
-            Chip newChip = DrawChip(chip.ShapeIndex, chip.ColorIndex, boardPos);
+            //Chip newChip = DrawChip(chip.ShapeIndex, chip.ColorIndex, boardPos);
 
-            added.Add(newChip);
+            //added.Add(newChip);
         }
 
         return added;
@@ -170,31 +160,31 @@ public class ChipController : Singleton<ChipController>
         {
             if (NextLine(ref line, chip.BoardPosition.y))
             {
-                await UniTask.Delay(DelayOnDrawChips);
+                await UniTask.Delay(1000);
 
                 CameraController.Instance.MoveToBottomBound();
             }
 
-            chip.ChipFiniteStateMachine.SetSelfDestroyableState().Forget();
+            //chip.ChipFiniteStateMachine.SetSelfDestroyableState().Forget();
 
             ChipRegistry.CheckBoardCapacity();
         }
     }
 
-#endregion
 
-
-    private Chip DrawChip(int shapeIndex, int colorIndex, Vector2Int boardPosition)
+    private Chip DrawChip(ChipInfo info)
     {
-        Vector3 worldPos = Board.Instance[boardPosition.x, boardPosition.y];
-
-        Transform instance = Instantiate(chipPrefab, worldPos, Quaternion.identity, GameManager.Instance.gameData.chipParent);
+        Transform instance = Instantiate(
+                _gameManager.gameData.chipPrefab,
+                info.position,
+                Quaternion.identity,
+                _gameManager.gameData.chipParent);
 
         if (!instance.TryGetComponent(out Chip chip)) return null;
 
-        chip.Init(shapeIndex, colorIndex);
+        instance.name = $"Chip ({info.shapeIndex}, {info.colorIndex})";
 
-        instance.name = $"Chip ({shapeIndex}, {colorIndex})";
+        chip.Init(info);
 
         return chip;
     }
@@ -202,16 +192,16 @@ public class ChipController : Singleton<ChipController>
 
 #region ENABLE / DISABLE
 
-    private void OnEnable()
-    {
-        CameraController.Instance.OnCameraSetup += DrawStartArray;
-    }
-
-
-    private void OnDisable()
-    {
-        CameraController.Instance.OnCameraSetup -= DrawStartArray;
-    }
+    // private void OnEnable()
+    // {
+    //     CameraController.Instance.OnCameraSetup += DrawStartArray;
+    // }
+    //
+    //
+    // private void OnDisable()
+    // {
+    //     CameraController.Instance.OnCameraSetup -= DrawStartArray;
+    // }
 
 #endregion
 }

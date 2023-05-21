@@ -16,7 +16,7 @@ public class RemoveSingleLineCommand : ICommand
     {
         _chipStates = chipStates;
 
-        _removedLine = _chipStates.First().Chip.BoardPosition.y;
+        //_removedLine = _chipStates.First()._chip.BoardPosition.y;
 
         //_score = GameData.GetScore(_removedLine);
     }
@@ -24,7 +24,7 @@ public class RemoveSingleLineCommand : ICommand
 
     public void Execute()
     {
-        ChipFiniteStateMachine.DisableChips(_chipStates);
+        //ChipFiniteStateMachine.DisableChips(_chipStates);
 
         GameManager.Instance.AddScore(_score);
     }
@@ -44,16 +44,16 @@ public class RemoveSingleLineCommand : ICommand
     {
         List<UniTask> tasks = new();
 
-        foreach (ChipFiniteStateMachine state in _chipStates)
-        {
-            Vector3 chipPos = state.transform.position;
-
-            chipPos.y = _removedLine;
-
-            state.transform.position = chipPos;
-
-            tasks.Add(state.SetRestoredState());
-        }
+        // foreach (ChipFiniteStateMachine state in _chipStates)
+        // {
+        //     Vector3 chipPos = state.transform.position;
+        //
+        //     chipPos.y = _removedLine;
+        //
+        //     state.transform.position = chipPos;
+        //
+        //     tasks.Add(state.SetRestoredState());
+        // }
 
         await UniTask.WhenAll(tasks);
     }

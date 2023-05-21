@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6589025527896620549}
   - component: {fileID: 2261315854277168526}
-  - component: {fileID: 5847835575243449304}
   - component: {fileID: 3956021514798426573}
   m_Layer: 0
   m_Name: Chip
@@ -48,18 +47,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 7019795339087405493}
---- !u!114 &5847835575243449304
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1431553280553932605}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 955ffeea5cee4afebac30573b08c4143, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!61 &3956021514798426573
 BoxCollider2D:
   m_ObjectHideFlags: 0

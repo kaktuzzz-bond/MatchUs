@@ -1,26 +1,28 @@
-using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-[RequireComponent(typeof(ChipFiniteStateMachine))]
 public class Chip : MonoBehaviour
 {
+    public enum States
+    {
+        LightOn,
+
+        LightOff,
+
+        Removed
+    }
+
+    public States CurrentState { get; private set; }
+
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
-    public int ShapeIndex => _chipData.shapeIndex;
+    public int ShapeIndex { get; private set; }
 
-    public int ColorIndex => _chipData.colorIndex;
-
-    private const float FadeTime = 0.2f;
-
-    private const float MoveTime = 0.3f;
-
-    private const float ShuffleTime = 0.6f;
+    public int ColorIndex { get; private set; }
 
     public ChipFiniteStateMachine ChipFiniteStateMachine { get; private set; }
 
@@ -35,52 +37,43 @@ public class Chip : MonoBehaviour
     private Board _board;
 
     private GameManager _gameManager;
-    
+
     private Tween _tween;
 
-#region INITIALIZATION
 
     private void Awake()
     {
         _board = Board.Instance;
 
         _gameManager = GameManager.Instance;
-        
-        ChipFiniteStateMachine = GetComponent<ChipFiniteStateMachine>();
     }
 
 
-    public void Init(int shapeIndex, int colorIndex)
+    public void Init(ChipInfo info)
     {
-        _chipData = new ChipData(shapeIndex, colorIndex);
+        Activate(false);
 
-        SetAppearance();
+        ShapeIndex = info.shapeIndex;
 
-        ChipFiniteStateMachine.Launch().Forget();
-    }
+        ColorIndex = info.colorIndex;
 
+        CurrentState = info.state;
 
-    private void SetAppearance()
-    {
         spriteRenderer.sprite = _gameManager.gameData.GetShape(ShapeIndex);
 
-        Color color = _gameManager.gameData.GetColor(ColorIndex);
+        spriteRenderer.color = _gameManager.gameData.GetColor(ColorIndex, 0f);
 
-        color.a = 0f;
-
-        spriteRenderer.color = color;
+        ChipFiniteStateMachine = new ChipFiniteStateMachine(this);
     }
 
-#endregion
-
-#region COMMANDS
 
     [Button("Fade")]
-    public void Fade(float endValue)
+    public async UniTask Fade(float endValue)
     {
-        spriteRenderer
-                .DOFade(endValue, FadeTime)
-                .SetEase(Ease.Linear);
+        await spriteRenderer
+                .DOFade(endValue, _gameManager.gameData.chipFadeTime)
+                .SetEase(Ease.Linear)
+                .ToUniTask();
     }
 
 
@@ -90,7 +83,7 @@ public class Chip : MonoBehaviour
     public async UniTask VerticalShiftAsync(float targetY)
     {
         await transform
-                .DOMoveY(targetY, FadeTime)
+                .DOMoveY(targetY, _gameManager.gameData.chipFadeTime)
                 .SetEase(Ease.OutCubic)
                 .ToUniTask();
     }
@@ -101,7 +94,7 @@ public class Chip : MonoBehaviour
         Vector3 worldPos = _board[boardPos.x, boardPos.y];
 
         await transform
-                .DOMove(worldPos, ShuffleTime)
+                .DOMove(worldPos, _gameManager.gameData.chipShuffleTime)
                 .SetEase(Ease.OutCubic)
                 .ToUniTask();
     }
@@ -112,9 +105,6 @@ public class Chip : MonoBehaviour
         Destroy(gameObject);
     }
 
-#endregion
-
-#region MOVING
 
     private void MoveUp(int boardLine)
     {
@@ -125,23 +115,24 @@ public class Chip : MonoBehaviour
             _tween.onComplete += () =>
             {
                 _tween = transform
-                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].y, FadeTime);
+                        .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].y, _gameManager.gameData.chipFadeTime);
             };
 
             return;
         }
 
         _tween = transform
-                .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].y, MoveTime);
+                .DOMoveY(_board[BoardPosition.x, BoardPosition.y - 1].y, _gameManager.gameData.chipMoveTime);
     }
 
 
     private void MoveDown(int boardLine)
     {
         if (BoardPosition.y < boardLine) return;
-        
+
         _board.AddChipTask(MoveDownAsync());
     }
+
 
     private async UniTask MoveDownAsync()
     {
@@ -151,7 +142,7 @@ public class Chip : MonoBehaviour
                     .ToUniTask();
 
             await transform
-                    .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].y, MoveTime)
+                    .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].y, _gameManager.gameData.chipMoveTime)
                     .SetEase(Ease.OutCubic)
                     .ToUniTask();
 
@@ -159,14 +150,34 @@ public class Chip : MonoBehaviour
         }
 
         await transform
-                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].y, MoveTime)
+                .DOMoveY(_board[BoardPosition.x, BoardPosition.y + 1].y, _gameManager.gameData.chipMoveTime)
                 .SetEase(Ease.OutCubic)
                 .ToUniTask();
     }
 
-#endregion
 
-#region COMPARISON
+    [Button("PLACE ON BOARD")]
+    private async UniTask PlaceOnBoard()
+    {
+        spriteRenderer.transform.localPosition =
+                new Vector3(0, _gameManager.gameData.placeOnBoardVerticalShift, 0);
+
+        await spriteRenderer.transform
+                .DOLocalMoveY(0, _gameManager.gameData.chipMoveTime)
+                .ToUniTask();
+    }
+
+
+    [Button("REMOVE FROM BOARD")]
+    private async UniTask RemoveFromBoard()
+    {
+        await spriteRenderer.transform
+                .DOLocalMoveY(
+                        _gameManager.gameData.placeOnBoardVerticalShift,
+                        _gameManager.gameData.chipMoveTime)
+                .ToUniTask();
+    }
+
 
     public bool CompareShape(Chip other)
     {
@@ -178,7 +189,6 @@ public class Chip : MonoBehaviour
     {
         return ColorIndex == other.ColorIndex;
     }
-
 
 
     public bool CompareHorizontalPosition(Chip other)
@@ -222,13 +232,17 @@ public class Chip : MonoBehaviour
             chips[1] = other;
         }
 
-        bool isTopClear = Board.IsPathClear(Vector2.right, _gameManager.gameData.width - chips[0].BoardPosition.x, chips[0], chips[1]);
+        bool isTopClear = Board.IsPathClear(
+                Vector2.right,
+                _gameManager.gameData.width - chips[0].BoardPosition.x,
+                chips[0],
+                chips[1]);
+
         bool isBottomClear = Board.IsPathClear(Vector2.left, chips[1].BoardPosition.x, chips[1], chips[0]);
 
         return isTopClear && isBottomClear;
     }
 
-#endregion
 
 #region ENABLE / DISABLE
 

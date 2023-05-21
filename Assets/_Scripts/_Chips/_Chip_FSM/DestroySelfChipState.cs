@@ -1,9 +1,9 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class DisabledChipState : IChipState
+public class DestroySelfChipState : IChipState
 {
-    public async UniTask Enter(Chip chip)
+    public async void Enter(Chip chip)
     {
         Vector3 initPos = chip.transform.position;
 
@@ -13,9 +13,6 @@ public class DisabledChipState : IChipState
 
         await chip.VerticalShiftAsync(targetPos.y);
 
-        chip.Activate(false);
-
-        ChipController.Instance.ChipRegistry.Unregister(chip);
+        ChipController.Instance.ChipRegistry.UnregisterAndDestroy(chip);
     }
-    
 }

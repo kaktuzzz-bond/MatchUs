@@ -165,7 +165,7 @@ public class Board : Singleton<Board>
         {
             if (!hit.collider.TryGetComponent(out Chip chip)) continue;
 
-            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(FadedInChipState))
+            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
             {
                 return null;
             }
@@ -197,7 +197,7 @@ public class Board : Singleton<Board>
                 continue;
             }
 
-            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(FadedInChipState))
+            if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
             {
                 return false;
             }

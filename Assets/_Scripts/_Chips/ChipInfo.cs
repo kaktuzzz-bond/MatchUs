@@ -10,5 +10,5 @@ public class ChipInfo
 
     public Vector3 position;
 
-    public string state;
+    public Chip.States state;
 }

@@ -58,6 +58,18 @@ public class GameData : SerializedScriptableObject
     [ColorPalette]
     public List<Color> colors;
 
+    [FoldoutGroup("Chip Behaviour Values")]
+    public float chipFadeTime = 0.2f;
+
+    [FoldoutGroup("Chip Behaviour Values")]
+    public float chipMoveTime = 0.3f;
+
+    [FoldoutGroup("Chip Behaviour Values")]
+    public float chipShuffleTime = 0.6f;
+
+    [FoldoutGroup("Chip Behaviour Values")]
+    public float placeOnBoardVerticalShift = 0.4f;
+
 #region DIFFICULTY SETTINGS
 
     [TitleGroup("Top", GroupName = "Game Mode Difficulty")]
@@ -130,7 +142,7 @@ public class GameData : SerializedScriptableObject
     }
 
 
-    public Color GetColor(int index)
+    public Color GetColor(int index, float transparency = 1f)
     {
         if (index < 0 ||
             index >= colors.Count)
@@ -138,7 +150,11 @@ public class GameData : SerializedScriptableObject
             throw new IndexOutOfRangeException($"{nameof(GetColor)}Index is out of range");
         }
 
-        return colors[index];
+        Color color = colors[index];
+
+        color.a = transparency;
+
+        return color;
     }
 
 

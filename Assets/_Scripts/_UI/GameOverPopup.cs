@@ -52,7 +52,7 @@ public class GameOverPopup : Popup
         
         await _gameGUI.Fader.FadeOutEffect();
         
-        ChipController.Instance.DrawStartArray();
+        //ChipController.Instance.DrawStartArray();
     }
 
 

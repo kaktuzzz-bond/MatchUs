@@ -63,7 +63,7 @@ public class PausePopup : Popup
         
         await _gameGUI.Fader.FadeOutEffect();
         
-        ChipController.Instance.DrawStartArray();
+        //ChipController.Instance.DrawStartArray();
     }
 
 

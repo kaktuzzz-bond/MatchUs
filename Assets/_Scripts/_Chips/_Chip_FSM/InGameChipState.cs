@@ -1,9 +1,9 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class EnabledChipState : IChipState
+public class InGameChipState : IChipState
 {
-    public async UniTask Enter(Chip chip)
+    public async void Enter(Chip chip)
     {
         Vector3 targetPos = Board.Instance[chip.BoardPosition.x, chip.BoardPosition.y];
 

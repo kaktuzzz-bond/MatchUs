@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class StartChipGenerator
+public class ChipInfoGenerator
 {
     private readonly List<ChipInfo> _chips = new();
 
 
-    public List<ChipInfo> GetStartChipInfo()
+    public List<ChipInfo> GetStartChipInfoArray()
     {
         int chipsOnStart = GameManager.Instance.gameData.GetOnStartChipNumber();
         float randomizer = GameManager.Instance.gameData.GetRandomizeValue();
@@ -37,7 +37,7 @@ public class StartChipGenerator
         {
                 shapeIndex = GameManager.Instance.gameData.GetRandomShapeIndex(),
                 colorIndex = GameManager.Instance.gameData.GetRandomColorIndex(),
-                state = nameof(FadedInChipState)
+                state = Chip.States.LightOn
         };
 
         Vector2Int boardPos = GetBoardPosition();
@@ -71,7 +71,7 @@ public class StartChipGenerator
         {
                 shapeIndex = shapeIndexes[Random.Range(0, shapeIndexes.Count)],
                 colorIndex = colorIndexes[Random.Range(0, colorIndexes.Count)],
-                state = nameof(FadedInChipState)
+                state = Chip.States.LightOn
         };
 
         Vector2Int boardPos = GetBoardPosition();
