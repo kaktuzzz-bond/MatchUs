@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,10 +13,10 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
 
     [SerializeField] [TabGroup("Main Menu")]
     private Button hardMode;
-    
+
     [SerializeField] [TabGroup("Main Menu")]
     private Button resumeTheGame;
-    
+
     [SerializeField] [TabGroup("Main Menu")]
     private Button testMode;
 
@@ -26,38 +27,55 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
     {
         _gameManager = GameManager.Instance;
 
-        easyMode.onClick.AddListener(() =>
-        {
-            _gameManager.gameData.difficultyLevel = DifficultyLevel.Easy;
+        easyMode.onClick.AddListener(
+                () =>
+                {
+                    _gameManager.gameData.difficultyLevel = DifficultyLevel.Easy;
 
-            GameManager.Instance.GameFiniteStateMachine.Loading();
+                    _gameManager.gameData.SetStartArrayInfos(GetChipInfos());
 
-        });
+                    _gameManager.GameFiniteStateMachine.Loading();
+                });
 
-        normalMode.onClick.AddListener(() =>
-        {
-            _gameManager.gameData.difficultyLevel = DifficultyLevel.Normal;
+        normalMode.onClick.AddListener(
+                () =>
+                {
+                    _gameManager.gameData.difficultyLevel = DifficultyLevel.Normal;
 
-            GameManager.Instance.GameFiniteStateMachine.Loading();
-        });
+                    _gameManager.gameData.SetStartArrayInfos(GetChipInfos());
 
-        hardMode.onClick.AddListener(() =>
-        {
-            _gameManager.gameData.difficultyLevel = DifficultyLevel.Hard;
+                    _gameManager.GameFiniteStateMachine.Loading();
+                });
 
-            GameManager.Instance.GameFiniteStateMachine.Loading();
-        });
-        
-        resumeTheGame.onClick.AddListener(() =>
-        {
-            Debug.Log("Continue");
-        });
+        hardMode.onClick.AddListener(
+                () =>
+                {
+                    _gameManager.gameData.difficultyLevel = DifficultyLevel.Hard;
 
-        testMode.onClick.AddListener(() =>
-        {
-            _gameManager.gameData.difficultyLevel = DifficultyLevel.Test;
+                    _gameManager.gameData.SetStartArrayInfos(GetChipInfos());
 
-            GameManager.Instance.GameFiniteStateMachine.Loading();
-        });
+                    _gameManager.GameFiniteStateMachine.Loading();
+                });
+
+        resumeTheGame.onClick.AddListener(
+                () => { Debug.LogWarning("Load saved data process"); });
+
+        testMode.onClick.AddListener(
+                () =>
+                {
+                    _gameManager.gameData.difficultyLevel = DifficultyLevel.Test;
+
+                    _gameManager.gameData.SetStartArrayInfos(GetChipInfos());
+
+                    _gameManager.GameFiniteStateMachine.Loading();
+                });
+    }
+
+
+    private List<ChipInfo> GetChipInfos()
+    {
+        ChipInfoGenerator generator = new();
+
+        return generator.GetStartChipInfoArray();
     }
 }

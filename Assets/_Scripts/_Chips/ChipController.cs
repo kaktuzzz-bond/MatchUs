@@ -79,9 +79,6 @@ public class ChipController : Singleton<ChipController>
         _chipComparer.TryMatching(chip);
     }
 
-
-    
-    
     
     
     public async UniTask DrawArrayAsync(List<ChipInfo> chipInfos)

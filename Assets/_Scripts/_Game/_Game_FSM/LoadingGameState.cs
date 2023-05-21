@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class LoadingGameState : IGameState
 {
-   
-
     public void Enter(GameFiniteStateMachine context)
     {
         if (context.IsExitGame)
@@ -27,25 +25,13 @@ public class LoadingGameState : IGameState
     private async UniTaskVoid LoadGameScreenAsync()
     {
         Debug.Log("Loading --> GAME");
-        
+
         GameManager.Instance.gameData
                 .CalculateCameraOrthographicSize();
 
         await SceneManager
                 .LoadSceneAsync(2);
 
-        var gameBoard = new GameBoard(
-                GameManager.Instance.gameData.width,
-                GameManager.Instance.gameData.height);
-        
-        Board.Instance.Init(gameBoard);
-        
-        await CameraController.Instance
-                .SetOrthographicSizeAsync();
-
-        await gameBoard
-                .DrawBoardAsync();
-        
         GameManager.Instance.GameFiniteStateMachine
                 .Active();
     }
@@ -59,8 +45,4 @@ public class LoadingGameState : IGameState
 
         GameManager.Instance.GameFiniteStateMachine.Initial();
     }
-
-
-    
-   
 }

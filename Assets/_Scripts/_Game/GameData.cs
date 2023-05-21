@@ -69,6 +69,8 @@ public class GameData : SerializedScriptableObject
 
     [FoldoutGroup("Chip Behaviour Values")]
     public float placeOnBoardVerticalShift = 0.4f;
+    [ShowInInspector]
+    public List<ChipInfo> StartArrayInfos { get; private set; }
 
 #region DIFFICULTY SETTINGS
 
@@ -189,5 +191,11 @@ public class GameData : SerializedScriptableObject
         CameraOrthographicSize = (width + 0.5f) * aspectRatio * 0.5f;
 
         Debug.Log($"Camera OrthographicSizeCalculated ({CameraOrthographicSize})");
+    }
+
+
+    public void SetStartArrayInfos(List<ChipInfo> infos)
+    {
+        StartArrayInfos = infos;
     }
 }

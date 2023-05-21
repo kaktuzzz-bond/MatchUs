@@ -14,8 +14,6 @@ public class Board : Singleton<Board>
 
     public event Action<int> OnLineRestored;
 
-    
-
     private HashSet<UniTask> _chipTasksAll = new();
 
     private GameBoard _gameBoard;
@@ -54,41 +52,6 @@ public class Board : Singleton<Board>
 
 
     public Vector3 this[int x, int y] => _gameBoard[x, y];
-
-    // public async UniTask DrawBoardAsync()
-    // {
-    //     for (int y = 0; y < _gameBoard.Height; y++)
-    //     {
-    //         for (int x = 0; x < _gameBoard.Width; x++)
-    //         {
-    //             Transform tile = Instantiate(
-    //                     _gameManager.gameData.tilePrefab,
-    //                     _gameBoard[x, y],
-    //                     Quaternion.identity,
-    //                     tileParent);
-    //
-    //             tile.name = $"Tile({x}, {y})";
-    //         }
-    //     }
-    //
-    //     //draw dots
-    //     foreach (Vector3 pos in _gameBoard.Dots)
-    //     {
-    //         Transform dot = Instantiate(
-    //                 _gameManager.gameData.tilePrefab,
-    //                 pos,
-    //                 Quaternion.identity,
-    //                 tileParent);
-    //
-    //         dot.name = "Dot";
-    //
-    //         SpriteRenderer sr = dot.GetComponentInChildren<SpriteRenderer>();
-    //
-    //         sr.color = _gameManager.gameData.GetRandomColor();
-    //     }
-    //
-    //     await UniTask.Yield();
-    // }
 
 
     public async UniTaskVoid ProcessMatched(Chip first, Chip second)

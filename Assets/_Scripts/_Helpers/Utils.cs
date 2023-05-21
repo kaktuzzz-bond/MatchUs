@@ -34,6 +34,12 @@ public class Utils : MonoBehaviour
     }
 
 
+    public static Vector3 ConvertBoardToWorldCoordinates(Vector2Int boardPosition)
+    {
+        return new Vector3(boardPosition.x, -boardPosition.y);
+    }
+
+
     public static List<int> GetIndexes(int listCount)
     {
         List<int> list = new();
@@ -42,8 +48,4 @@ public class Utils : MonoBehaviour
 
         return list;
     }
-    
-    
-    
-    
 }

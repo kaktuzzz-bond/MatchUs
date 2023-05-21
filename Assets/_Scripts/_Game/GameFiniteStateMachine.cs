@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class GameFiniteStateMachine
 {
     public IGameState CurrentGameState { get; private set; }
@@ -14,6 +16,7 @@ public class GameFiniteStateMachine
     public GameFiniteStateMachine()
     {
         CurrentGameState = _initial;
+        CurrentGameState.Enter(this);
     }
 
 

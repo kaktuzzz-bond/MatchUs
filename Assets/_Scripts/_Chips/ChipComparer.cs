@@ -14,7 +14,7 @@ public class ChipComparer
     public ChipComparer(PointerController pointerController)
     {
         _pointerController = pointerController;
-        _pointerController.OnPointersHidden += ClearStorage;
+        //_pointerController.OnPointersHidden += ClearStorage;
     }
 
 

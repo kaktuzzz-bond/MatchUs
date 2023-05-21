@@ -9,6 +9,8 @@ public class ChipInfoGenerator
 
     public List<ChipInfo> GetStartChipInfoArray()
     {
+        _chips.Clear();
+        
         int chipsOnStart = GameManager.Instance.gameData.GetOnStartChipNumber();
         float randomizer = GameManager.Instance.gameData.GetRandomizeValue();
 
@@ -81,7 +83,7 @@ public class ChipInfoGenerator
 
         Vector2Int boardPos = GetBoardPosition();
 
-        info.position = Board.Instance[boardPos.x, boardPos.y];
+        info.position = Utils.ConvertBoardToWorldCoordinates(boardPos);
 
         return info;
     }
@@ -115,7 +117,7 @@ public class ChipInfoGenerator
 
         Vector2Int boardPos = GetBoardPosition();
 
-        info.position = Board.Instance[boardPos.x, boardPos.y];
+        info.position = Utils.ConvertBoardToWorldCoordinates(boardPos);
 
         return info;
     }

@@ -25,11 +25,30 @@ public class ActiveGameState : IGameState
 
     private async UniTaskVoid PrepareToStart()
     {
+        GameBoard gameBoard = new (
+                GameManager.Instance.gameData.width,
+                GameManager.Instance.gameData.height);
+        
+        Board.Instance.Init(gameBoard);
+        
+        await CameraController.Instance
+                .SetOrthographicSizeAsync();
+
+        await gameBoard
+                .DrawBoardAsync();
+        
+        await CameraController.Instance.SetBoundsAsync();
+
         await CameraController.Instance.SetInitialPositionAsync();
 
         await CameraController.Instance.SetBoundsAsync();
 
+        await CameraController.Instance.SetInitialPositionAsync();
+        
         await GameGUI.Instance.SetupGUIAndFadeOut();
+        
+        await ChipController.Instance
+                .DrawArrayAsync(GameManager.Instance.gameData.StartArrayInfos);
     }
 
 
