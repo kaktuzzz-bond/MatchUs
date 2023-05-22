@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ChipInfoGenerator
+public static class ChipInfoManager
 {
-    private readonly List<ChipInfo> _chips = new();
+    private static readonly List<ChipInfo> Infos = new();
 
 
-    public List<ChipInfo> GetStartChipInfoArray()
+    public static List<ChipInfo> GetStartChipInfoArray()
     {
-        _chips.Clear();
+        Infos.Clear();
 
         int chipsOnStart = GameManager.Instance.gameData.GetOnStartChipNumber();
         float randomizer = GameManager.Instance.gameData.GetRandomizeValue();
@@ -18,33 +18,40 @@ public class ChipInfoGenerator
         {
             ChipInfo info = GetChipDataByChance(randomizer);
 
-            _chips.Add(info);
+            Infos.Add(info);
         }
 
-        return _chips;
+        return Infos;
     }
 
 
-    public List<ChipInfo> GetClonedInfo(List<ChipInfo> origin, int counter)
+    public static List<ChipInfo> GetClonedInfo(List<ChipInfo> origin, int counter)
     {
-        var cloned = new List<ChipInfo>(origin);
+        List<ChipInfo> chipInfos = new();
 
         for (int i = 0; i < origin.Count; i++)
         {
-            Vector2Int boardPos = GetBoardPosition(counter + i);
+            Vector2Int boardPos = Board.GetBoardPosition(counter + i);
 
-            cloned[i].position = Utils.ConvertBoardToWorldCoordinates(boardPos);
+            ChipInfo newInfo = new (
+                    shapeIndex: origin[i].shapeIndex,
+                    colorIndex: origin[i].colorIndex,
+                    position: Utils.ConvertBoardToWorldCoordinates(boardPos),
+                    state: origin[i].state);
+
+            chipInfos.Add(newInfo);
         }
 
-        return cloned;
+        return chipInfos;
     }
 
-    
-    public List<ChipInfo> ExtractInfos(List<Chip> origin)
+
+    public static List<ChipInfo> ExtractInfos(List<Chip> origin)
     {
         return origin.Select(chip => chip.GetInfo()).ToList();
     }
-    
+
+
     // public async UniTask<List<Chip>> CloneInGameChipsAsync()
     // {
     //     List<Chip> added = new();
@@ -83,7 +90,7 @@ public class ChipInfoGenerator
     // }
 
 
-    private ChipInfo GetChipDataByChance(float chance)
+    private static ChipInfo GetChipDataByChance(float chance)
     {
         return Random.value <= chance
                 ? GetRandomChipData()
@@ -91,7 +98,7 @@ public class ChipInfoGenerator
     }
 
 
-    private ChipInfo GetRandomChipData()
+    private static ChipInfo GetRandomChipData()
     {
         ChipInfo info = new()
         {
@@ -100,7 +107,7 @@ public class ChipInfoGenerator
                 state = Chip.States.LightOn
         };
 
-        Vector2Int boardPos = GetBoardPosition(_chips.Count);
+        Vector2Int boardPos = Board.GetBoardPosition(Infos.Count);
 
         info.position = Utils.ConvertBoardToWorldCoordinates(boardPos);
 
@@ -108,19 +115,19 @@ public class ChipInfoGenerator
     }
 
 
-    private ChipInfo GetChipDataForHardLevel()
+    private static ChipInfo GetChipDataForHardLevel()
     {
         List<int> shapeIndexes = new(GameManager.Instance.gameData.GetShapeIndexes());
         List<int> colorIndexes = new(GameManager.Instance.gameData.GetColorIndexes());
 
-        if (_chips.Count > 0)
+        if (Infos.Count > 0)
         {
-            shapeIndexes.Remove(_chips.Last().shapeIndex);
-            colorIndexes.Remove(_chips.Last().colorIndex);
+            shapeIndexes.Remove(Infos.Last().shapeIndex);
+            colorIndexes.Remove(Infos.Last().colorIndex);
 
-            if (_chips.Count >= GameManager.Instance.gameData.width)
+            if (Infos.Count >= GameManager.Instance.gameData.width)
             {
-                ChipInfo chipInfo = _chips[^GameManager.Instance.gameData.width];
+                ChipInfo chipInfo = Infos[^GameManager.Instance.gameData.width];
 
                 shapeIndexes.Remove(chipInfo.shapeIndex);
                 colorIndexes.Remove(chipInfo.colorIndex);
@@ -134,18 +141,10 @@ public class ChipInfoGenerator
                 state = Chip.States.LightOn
         };
 
-        Vector2Int boardPos = GetBoardPosition(_chips.Count);
+        Vector2Int boardPos = Board.GetBoardPosition(Infos.Count);
 
         info.position = Utils.ConvertBoardToWorldCoordinates(boardPos);
 
         return info;
-    }
-
-
-    private Vector2Int GetBoardPosition(int count)
-    {
-        return new Vector2Int(
-                count % GameManager.Instance.gameData.width,
-                count / GameManager.Instance.gameData.width);
     }
 }

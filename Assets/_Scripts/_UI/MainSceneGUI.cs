@@ -32,7 +32,7 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
                 {
                     _gameManager.gameData.difficultyLevel = DifficultyLevel.Easy;
 
-                    _gameManager.gameData.SetStartArrayInfos(GetChipInfos());
+                    _gameManager.gameData.SetStartArrayInfos(ChipInfoManager.GetStartChipInfoArray());
 
                     _gameManager.GameFiniteStateMachine.Loading();
                 });
@@ -42,7 +42,7 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
                 {
                     _gameManager.gameData.difficultyLevel = DifficultyLevel.Normal;
 
-                    _gameManager.gameData.SetStartArrayInfos(GetChipInfos());
+                    _gameManager.gameData.SetStartArrayInfos(ChipInfoManager.GetStartChipInfoArray());
 
                     _gameManager.GameFiniteStateMachine.Loading();
                 });
@@ -52,7 +52,7 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
                 {
                     _gameManager.gameData.difficultyLevel = DifficultyLevel.Hard;
 
-                    _gameManager.gameData.SetStartArrayInfos(GetChipInfos());
+                    _gameManager.gameData.SetStartArrayInfos(ChipInfoManager.GetStartChipInfoArray());
 
                     _gameManager.GameFiniteStateMachine.Loading();
                 });
@@ -65,17 +65,9 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
                 {
                     _gameManager.gameData.difficultyLevel = DifficultyLevel.Test;
 
-                    _gameManager.gameData.SetStartArrayInfos(GetChipInfos());
+                    _gameManager.gameData.SetStartArrayInfos(ChipInfoManager.GetStartChipInfoArray());
 
                     _gameManager.GameFiniteStateMachine.Loading();
                 });
-    }
-
-
-    private List<ChipInfo> GetChipInfos()
-    {
-        ChipInfoGenerator generator = new();
-
-        return generator.GetStartChipInfoArray();
     }
 }

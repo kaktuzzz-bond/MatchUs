@@ -1,21 +1,18 @@
-using System.Collections.Generic;
-using UnityEngine;
-
-public class ChipComparer
+public static class ChipComparer
 {
-    private Chip _storage;
+    private static Chip _storage;
 
 
-    public void ClearStorage() => _storage = null;
+    public static void ClearStorage() => _storage = null;
 
 
-    public Chip[] HandleTap(Chip chip)
+    public static Chip[] HandleTap(Chip chip)
     {
         //case: Storage is empty
         if (_storage == null)
         {
             _storage = chip;
-        
+
             return new[] { chip };
         }
 

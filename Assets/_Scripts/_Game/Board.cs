@@ -229,4 +229,12 @@ public class Board : Singleton<Board>
     {
         //_chipTasksAll.Add(task);
     }
+
+
+    public static Vector2Int GetBoardPosition(int count)
+    {
+        int width = GameManager.Instance.gameData.width;
+
+        return new Vector2Int(count % width, count / width);
+    }
 }

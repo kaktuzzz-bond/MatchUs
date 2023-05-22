@@ -6,18 +6,7 @@ using Sirenix.OdinInspector;
 
 public class ChipController : Singleton<ChipController>
 {
-    public Vector2Int NextBoardPosition =>
-            new(
-                    _chipRegistry.Counter % _gameManager.gameData.width,
-                    _chipRegistry.Counter / _gameManager.gameData.width);
-
-    public ChipRegistry ChipRegistry => _chipRegistry;
-
-    private ChipComparer _chipComparer;
-
-    private ChipInfoGenerator _chipInfoGenerator;
-
-    private ChipRegistry _chipRegistry;
+    public ChipRegistry ChipRegistry { get; private set; }
 
     private CommandLogger _commandLogger;
 
@@ -26,13 +15,9 @@ public class ChipController : Singleton<ChipController>
 
     private void Awake()
     {
-        _chipRegistry = new ChipRegistry();
+        ChipRegistry = new ChipRegistry();
 
         _commandLogger = new CommandLogger();
-
-        _chipInfoGenerator = new ChipInfoGenerator();
-
-        _chipComparer = new ChipComparer();
 
         _gameManager = GameManager.Instance;
     }
@@ -42,13 +27,13 @@ public class ChipController : Singleton<ChipController>
     {
         //PointerController.HidePointers();
 
-        var infos = _chipInfoGenerator.ExtractInfos(_chipRegistry.ActiveChips);
+        var infos = ChipInfoManager.ExtractInfos(ChipRegistry.ActiveChips);
 
-        var cloned = _chipInfoGenerator.GetClonedInfo(infos, _chipRegistry.Counter);
+        var cloned = ChipInfoManager.GetClonedInfo(infos, ChipRegistry.Counter);
 
         await DrawArrayAsync(cloned);
 
-        _chipComparer.ClearStorage();
+        ChipComparer.ClearStorage();
 
         _commandLogger.AddCommand(new AddChipsCommand());
     }
@@ -58,7 +43,7 @@ public class ChipController : Singleton<ChipController>
     {
         //PointerController.HidePointers();
 
-        _chipComparer.ClearStorage();
+        ChipComparer.ClearStorage();
 
         _commandLogger.AddCommand(new ShuffleCommand());
     }
@@ -78,7 +63,7 @@ public class ChipController : Singleton<ChipController>
 
     public void ProcessTappedChip(Chip chip)
     {
-        var tapped = _chipComparer.HandleTap(chip);
+        var tapped = ChipComparer.HandleTap(chip);
 
         if (tapped == null)
         {
@@ -118,13 +103,13 @@ public class ChipController : Singleton<ChipController>
 
             Chip chip = CreateChip(info);
 
-            _chipRegistry.Register(chip);
+            ChipRegistry.Register(chip);
 
             chip.Init(info);
 
             chip.PlaceOnBoardAsync().Forget();
         }
-        
+
         _commandLogger.CheckStackCount();
     }
 
@@ -165,20 +150,4 @@ public class ChipController : Singleton<ChipController>
 
         return chip;
     }
-
-
-#region ENABLE / DISABLE
-
-    // private void OnEnable()
-    // {
-    //     CameraController.Instance.OnCameraSetup += DrawStartArray;
-    // }
-    //
-    //
-    // private void OnDisable()
-    // {
-    //     CameraController.Instance.OnCameraSetup -= DrawStartArray;
-    // }
-
-#endregion
 }

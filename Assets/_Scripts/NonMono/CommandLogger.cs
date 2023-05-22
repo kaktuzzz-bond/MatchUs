@@ -6,6 +6,7 @@ public class CommandLogger
 {
     private readonly Stack<ICommand> _stack = new();
 
+    
 
     public void AddCommand(ICommand command)
     {
