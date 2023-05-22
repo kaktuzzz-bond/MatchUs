@@ -27,9 +27,9 @@ public class ChipController : Singleton<ChipController>
     {
         //PointerController.HidePointers();
 
-        var infos = ChipInfoManager.ExtractInfos(ChipRegistry.ActiveChips);
+        var infos = ChipInfo.ExtractInfos(ChipRegistry.ActiveChips);
 
-        var cloned = ChipInfoManager.GetClonedInfo(infos, ChipRegistry.Counter);
+        var cloned = ChipInfo.GetClonedInfo(infos, ChipRegistry.Counter);
 
         await DrawArrayAsync(cloned);
 

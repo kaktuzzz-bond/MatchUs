@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    
     public event Action OnGameOver;
 
     public GameData gameData;
@@ -15,9 +14,6 @@ public class GameManager : Singleton<GameManager>
     public IGameState CurrentGameState => GameFiniteStateMachine.CurrentGameState;
 
     public GameFiniteStateMachine GameFiniteStateMachine { get; private set; }
-
-   
-
 
     private int _score;
 
@@ -47,16 +43,12 @@ public class GameManager : Singleton<GameManager>
 
         GameFiniteStateMachine = new GameFiniteStateMachine();
     }
-    
 
-    
-    
-    
+
     public void AddScore(int score)
     {
         Score += score;
     }
-    
 
 
     public void StartGame()
