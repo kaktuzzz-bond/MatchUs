@@ -6,13 +6,15 @@ public class AddChipsCommand : ICommand
     private List<Chip> _addedChips;
 
 
-    public void Execute()
+    public async UniTask Execute()
     {
         GameGUI.Instance.SetButtonPressPermission(false);
 
         GameGUI.Instance.HideInfo();
         
         RecordChips().Forget();
+
+        UniTask.Yield();
     }
 
 

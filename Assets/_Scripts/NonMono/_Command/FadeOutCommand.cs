@@ -18,13 +18,15 @@ public class FadeOutCommand : ICommand
     }
 
 
-    public void Execute()
+    public async UniTask Execute()
     {
         _first.SetState(Chip.States.LightOff);
 
         _second.SetState(Chip.States.LightOff);
 
         GameManager.Instance.AddScore(_score);
+
+        UniTask.Yield();
     }
 
 

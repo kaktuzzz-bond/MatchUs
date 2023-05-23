@@ -9,7 +9,7 @@ public class ShowHintsCommand : ICommand
     public event Action<Vector2Int, Vector2Int> OnHintFound;
 
 
-    public void Execute()
+    public async UniTask Execute()
     {
         var inGameChips = ChipController.Instance.Registry.ActiveChips;
 
@@ -33,6 +33,8 @@ public class ShowHintsCommand : ICommand
         //Debug.Log("======== NO HINTS ========");
 
         GameGUI.Instance.ShowInfo();
+        
+        await UniTask.Yield();
     }
 
 

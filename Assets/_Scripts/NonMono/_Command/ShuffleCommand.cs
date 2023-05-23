@@ -8,13 +8,27 @@ public class ShuffleCommand : ICommand
     private Dictionary<Vector2Int, Chip> _original;
 
 
-    public void Execute()
+    public async UniTask Execute()
     {
         GameGUI.Instance.SetButtonPressPermission(false);
 
         GameGUI.Instance.HideInfo();
                 
-        SendChipsToNewPositions().Forget();
+        var inGameChips = ChipController.Instance.Registry.ActiveChips;
+
+        _original = inGameChips.ToDictionary(chip => chip.BoardPosition);
+
+        var modified = inGameChips.Shuffle();
+
+        var tasks = Enumerable
+                .Select(
+                        inGameChips,
+                        (t, i) => modified[i].MoveToAsync(t.BoardPosition))
+                .ToList();
+
+        await UniTask.WhenAll(tasks);
+
+        GameGUI.Instance.SetButtonPressPermission(true);
     }
 
 
@@ -33,24 +47,5 @@ public class ShuffleCommand : ICommand
         GameGUI.Instance.SetButtonPressPermission(true);
     }
 
-
-    private async UniTaskVoid SendChipsToNewPositions()
-    {
-        var inGameChips = ChipController.Instance.Registry.ActiveChips;
-
-        _original = inGameChips.ToDictionary(chip => chip.BoardPosition);
-
-        var modified = inGameChips.Shuffle();
-
-        var tasks = Enumerable
-                .Select(
-                        inGameChips,
-                        (t, i) => modified[i].MoveToAsync(t.BoardPosition))
-                .ToList();
-
-        await UniTask.WhenAll(tasks);
-
-        GameGUI.Instance.SetButtonPressPermission(true);
-    }
     
 }

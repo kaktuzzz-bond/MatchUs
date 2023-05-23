@@ -55,6 +55,12 @@ public class ChipRegistry
         return InGameChips.Where(chip => chip.BoardPosition.y > boardLine).ToList();
     }
 
+    public List<Chip> GetChipsOnLineAndBelow(int boardLine)
+    {
+        return InGameChips.Where(chip => chip.BoardPosition.y >= boardLine).ToList();
+    }
+    
+    
     public async UniTask ResetRegistry()
     {
         async UniTask ChipDestroy(Chip c)

@@ -26,7 +26,7 @@ public class RemoveSingleLineCommand : ICommand
     }
 
 
-    public void Execute()
+    public async UniTask Execute()
     {
         foreach (Chip chip in _chips)
         {
