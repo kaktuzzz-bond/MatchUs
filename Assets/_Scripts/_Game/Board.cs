@@ -1,24 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
-using JetBrains.Annotations;
-using Sirenix.OdinInspector;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class Board : Singleton<Board>
 {
-    public event Action<int> OnLineRemoved;
-
-    public event Action<int> OnLineRestored;
-
     private HashSet<UniTask> _chipTasksAll = new();
 
     private GameBoard _gameBoard;
-
-    private LineChecker _lineChecker;
 
     private GameManager _gameManager;
 
@@ -43,7 +31,7 @@ public class Board : Singleton<Board>
                 _gameManager.gameData.width,
                 _gameManager.gameData.height);
 
-        _lineChecker = new LineChecker(_gameBoard);
+        LineChecker.SetBoard(_gameBoard);
 
         _pointerPool = new PointerPool();
         _pointerPool.Init();
@@ -93,142 +81,13 @@ public class Board : Singleton<Board>
     }
 
 
-    public void CheckLines(Chip first, Chip second)
-    {
-        int firstLine = first.BoardPosition.y;
-
-        int secondLine = second.BoardPosition.y;
-
-        // a single line
-        if (firstLine == secondLine)
-        {
-            if (_lineChecker.IsLineEmpty(firstLine) != null)
-            {
-                // ChipController.Instance._commandLogger.
-                // AddCommand(new RemoveSingleLineCommand(states));
-            }
-
-            return;
-        }
-
-        // two lines
-        int topLine = Mathf.Min(firstLine, secondLine);
-
-        int bottomLine = Mathf.Max(firstLine, secondLine);
-
-        // CheckLineToRemove(bottomLine);
-        //
-        // CheckLineToRemove(topLine);
-    }
-
-
-    // private void CheckLineToRemove(int boardLine)
-    // {
-    //     var hits = GetRaycastHits(boardLine);
-    //
-    //     var states = AreAllFadedOut(hits);
-    //
-    //     if (states == null) return;
-    //
-    //     //ChipController.Instance._commandLogger.AddCommand(new RemoveSingleLineCommand(states));
-    //
-    //     OnLineRemoved?.Invoke(boardLine);
-    // }
-    //
-    //
-    // private RaycastHit2D[] GetRaycastHits(int boardLine)
-    // {
-    //     var hits = new RaycastHit2D[_gameManager.gameData.width];
-    //
-    //     ContactFilter2D filter = new();
-    //
-    //     Vector2 origin = _gameBoard[0, boardLine];
-    //
-    //     int result = Physics2D.Raycast(origin, Vector2.right, filter, hits, _gameManager.gameData.width);
-    //
-    //     if (result == 0)
-    //     {
-    //         Debug.LogError("CheckLine() caught the empty line!");
-    //     }
-    //
-    //     return hits;
-    // }
-    //
-    //
-    // private static List<ChipFiniteStateMachine> AreAllFadedOut([NotNull] RaycastHit2D[] hits)
-    // {
-    //     if (hits == null) throw new ArgumentNullException(nameof(hits));
-    //
-    //     List<ChipFiniteStateMachine> chips = new();
-    //
-    //     foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
-    //     {
-    //         if (!hit.collider.TryGetComponent(out Chip chip)) continue;
-    //
-    //         if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
-    //         {
-    //             return null;
-    //         }
-    //
-    //         chips.Add(chip.GetComponent<ChipFiniteStateMachine>());
-    //     }
-    //
-    //     return chips;
-    // }
-    //
-    //
-    // public static bool IsPathClear(Vector2 direction, float distance, [NotNull] Chip origin, [NotNull] Chip other)
-    // {
-    //     ContactFilter2D filter = new();
-    //
-    //     List<RaycastHit2D> hits = new();
-    //
-    //     if (origin.TryGetComponent(out Collider2D component))
-    //     {
-    //         int count = component.Raycast(direction, filter, hits, distance);
-    //     }
-    //
-    //     foreach (RaycastHit2D hit in hits.Where(hit => hit.collider != null))
-    //     {
-    //         if (!hit.collider.TryGetComponent(out Chip chip)) continue;
-    //
-    //         if (chip.Equals(other))
-    //         {
-    //             continue;
-    //         }
-    //
-    //         if (chip.ChipFiniteStateMachine.CurrentState.GetType() == typeof(LightedOnChipState))
-    //         {
-    //             return false;
-    //         }
-    //     }
-    //
-    //     //Debug.DrawRay(origin.transform.position, direction, Color.red, 5f);
-    //
-    //     return true;
-    // }
-
-
     public void RestoreLine(int boardLine)
     {
         //_chipTasksAll.Clear();
 
-        OnLineRestored?.Invoke(boardLine);
+        //OnLineRestored?.Invoke(boardLine);
     }
 
-
-    public async UniTask WaitForAllChipTasks()
-    {
-        //await UniTask.WhenAll(_chipTasksAll);
-
-        //_chipTasksAll.Clear();
-    }
-
-
-    public void AddChipTask(UniTask task)
-    {
-        //_chipTasksAll.Add(task);
-    }
 
 
     public static Vector2Int GetBoardPosition(int count)

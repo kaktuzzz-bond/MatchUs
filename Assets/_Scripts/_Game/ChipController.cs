@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 
 public class ChipController : Singleton<ChipController>
 {
-    public ChipRegistry ChipRegistry { get; private set; }
+    public ChipRegistry Registry { get; private set; }
 
     private CommandLogger _commandLogger;
 
@@ -15,7 +16,7 @@ public class ChipController : Singleton<ChipController>
 
     private void Awake()
     {
-        ChipRegistry = new ChipRegistry();
+        Registry = new ChipRegistry();
 
         _commandLogger = new CommandLogger();
 
@@ -27,9 +28,9 @@ public class ChipController : Singleton<ChipController>
     {
         //PointerController.HidePointers();
 
-        var infos = ChipInfo.ExtractInfos(ChipRegistry.ActiveChips);
+        var infos = ChipInfo.ExtractInfos(Registry.ActiveChips);
 
-        var cloned = ChipInfo.GetClonedInfo(infos, ChipRegistry.Counter);
+        var cloned = ChipInfo.GetClonedInfo(infos, Registry.Counter);
 
         await DrawArrayAsync(cloned);
 
@@ -79,15 +80,59 @@ public class ChipController : Singleton<ChipController>
             return;
         }
 
-        // on matched
-        Board.Instance.HideSelector();
-
-        _commandLogger.AddCommand(new FadeOutCommand(tapped[0], tapped[1]));
-
-        Board.Instance.CheckLines(tapped[0], tapped[1]);
+        Matching(tapped[0], tapped[1]);
     }
 
 
+    private void Matching(Chip first, Chip second)
+    {
+        Board.Instance.HideSelector();
+
+        _commandLogger.AddCommand(new FadeOutCommand(first, second));
+
+        var emptyLines = LineChecker.GetEmptyLines(first, second);
+
+        if (emptyLines.Count == 0) return;
+
+        RemoveLines(emptyLines).Forget();
+    }
+
+
+    private async UniTaskVoid RemoveLines(List<List<Chip>> lines)
+    {
+        foreach (var list in lines)
+        {
+            int lineNumber = list.First().BoardPosition.y;
+
+            _commandLogger.AddCommand(new RemoveSingleLineCommand(list, lineNumber, Registry));
+
+            await MoveChipsUpAsync(lineNumber);
+
+            CameraController.Instance.MoveToBottomBound();
+
+            Registry.CheckBoardCapacity();
+        }
+    }
+
+
+    private async UniTask MoveChipsUpAsync(int lineNumber)
+    {
+        var chipsBelow = Registry.GetChipsBelowLine(lineNumber);
+
+        List<UniTask> tasks = new();
+
+        foreach (Chip chip in chipsBelow)
+        {
+            tasks.Add(chip.MoveUpAsync());
+        }
+
+        await UniTask.WhenAll(tasks);
+    }
+
+
+    
+    
+    
     public async UniTask DrawArrayAsync(List<ChipInfo> chipInfos)
     {
         int line = (int)chipInfos.First().position.y;
@@ -103,7 +148,7 @@ public class ChipController : Singleton<ChipController>
 
             Chip chip = CreateChip(info);
 
-            ChipRegistry.Register(chip);
+            Registry.Register(chip);
 
             chip.Init(info);
 
@@ -112,28 +157,6 @@ public class ChipController : Singleton<ChipController>
 
         _commandLogger.CheckStackCount();
     }
-
-
-    //
-    //
-    // public async UniTask RemoveChipsAsync(List<Chip> chips)
-    // {
-    //     int line = chips[0].BoardPosition.y;
-    //
-    //     foreach (Chip chip in chips)
-    //     {
-    //         if (NextLine(ref line, chip.BoardPosition.y))
-    //         {
-    //             await UniTask.Delay(1000);
-    //
-    //             CameraController.Instance.MoveToBottomBound();
-    //         }
-    //
-    //         //chip.ChipFiniteStateMachine.SetSelfDestroyableState().Forget();
-    //
-    //         ChipRegistry.CheckBoardCapacity();
-    //     }
-    // }
 
 
     private Chip CreateChip(ChipInfo info)

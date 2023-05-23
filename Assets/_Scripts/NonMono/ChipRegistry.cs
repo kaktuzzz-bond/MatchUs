@@ -50,6 +50,11 @@ public class ChipRegistry
     }
 
 
+    public List<Chip> GetChipsBelowLine(int boardLine)
+    {
+        return InGameChips.Where(chip => chip.BoardPosition.y > boardLine).ToList();
+    }
+
     public async UniTask ResetRegistry()
     {
         async UniTask ChipDestroy(Chip c)
@@ -80,7 +85,7 @@ public class ChipRegistry
         }
     }
 
-
+    
     public void CheckBoardCapacity()
     {
         int emptyCells = Board.Instance.Capacity - InGameChips.Count;

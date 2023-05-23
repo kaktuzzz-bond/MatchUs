@@ -34,6 +34,7 @@ public class Chip : MonoBehaviour
 
     private GameManager _gameManager;
 
+
     private void Awake()
     {
         _gameManager = GameManager.Instance;
@@ -49,6 +50,7 @@ public class Chip : MonoBehaviour
         return _chipInfo;
     }
 
+
     public void Init(ChipInfo info)
     {
         _chipInfo = info;
@@ -58,11 +60,10 @@ public class Chip : MonoBehaviour
         spriteRenderer.color = _gameManager.gameData.GetColor(ColorIndex, 0f);
 
         _chipFiniteStateMachine = new ChipFiniteStateMachine(this);
-        
+
         SetState(States.LightOn);
     }
 
-    
 
     public void SetState(States newState)
     {
@@ -95,8 +96,6 @@ public class Chip : MonoBehaviour
     }
 
 
-   
-
     [Button("Fade")]
     public async UniTask Fade(float endValue)
     {
@@ -125,24 +124,24 @@ public class Chip : MonoBehaviour
 
 
     [Button("Move UP")]
-    public async UniTask MoveUpAsync()
+    public async UniTask MoveUpAsync(float step = 1f)
     {
         Vector3 startPos = transform.position;
 
         await transform
-                .DOMoveY(++startPos.y, _gameManager.gameData.chipMoveTime)
+                .DOMoveY(startPos.y + step, _gameManager.gameData.chipMoveTime)
                 .SetEase(Ease.InOutCubic)
                 .ToUniTask();
     }
 
 
     [Button("Move DOWN")]
-    public async UniTask MoveDownAsync()
+    public async UniTask MoveDownAsync(float step = 1f)
     {
         Vector3 startPos = transform.position;
 
         await transform
-                .DOMoveY(--startPos.y, _gameManager.gameData.chipMoveTime)
+                .DOMoveY(startPos.y - step, _gameManager.gameData.chipMoveTime)
                 .SetEase(Ease.InOutCubic)
                 .ToUniTask();
     }

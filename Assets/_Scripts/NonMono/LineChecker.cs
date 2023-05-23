@@ -4,18 +4,60 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class LineChecker
+public static class LineChecker
 {
-    private readonly GameBoard _gameBoard;
+    private static GameBoard _gameBoard;
 
 
-    public LineChecker(GameBoard gameBoard)
+    public static void SetBoard(GameBoard gameBoard)
     {
         _gameBoard = gameBoard;
     }
 
+    
+    public static List<List<Chip>> GetEmptyLines(Chip first, Chip second)
+    {
+        int firstLine = first.BoardPosition.y;
 
-    public List<Chip> IsLineEmpty(int boardLine)
+        int secondLine = second.BoardPosition.y;
+
+        // a single line
+        if (firstLine == secondLine)
+        {
+            var line = IsLineEmpty(firstLine);
+            
+            if ( line != null)
+            {
+
+                return new List<List<Chip>>() { line };
+            }
+        }
+
+        // two lines
+        int topLineNum = Mathf.Min(firstLine, secondLine);
+
+        int bottomLineNum = Mathf.Max(firstLine, secondLine);
+
+        List<List<Chip>> lines = new();
+
+        var topLine = IsLineEmpty(topLineNum);
+        
+        var bottomLine = IsLineEmpty(bottomLineNum);
+        
+        if (topLine != null)
+        {
+            lines.Add(topLine);
+        }
+
+        if (bottomLine != null)
+        {
+            lines.Add(bottomLine);
+        }
+
+        return lines;
+    }
+
+    private static List<Chip> IsLineEmpty(int boardLine)
     {
         var hits = GetRaycastHits(boardLine);
 
@@ -24,6 +66,7 @@ public class LineChecker
         return chips;
     }
 
+   
 
     public static bool IsPathClear(Vector2 direction, float distance, [NotNull] Chip origin, [NotNull] Chip other)
     {
@@ -57,7 +100,7 @@ public class LineChecker
     }
 
 
-    private RaycastHit2D[] GetRaycastHits(int boardLine)
+    private static RaycastHit2D[] GetRaycastHits(int boardLine)
     {
         var hits = new RaycastHit2D[GameManager.Instance.gameData.width];
 

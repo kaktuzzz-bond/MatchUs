@@ -30,7 +30,7 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
         easyMode.onClick.AddListener(
                 () =>
                 {
-                    _gameManager.gameData.difficultyLevel = DifficultyLevel.Easy;
+                    _gameManager.gameData.difficultyLevel = GameData.DifficultyLevel.Easy;
 
                     _gameManager.gameData.SetStartArrayInfos(ChipInfo.GetStartChipInfoArray());
 
@@ -40,7 +40,7 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
         normalMode.onClick.AddListener(
                 () =>
                 {
-                    _gameManager.gameData.difficultyLevel = DifficultyLevel.Normal;
+                    _gameManager.gameData.difficultyLevel = GameData.DifficultyLevel.Normal;
 
                     _gameManager.gameData.SetStartArrayInfos(ChipInfo.GetStartChipInfoArray());
 
@@ -50,7 +50,7 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
         hardMode.onClick.AddListener(
                 () =>
                 {
-                    _gameManager.gameData.difficultyLevel = DifficultyLevel.Hard;
+                    _gameManager.gameData.difficultyLevel = GameData.DifficultyLevel.Hard;
 
                     _gameManager.gameData.SetStartArrayInfos(ChipInfo.GetStartChipInfoArray());
 
@@ -63,7 +63,7 @@ public class MainSceneGUI : Singleton<MainSceneGUI>
         testMode.onClick.AddListener(
                 () =>
                 {
-                    _gameManager.gameData.difficultyLevel = DifficultyLevel.Test;
+                    _gameManager.gameData.difficultyLevel = GameData.DifficultyLevel.Test;
 
                     _gameManager.gameData.SetStartArrayInfos(ChipInfo.GetStartChipInfoArray());
 

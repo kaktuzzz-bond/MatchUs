@@ -7,16 +7,20 @@ public class RemoveSingleLineCommand : ICommand
 {
     private readonly int _removedLine;
 
-    private readonly List<ChipFiniteStateMachine> _chipStates;
+    private readonly List<Chip> _chips;
 
     private readonly int _score;
 
+    ChipRegistry _registry;
 
-    public RemoveSingleLineCommand(List<ChipFiniteStateMachine> chipStates)
+
+    public RemoveSingleLineCommand(List<Chip> chips, int line, ChipRegistry registry)
     {
-        _chipStates = chipStates;
+        _chips = chips;
 
-        //_removedLine = _chipStates.First()._chip.BoardPosition.y;
+        _removedLine = line;
+
+        _registry = registry;
 
         //_score = GameData.GetScore(_removedLine);
     }
@@ -24,7 +28,10 @@ public class RemoveSingleLineCommand : ICommand
 
     public void Execute()
     {
-        //ChipFiniteStateMachine.DisableChips(_chipStates);
+        foreach (Chip chip in _chips)
+        {
+            chip.SetState(Chip.States.Removed);
+        }
 
         GameManager.Instance.AddScore(_score);
     }

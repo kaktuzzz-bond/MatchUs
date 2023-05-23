@@ -32,7 +32,7 @@ public class AddChipsCommand : ICommand
     {
         //_addedChips = await ChipController.Instance.CloneInGameChipsAsync();
 
-        ChipController.Instance.ChipRegistry.CheckBoardCapacity();
+        ChipController.Instance.Registry.CheckBoardCapacity();
 
         GameGUI.Instance.SetButtonPressPermission(true);
     }

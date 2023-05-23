@@ -36,7 +36,7 @@ public class ShuffleCommand : ICommand
 
     private async UniTaskVoid SendChipsToNewPositions()
     {
-        var inGameChips = ChipController.Instance.ChipRegistry.ActiveChips;
+        var inGameChips = ChipController.Instance.Registry.ActiveChips;
 
         _original = inGameChips.ToDictionary(chip => chip.BoardPosition);
 

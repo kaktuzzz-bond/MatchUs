@@ -7,6 +7,17 @@ using Random = UnityEngine.Random;
 [CreateAssetMenu(fileName = "New game data", menuName = "Create data")]
 public class GameData : SerializedScriptableObject
 {
+    public enum DifficultyLevel
+    {
+        Test,
+
+        Easy,
+
+        Normal,
+
+        Hard
+    }
+    
     [ShowInInspector]
     public float CameraOrthographicSize { get; private set; }
 

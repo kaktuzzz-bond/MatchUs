@@ -46,7 +46,7 @@ public class GameOverPopup : Popup
 
     private async UniTaskVoid Restart()
     {
-        await ChipController.Instance.ChipRegistry.ResetRegistry();
+        await ChipController.Instance.Registry.ResetRegistry();
 
         await HidePopupAsync();
         
