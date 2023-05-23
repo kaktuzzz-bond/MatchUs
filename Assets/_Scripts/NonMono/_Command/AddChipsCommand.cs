@@ -1,20 +1,34 @@
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 public class AddChipsCommand : ICommand
 {
-    private List<Chip> _addedChips;
+    private readonly List<Chip> _addedChips = new();
+
+    private List<ChipInfo> _infos;
+
+
+    public AddChipsCommand(List<ChipInfo> infos)
+    {
+        _infos = infos;
+    }
 
 
     public async UniTask Execute()
     {
         GameGUI.Instance.SetButtonPressPermission(false);
 
-        GameGUI.Instance.HideInfo();
-        
-        RecordChips().Forget();
+        ChipComparer.ClearStorage();
 
-        UniTask.Yield();
+        GameGUI.Instance.HideInfo();
+
+        await DrawArrayAsync(_infos);
+
+        ChipRegistry.CheckBoardCapacity();
+
+        GameGUI.Instance.SetButtonPressPermission(true);
     }
 
 
@@ -24,18 +38,74 @@ public class AddChipsCommand : ICommand
 
         _addedChips.Reverse();
 
-        //await ChipController.Instance.RemoveChipsAsync(_addedChips);
+        await RemoveArrayAsync();
 
         GameGUI.Instance.SetButtonPressPermission(true);
     }
 
 
-    private async UniTaskVoid RecordChips()
+    private async UniTask RemoveArrayAsync()
     {
-        //_addedChips = await ChipController.Instance.CloneInGameChipsAsync();
+        int line = _addedChips.First().BoardPosition.y;
 
-        ChipController.Instance.Registry.CheckBoardCapacity();
+        foreach (Chip chip in _addedChips)
+        {
+            if (chip.BoardPosition.y != line)
+            {
+                line = chip.BoardPosition.y;
 
-        GameGUI.Instance.SetButtonPressPermission(true);
+                CameraController.Instance.MoveToBottomBound();
+                
+                await UniTask.Delay(100);
+            }
+
+            chip.SetState(Chip.States.Removed);
+
+            ChipRegistry.UnregisterAndDestroy(chip).Forget();
+        }
+    }
+
+
+    private async UniTask DrawArrayAsync(List<ChipInfo> chipInfos)
+    {
+        int line = (int)chipInfos.First().position.y;
+
+        foreach (ChipInfo info in chipInfos)
+        {
+            if ((int)info.position.y != line)
+            {
+                line = (int)info.position.y;
+
+                CameraController.Instance.MoveToBottomBound();
+                
+                await UniTask.Delay(100);
+            }
+
+            Chip chip = CreateChip(info);
+
+            _addedChips.Add(chip);
+
+            ChipRegistry.Register(chip);
+
+            chip.Init(info);
+
+            chip.PlaceOnBoardAsync().Forget();
+        }
+    }
+
+
+    private Chip CreateChip(ChipInfo info)
+    {
+        Transform instance = Object.Instantiate(
+                GameManager.Instance.gameData.chipPrefab,
+                info.position,
+                Quaternion.identity,
+                GameManager.Instance.gameData.chipParent);
+
+        if (!instance.TryGetComponent(out Chip chip)) return null;
+
+        instance.name = $"Chip ({info.shapeIndex}, {info.colorIndex})";
+
+        return chip;
     }
 }

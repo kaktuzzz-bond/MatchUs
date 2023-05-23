@@ -1,26 +1,27 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class CommandLogger
+public static class CommandLogger
 {
-    private readonly Stack<ICommand> _stack = new();
+    private static readonly Stack<ICommand> Log = new();
 
-    
 
-    public void AddCommand(ICommand command)
+    public static async UniTask AddCommand(ICommand command)
     {
-        _stack.Push(command);
+        Log.Push(command);
 
-        command.Execute();
+        await command.Execute();
 
         CheckStackCount();
     }
 
 
-    public async UniTaskVoid UndoCommand()
+    public static async UniTask UndoCommand()
     {
-        if (_stack.Count == 0)
+        if (Log.Count == 0)
         {
             Debug.Log("Log is empty!");
 
@@ -31,20 +32,19 @@ public class CommandLogger
 
         do
         {
-            command = _stack.Pop();
+            command = Log.Pop();
 
             await command.Undo();
-
         } while (command.GetType() == typeof(RemoveSingleLineCommand));
 
         GameGUI.Instance.HideInfo();
-                
+
         CheckStackCount();
     }
 
 
-    public void CheckStackCount()
+    private static void CheckStackCount()
     {
-        GameGUI.Instance.UndoButton.SetInteractivity(_stack.Count > 0);
+        GameGUI.Instance.UndoButton.SetInteractivity(Log.Count > 1);
     }
 }

@@ -14,7 +14,7 @@ public static class LineChecker
         _gameBoard = gameBoard;
     }
 
-    
+
     public static List<List<Chip>> GetEmptyLines(Chip first, Chip second)
     {
         int firstLine = first.BoardPosition.y;
@@ -25,10 +25,9 @@ public static class LineChecker
         if (firstLine == secondLine)
         {
             var line = IsLineEmpty(firstLine);
-            
-            if ( line != null)
-            {
 
+            if (line != null)
+            {
                 return new List<List<Chip>>() { line };
             }
         }
@@ -41,21 +40,24 @@ public static class LineChecker
         List<List<Chip>> lines = new();
 
         var topLine = IsLineEmpty(topLineNum);
-        
+
         var bottomLine = IsLineEmpty(bottomLineNum);
-        
-        if (topLine != null)
-        {
-            lines.Add(topLine);
-        }
 
         if (bottomLine != null)
         {
+            Debug.Log($"Found emptyLine (bottom) ({bottomLineNum})");
             lines.Add(bottomLine);
+        }
+
+        if (topLine != null)
+        {
+            Debug.Log($"Found emptyLine (top) ({topLineNum})");
+            lines.Add(topLine);
         }
 
         return lines;
     }
+
 
     private static List<Chip> IsLineEmpty(int boardLine)
     {
@@ -66,7 +68,6 @@ public static class LineChecker
         return chips;
     }
 
-   
 
     public static bool IsPathClear(Vector2 direction, float distance, [NotNull] Chip origin, [NotNull] Chip other)
     {

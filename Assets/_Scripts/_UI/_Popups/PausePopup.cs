@@ -57,7 +57,7 @@ public class PausePopup : Popup
 
     private async UniTaskVoid Restart()
     {
-        await ChipController.Instance.Registry.ResetRegistry();
+        await ChipRegistry.ResetRegistry();
 
         await HidePopupAsync();
         

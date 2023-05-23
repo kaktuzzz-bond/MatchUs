@@ -15,7 +15,7 @@ public class RemovedChipState : IChipState
                 chip.RemoveFromBoardAsync(),
                 chip.Fade(0f));
 
-        ChipController.Instance.Registry.Unregister(chip);
+        ChipRegistry.Unregister(chip);
 
         chip.Activate(false);
     }

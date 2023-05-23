@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+
 public class GameGUI : Singleton<GameGUI>
 {
     public event Action<bool> OnButtonPressPermission;
@@ -104,11 +105,11 @@ public class GameGUI : Singleton<GameGUI>
     private void Init()
     {
         // game buttons
-        add.onClick.AddListener(()=> ChipController.Instance.AddChips().Forget());
+        add.onClick.AddListener(() => ChipController.Instance.AddChips().Forget());
 
         AddButton = add.GetComponent<GameButton>();
 
-        special.onClick.AddListener(ChipController.Instance.ShuffleChips);
+        special.onClick.AddListener(() => ChipController.Instance.ShuffleChips().Forget());
 
         SpecialButton = special.GetComponent<GameButton>();
 
@@ -116,7 +117,7 @@ public class GameGUI : Singleton<GameGUI>
 
         HintButton = hint.GetComponent<GameButton>();
 
-        undo.onClick.AddListener(ChipController.Instance.UndoCommand);
+        undo.onClick.AddListener(() => CommandLogger.UndoCommand().Forget());
 
         UndoButton = undo.GetComponent<GameButton>();
 

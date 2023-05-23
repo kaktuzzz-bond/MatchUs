@@ -10,11 +10,13 @@ public class ShuffleCommand : ICommand
 
     public async UniTask Execute()
     {
+        ChipComparer.ClearStorage();
+        
         GameGUI.Instance.SetButtonPressPermission(false);
 
         GameGUI.Instance.HideInfo();
                 
-        var inGameChips = ChipController.Instance.Registry.ActiveChips;
+        var inGameChips = ChipRegistry.ActiveChips;
 
         _original = inGameChips.ToDictionary(chip => chip.BoardPosition);
 

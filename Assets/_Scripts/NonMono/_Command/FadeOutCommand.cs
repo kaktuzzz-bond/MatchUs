@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 
 public class FadeOutCommand : ICommand
@@ -20,13 +22,22 @@ public class FadeOutCommand : ICommand
 
     public async UniTask Execute()
     {
+        Board.Instance.HideSelector();
+        
         _first.SetState(Chip.States.LightOff);
 
         _second.SetState(Chip.States.LightOff);
 
+        var emptyLines = LineChecker.GetEmptyLines(_first, _second);
+
+        if (emptyLines.Count == 0) return;
+
+        RemoveLines(emptyLines).Forget();
+        
+        
         GameManager.Instance.AddScore(_score);
 
-        UniTask.Yield();
+        await UniTask.Yield();
     }
 
 
@@ -41,5 +52,36 @@ public class FadeOutCommand : ICommand
         GameManager.Instance.AddScore(-_score);
 
         await UniTask.Yield();
+    }
+    
+    private async UniTaskVoid RemoveLines(List<List<Chip>> lines)
+    {
+        foreach (var list in lines)
+        {
+            int lineNumber = list.First().BoardPosition.y;
+
+            await CommandLogger.AddCommand(new RemoveSingleLineCommand(list, lineNumber));
+
+            await MoveChipsUpAsync(lineNumber);
+
+            CameraController.Instance.MoveToBottomBound();
+
+            ChipRegistry.CheckBoardCapacity();
+        }
+    }
+
+
+    private async UniTask MoveChipsUpAsync(int lineNumber)
+    {
+        var chipsBelow = ChipRegistry.GetChipsBelowLine(lineNumber);
+
+        List<UniTask> tasks = new();
+
+        foreach (Chip chip in chipsBelow)
+        {
+            tasks.Add(chip.MoveUpAsync());
+        }
+
+        await UniTask.WhenAll(tasks);
     }
 }

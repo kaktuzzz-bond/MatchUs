@@ -81,15 +81,6 @@ public class Board : Singleton<Board>
     }
 
 
-    public void RestoreLine(int boardLine)
-    {
-        //_chipTasksAll.Clear();
-
-        //OnLineRestored?.Invoke(boardLine);
-    }
-
-
-
     public static Vector2Int GetBoardPosition(int count)
     {
         int width = GameManager.Instance.gameData.width;

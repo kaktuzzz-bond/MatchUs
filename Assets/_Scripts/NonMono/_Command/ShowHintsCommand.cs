@@ -11,7 +11,7 @@ public class ShowHintsCommand : ICommand
 
     public async UniTask Execute()
     {
-        var inGameChips = ChipController.Instance.Registry.ActiveChips;
+        var inGameChips = ChipRegistry.ActiveChips;
 
         int count = inGameChips.Count;
 

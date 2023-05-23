@@ -211,7 +211,7 @@ public class CameraController : Singleton<CameraController>
 
     private void CalculateBottomBound()
     {
-        Vector2Int nextBoardPos = Board.GetBoardPosition(ChipController.Instance.Registry.Counter);
+        Vector2Int nextBoardPos = Board.GetBoardPosition(ChipRegistry.Counter);
 
         Vector3 worldPos = _board[nextBoardPos.x, nextBoardPos.y];
 

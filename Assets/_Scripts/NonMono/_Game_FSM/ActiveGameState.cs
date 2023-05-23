@@ -48,8 +48,8 @@ public class ActiveGameState : IGameState
 
         await UniTask.Delay(200);
 
-        await ChipController.Instance
-                .DrawArrayAsync(GameManager.Instance.gameData.StartArrayInfos);
+        await CommandLogger
+                .AddCommand(new AddChipsCommand(GameManager.Instance.gameData.StartArrayInfos));
 
         await UniTask.Delay(100);
 

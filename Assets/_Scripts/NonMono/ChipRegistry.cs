@@ -3,34 +3,34 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 
-public class ChipRegistry
+public static class ChipRegistry
 {
     [ShowInInspector, ReadOnly]
-    public int Counter => InGameChips.Count;
+    public static int Counter => InGameChips.Count;
 
     [ShowInInspector]
-    public List<Chip> InGameChips { get; private set; } = new();
+    public static List<Chip> InGameChips { get; private set; } = new();
 
-    public List<Chip> ActiveChips => InGameChips
+    public static List<Chip> ActiveChips => InGameChips
             .Where(c => c.CurrentState == Chip.States.LightOn)
             .OrderBy(c => c.BoardPosition.y)
             .ThenBy(c => c.BoardPosition.x)
             .ToList();
 
-    private readonly List<Chip> _allChips = new();
+    private static readonly List<Chip> AllChips = new();
     
     
-    public void Register(Chip chip)
+    public static void Register(Chip chip)
     {
-        if (!_allChips.Contains(chip))
+        if (!AllChips.Contains(chip))
         {
-            _allChips.Add(chip);
+            AllChips.Add(chip);
         }
 
         InGameChips.Add(chip);
     }
     
-    public void Unregister(Chip chip)
+    public static void Unregister(Chip chip)
     {
         InGameChips.Remove(chip);
 
@@ -38,30 +38,32 @@ public class ChipRegistry
     }
 
 
-    public void UnregisterAndDestroy(Chip chip)
+    public static async UniTaskVoid UnregisterAndDestroy(Chip chip)
     {
-        _allChips.Remove(chip);
+        AllChips.Remove(chip);
 
         InGameChips.Remove(chip);
 
+        await chip.RemoveFromBoardAsync();
+        
         chip.Destroy();
 
         CheckCounter();
     }
 
 
-    public List<Chip> GetChipsBelowLine(int boardLine)
+    public static List<Chip> GetChipsBelowLine(int boardLine)
     {
         return InGameChips.Where(chip => chip.BoardPosition.y > boardLine).ToList();
     }
 
-    public List<Chip> GetChipsOnLineAndBelow(int boardLine)
+    public static List<Chip> GetChipsOnLineAndBelow(int boardLine)
     {
         return InGameChips.Where(chip => chip.BoardPosition.y >= boardLine).ToList();
     }
     
     
-    public async UniTask ResetRegistry()
+    public static async UniTask ResetRegistry()
     {
         async UniTask ChipDestroy(Chip c)
 
@@ -72,18 +74,18 @@ public class ChipRegistry
         }
 
         var tasks = Enumerable
-                .Select(_allChips, ChipDestroy)
+                .Select(AllChips, ChipDestroy)
                 .ToList();
 
         await UniTask.WhenAll(tasks);
 
         InGameChips.Clear();
 
-        _allChips.Clear();
+        AllChips.Clear();
     }
 
 
-    private void CheckCounter()
+    private static void CheckCounter()
     {
         if (Counter == 0)
         {
@@ -92,7 +94,7 @@ public class ChipRegistry
     }
 
     
-    public void CheckBoardCapacity()
+    public static void CheckBoardCapacity()
     {
         int emptyCells = Board.Instance.Capacity - InGameChips.Count;
 

@@ -10,17 +10,14 @@ public class RemoveSingleLineCommand : ICommand
     private readonly List<Chip> _chips;
 
     private readonly int _score;
+    
 
-    ChipRegistry _registry;
 
-
-    public RemoveSingleLineCommand(List<Chip> chips, int line, ChipRegistry registry)
+    public RemoveSingleLineCommand(List<Chip> chips, int line)
     {
         _chips = chips;
 
         _removedLine = line;
-
-        _registry = registry;
 
         //_score = GameData.GetScore(_removedLine);
     }
@@ -34,12 +31,14 @@ public class RemoveSingleLineCommand : ICommand
         }
 
         GameManager.Instance.AddScore(_score);
+
+        await UniTask.Yield();
     }
 
 
     public async UniTask Undo()
     {
-        Board.Instance.RestoreLine(_removedLine);
+        await MoveChipsDownAsync(_removedLine);
 
         await RestoreLine();
 
@@ -47,21 +46,32 @@ public class RemoveSingleLineCommand : ICommand
     }
 
 
-    private async UniTask RestoreLine()
+    private async UniTask MoveChipsDownAsync(int lineNumber)
     {
+        var chipsBelow = ChipRegistry.GetChipsOnLineAndBelow(lineNumber);
+
         List<UniTask> tasks = new();
 
-        // foreach (ChipFiniteStateMachine state in _chipStates)
-        // {
-        //     Vector3 chipPos = state.transform.position;
-        //
-        //     chipPos.y = _removedLine;
-        //
-        //     state.transform.position = chipPos;
-        //
-        //     tasks.Add(state.SetRestoredState());
-        // }
+        foreach (Chip chip in chipsBelow)
+        {
+            tasks.Add(chip.MoveDownAsync());
+        }
 
         await UniTask.WhenAll(tasks);
+    }
+
+
+    private async UniTask RestoreLine()
+    {
+        Debug.Log($"Restore line ({_removedLine})");
+        foreach (Chip chip in _chips)
+        {
+           
+            chip.SetState(Chip.States.LightOff);
+            
+            chip.PlaceOnBoardAsync().Forget();
+        }
+
+        await UniTask.Yield();
     }
 }
