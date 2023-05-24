@@ -1,75 +1,77 @@
-using System;
-using System.Collections.Generic;
+using Board;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class PointerPool
+namespace NonMono
 {
-    private GamePointer _selector;
-
-    private GamePointer[] _hints;
-
-    private GameManager _gameManager;
-
-    private int _selectorCounter;
-
-
-    public void Init()
+    public class PointerPool
     {
-        _gameManager = GameManager.Instance;
+        private GamePointer _selector;
 
-        Transform selector = Object.Instantiate(
-                _gameManager.gameData.selectorPrefab,
-                _gameManager.gameData.pointerParent);
+        private GamePointer[] _hints;
 
-        selector.gameObject.SetActive(false);
+        private GameManager _gameManager;
 
-        _selector = selector.GetComponent<GamePointer>();
+        private int _selectorCounter;
 
-        _selector.SetName(_selector.tag);
 
-        _hints = new GamePointer[2];
-
-        for (int i = 0; i < 2; i++)
+        public void Init()
         {
-            Transform hint = Object.Instantiate(
-                    _gameManager.gameData.hintPrefab,
+            _gameManager = GameManager.Instance;
+
+            Transform selector = Object.Instantiate(
+                    _gameManager.gameData.selectorPrefab,
                     _gameManager.gameData.pointerParent);
 
-            hint.gameObject.SetActive(false);
+            selector.gameObject.SetActive(false);
 
-            _hints[i] = hint.GetComponent<GamePointer>();
+            _selector = selector.GetComponent<GamePointer>();
 
-            _hints[i].SetName(_hints[i].tag);
+            _selector.SetName(_selector.tag);
+
+            _hints = new GamePointer[2];
+
+            for (int i = 0; i < 2; i++)
+            {
+                Transform hint = Object.Instantiate(
+                        _gameManager.gameData.hintPrefab,
+                        _gameManager.gameData.pointerParent);
+
+                hint.gameObject.SetActive(false);
+
+                _hints[i] = hint.GetComponent<GamePointer>();
+
+                _hints[i].SetName(_hints[i].tag);
+            }
         }
-    }
 
 
-    public void ShowSelector(Vector3 position)
-    {
-        _selector.SetPosition(position).Show();
+        public void ShowSelector(Vector3 position)
+        {
+            _selector.SetPosition(position).Show();
         
-    }
+        }
 
 
-    public void HideSelector()
-    {
-        _selector.HideAsync().Forget();
-    }
+        public void HideSelector()
+        {
+            _selector.HideAsync().Forget();
+        }
 
 
-    public void ShowHints(Vector3 firstPosition, Vector3 secondPosition)
-    {
-        _hints[0].SetPosition(firstPosition).Show();
+        public void ShowHints(Vector3 firstPosition, Vector3 secondPosition)
+        {
+            _hints[0].SetPosition(firstPosition).Show();
 
-        _hints[1].SetPosition(secondPosition).Show();
-    }
+            _hints[1].SetPosition(secondPosition).Show();
+        }
 
 
-    public void HideHints()
-    {
-        _hints[0].HideAsync().Forget();
+        public void HideHints()
+        {
+            _hints[0].HideAsync().Forget();
 
-        _hints[1].HideAsync().Forget();
+            _hints[1].HideAsync().Forget();
+        }
     }
 }
