@@ -30,8 +30,6 @@ public class CameraController : Singleton<CameraController>
     
     private Camera _camera;
 
-    private Board.Board _board;
-
     private InputManager _inputManager;
 
     private GameGUI _gameGUI;
@@ -54,7 +52,7 @@ public class CameraController : Singleton<CameraController>
 
     private void Awake()
     {
-        _board = Board.Board.Instance;
+       
 
         _inputManager = InputManager.Instance;
 
@@ -143,7 +141,7 @@ public class CameraController : Singleton<CameraController>
 
     public void MoveToBoardPosition(int boardLine)
     {
-        float targetY = _board[0, boardLine].y;
+        float targetY = _gameManager.gameData.Board[0, boardLine].y;
 
         targetY = Mathf.Clamp(targetY, _bottomBoundPoint.y, _topBoundPoint.y);
 
@@ -214,9 +212,9 @@ public class CameraController : Singleton<CameraController>
 
     private void CalculateBottomBound()
     {
-        Vector2Int nextBoardPos = Board.Board.GetBoardPosition(ChipRegistry.Counter);
+        Vector2Int nextBoardPos = ChipController.GetBoardPosition(ChipRegistry.Counter);
 
-        Vector3 worldPos = _board[nextBoardPos.x, nextBoardPos.y];
+        Vector3 worldPos = _gameManager.gameData.Board[nextBoardPos.x, nextBoardPos.y];
 
         _bottomBoundPoint.y = worldPos.y + _camToNextPositionDistance;
 

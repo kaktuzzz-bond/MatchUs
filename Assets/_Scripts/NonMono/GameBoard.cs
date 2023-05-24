@@ -7,6 +7,7 @@ namespace NonMono
 {
     public class GameBoard
     {
+        
         public int Capacity { get; private set; }
 
         private const float DotRandomizationValue = 0.15f;
@@ -30,8 +31,7 @@ namespace NonMono
 
             _tilePositions = GetTilePositions(width, height);
         }
-
-
+        
         public Vector3 this[int x, int y] => _tilePositions[x, y];
 
 

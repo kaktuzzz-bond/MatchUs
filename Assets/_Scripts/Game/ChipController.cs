@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using NonMono;
 using NonMono.Commands;
@@ -7,6 +8,9 @@ namespace Game
 {
     public class ChipController : Singleton<ChipController>
     {
+      
+
+
         public async UniTask AddChips()
         {
             var allChipInfos = ChipInfo.ExtractInfos(ChipRegistry.ActiveChips);
@@ -35,14 +39,16 @@ namespace Game
 
             if (tapped == null)
             {
-                Board.Board.Instance.HideSelector();
+                Debug.LogWarning("HIDE Selector here");
+                //Board.Board.Instance.HideSelector();
 
                 return;
             }
 
             if (tapped.Length == 1)
             {
-                Board.Board.Instance.ShowSelector(chip.transform.position);
+                Debug.LogWarning("SHOW Selector here");
+                //Board.Board.Instance.ShowSelector(chip.transform.position);
 
                 return;
             }
@@ -54,6 +60,13 @@ namespace Game
         private async UniTask Matching(Chip first, Chip second)
         {
             await CommandLogger.AddCommand(new FadeOutCommand(first, second));
+        }
+        
+        public static Vector2Int GetBoardPosition(int count)
+        {
+            int width = GameManager.Instance.gameData.width;
+
+            return new Vector2Int(count % width, count / width);
         }
     }
 }

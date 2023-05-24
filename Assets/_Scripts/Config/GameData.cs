@@ -22,6 +22,9 @@ public class GameData : SerializedScriptableObject
     [ShowInInspector]
     public float CameraOrthographicSize { get; private set; }
 
+    [ShowInInspector]
+    public GameBoard Board { get; private set; }
+    
     [TitleGroup("Board", GroupName = "Board Size")]
     [HorizontalGroup("Board/Size", 0.5f)]
     [BoxGroup("Board/Size/Width"), HideLabel]
@@ -118,6 +121,11 @@ public class GameData : SerializedScriptableObject
 #endregion
 
 
+    public void SetBoard(GameBoard gameBoard)
+    {
+        Board = gameBoard;
+    }
+    
     public int GetOnStartChipNumber()
     {
         return difficultyLevel switch

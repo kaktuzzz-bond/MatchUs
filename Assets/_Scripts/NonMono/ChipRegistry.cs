@@ -100,7 +100,7 @@ namespace NonMono
     
         public static void CheckBoardCapacity()
         {
-            int emptyCells = Board.Board.Instance.Capacity - InGameChips.Count;
+            int emptyCells = GameManager.Instance.gameData.Board.Capacity - InGameChips.Count;
 
             GameGUI.Instance.AddButton.SetInteractivity(emptyCells >= Counter);
         }

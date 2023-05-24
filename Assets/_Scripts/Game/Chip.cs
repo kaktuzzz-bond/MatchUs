@@ -111,7 +111,7 @@ namespace Game
 
         public async UniTask MoveToAsync(Vector2Int boardPos)
         {
-            Vector3 worldPos = Board.Board.Instance[boardPos.x, boardPos.y];
+            Vector3 worldPos = _gameManager.gameData.Board[boardPos.x, boardPos.y];
 
             await transform
                     .DOMove(worldPos, _gameManager.gameData.chipShuffleTime)

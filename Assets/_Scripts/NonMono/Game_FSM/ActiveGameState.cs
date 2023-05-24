@@ -9,8 +9,20 @@ namespace NonMono.Game_FSM
 {
     public class ActiveGameState : IGameState
     {
+        GameManager _gameManager;
+
+
         public void Enter(GameFiniteStateMachine context)
         {
+            _gameManager = GameManager.Instance;
+
+            OrganizeFolders(CameraController.Instance.transform);
+
+            _gameManager.gameData.SetBoard(
+                            new(
+                                    _gameManager.gameData.width,
+                                    _gameManager.gameData.height));
+
             PrepareToStart().Forget();
         }
 
@@ -35,7 +47,7 @@ namespace NonMono.Game_FSM
         {
             //DOTween.SetTweensCapacity(5000, 100);
 
-            await Board.Board.Instance.Init();
+            await _gameManager.gameData.Board.DrawBoardAsync();
 
             await CameraController.Instance
                     .SetOrthographicSizeAsync();
@@ -58,6 +70,29 @@ namespace NonMono.Game_FSM
             await UniTask.Delay(100);
 
             GameManager.Instance.StartGame();
+        }
+
+
+        private void OrganizeFolders(Transform parent)
+        {
+            GameManager gm = GameManager.Instance;
+            gm.gameData.tileParent = CreateParent("Tile", parent);
+            gm.gameData.chipParent = CreateParent("Chips", parent);
+            gm.gameData.pointerParent = CreateParent("Pointers", parent);
+        }
+
+
+        private Transform CreateParent(string folderName, Transform parent)
+        {
+            GameObject go = new();
+
+            Transform folder = go.transform;
+
+            folder.name = folderName;
+
+            folder.SetParent(parent);
+
+            return folder;
         }
     }
 }

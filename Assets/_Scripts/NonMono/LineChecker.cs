@@ -9,13 +9,7 @@ namespace NonMono
 {
     public static class LineChecker
     {
-        private static GameBoard _gameBoard;
-
-
-        public static void SetBoard(GameBoard gameBoard)
-        {
-            _gameBoard = gameBoard;
-        }
+      
 
 
         public static List<List<Chip>> GetEmptyLines(Chip first, Chip second)
@@ -110,7 +104,7 @@ namespace NonMono
 
             ContactFilter2D filter = new();
 
-            Vector2 origin = _gameBoard[0, boardLine];
+            Vector2 origin =  GameManager.Instance.gameData.Board[0, boardLine];
 
             int result = Physics2D.Raycast(origin, Vector2.right, filter, hits, GameManager.Instance.gameData.width);
 

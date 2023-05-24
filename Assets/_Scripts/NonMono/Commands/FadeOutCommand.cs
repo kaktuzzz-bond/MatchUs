@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Game;
+using UnityEngine;
 
 namespace NonMono.Commands
 {
@@ -25,7 +26,8 @@ namespace NonMono.Commands
 
         public async UniTask Execute()
         {
-            Board.Board.Instance.HideSelector();
+            Debug.LogWarning("HIDE selector here");
+            //Board.Board.Instance.HideSelector();
         
             _first.SetState(ChipState.LightOff);
 
