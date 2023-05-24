@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Game;
+using NonMono;
 using UnityEngine;
 
 namespace Board
@@ -11,23 +13,27 @@ namespace Board
 
         private const float FadeDuration = 0.05f;
 
+        private ObjectPool<GamePointer> _parentPool;
 
-        public void Show()
+        public async UniTask Show(ObjectPool<GamePointer> parentPool)
         {
+            _parentPool = parentPool;
+            
             gameObject.SetActive(true);
 
-            spriteRenderer
-                    .DOFade(1f, FadeDuration);
+            await spriteRenderer
+                    .DOFade(1f, FadeDuration)
+                    .ToUniTask();
         }
 
 
-        public async UniTaskVoid HideAsync()
+        public async UniTask HideAsync()
         {
             await spriteRenderer
-                    .DOFade(0f, FadeDuration)
+                    .DOFade(0f, GameManager.Instance.gameData.chipFadeTime)
                     .ToUniTask();
 
-            gameObject.SetActive(false);
+           _parentPool.Release(this);
         }
 
 

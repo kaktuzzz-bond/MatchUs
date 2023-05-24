@@ -1,14 +1,24 @@
 using System;
+using Board;
 using Cysharp.Threading.Tasks;
 using NonMono;
 using NonMono.Commands;
+using UI;
 using UnityEngine;
 
 namespace Game
 {
     public class ChipController : Singleton<ChipController>
     {
-      
+        private PointerPool _pointerPool;
+
+
+        private void Awake()
+        {
+            _pointerPool = new PointerPool(
+                    GameManager.Instance.gameData.selectorPrefab.GetComponent<GamePointer>(),
+                    GameManager.Instance.gameData.hintPrefab.GetComponent<GamePointer>());
+        }
 
 
         public async UniTask AddChips()
@@ -29,29 +39,58 @@ namespace Game
 
         public void ShowHints()
         {
-            Debug.Log("SHOW HINTS");
+            var inGameChips = ChipRegistry.ActiveChips;
+
+            int count = inGameChips.Count;
+
+            for (int i = 0; i < count - 1; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                {
+                    Chip first = inGameChips[i];
+                    Chip second = inGameChips[j];
+
+                    if (!ChipComparer.CompareChips(first, second)) continue;
+
+                    Debug.Log("SHOW HINTS");
+
+                    _pointerPool.ShowPointer(PointerPool.Hint, first.transform.position).Forget();
+
+                    _pointerPool.ShowPointer(PointerPool.Hint, second.transform.position).Forget();
+
+                    return;
+                }
+            }
+
+            //Debug.Log("======== NO HINTS ========");
+
+            GameGUI.Instance.ShowInfo();
         }
 
 
-        public void ProcessTappedChip(Chip chip)
+        public async UniTask ProcessTappedChip(Chip chip)
         {
             var tapped = ChipComparer.HandleTap(chip);
 
             if (tapped == null)
             {
-                Debug.LogWarning("HIDE Selector here");
-                //Board.Board.Instance.HideSelector();
+                _pointerPool.HideAllVisible().Forget();
 
                 return;
             }
 
             if (tapped.Length == 1)
             {
-                Debug.LogWarning("SHOW Selector here");
-                //Board.Board.Instance.ShowSelector(chip.transform.position);
+                _pointerPool.HideAllVisible().Forget();
+
+                await _pointerPool.ShowPointer(PointerPool.Selector, tapped[0].transform.position);
 
                 return;
             }
+
+            await _pointerPool.ShowPointer(PointerPool.Selector, tapped[0].transform.position);
+
+            await _pointerPool.HideAllVisible();
 
             Matching(tapped[0], tapped[1]).Forget();
         }
@@ -60,13 +99,8 @@ namespace Game
         private async UniTask Matching(Chip first, Chip second)
         {
             await CommandLogger.AddCommand(new FadeOutCommand(first, second));
-        }
-        
-        public static Vector2Int GetBoardPosition(int count)
-        {
-            int width = GameManager.Instance.gameData.width;
 
-            return new Vector2Int(count % width, count / width);
+            Debug.Log("Draw line here");
         }
     }
 }

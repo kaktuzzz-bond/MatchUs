@@ -54,7 +54,7 @@ namespace NonMono
 
             for (int i = 0; i < origin.Count; i++)
             {
-                Vector2Int boardPos = ChipController.GetBoardPosition(counter + i);
+                Vector2Int boardPos = GetBoardPosition(counter + i);
 
                 ChipInfo newInfo = new(
                         shapeIndex: origin[i].shapeIndex,
@@ -85,7 +85,7 @@ namespace NonMono
 
         private static ChipInfo GetRandomChipData()
         {
-            Vector2Int boardPos = ChipController.GetBoardPosition(Infos.Count);
+            Vector2Int boardPos = GetBoardPosition(Infos.Count);
 
             ChipInfo info = new(
                     shapeIndex: GameManager.Instance.gameData.GetRandomShapeIndex(),
@@ -116,7 +116,7 @@ namespace NonMono
                 }
             }
 
-            Vector2Int boardPos =ChipController.GetBoardPosition(Infos.Count);
+            Vector2Int boardPos = GetBoardPosition(Infos.Count);
 
             ChipInfo info = new(
                     shapeIndex: shapeIndexes[Random.Range(0, shapeIndexes.Count)],
@@ -125,6 +125,13 @@ namespace NonMono
                     state: ChipState.LightOn);
 
             return info;
+        }
+        
+        public static Vector2Int GetBoardPosition(int count)
+        {
+            int width = GameManager.Instance.gameData.width;
+        
+            return new Vector2Int(count % width, count / width);
         }
     }
 }

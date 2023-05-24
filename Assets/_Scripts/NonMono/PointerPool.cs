@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Board;
+using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -7,72 +11,62 @@ namespace NonMono
 {
     public class PointerPool
     {
-        private GamePointer _selector;
+        public static string Selector { get; private set; }
 
-        private GamePointer[] _hints;
+        public static string Hint { get; private set; }
 
-        private GameManager _gameManager;
+        private readonly Dictionary<string, ObjectPool<GamePointer>> _pools;
 
-        private int _selectorCounter;
+        public readonly List<GamePointer> _pointers = new();
 
 
-        public void Init()
+        public PointerPool(GamePointer selector, GamePointer hint)
         {
-            _gameManager = GameManager.Instance;
+            Selector = selector.tag;
 
-            Transform selector = Object.Instantiate(
-                    _gameManager.gameData.selectorPrefab,
-                    _gameManager.gameData.pointerParent);
+            Hint = hint.tag;
 
-            selector.gameObject.SetActive(false);
-
-            _selector = selector.GetComponent<GamePointer>();
-
-            _selector.SetName(_selector.tag);
-
-            _hints = new GamePointer[2];
-
-            for (int i = 0; i < 2; i++)
+            _pools = new Dictionary<string, ObjectPool<GamePointer>>()
             {
-                Transform hint = Object.Instantiate(
-                        _gameManager.gameData.hintPrefab,
-                        _gameManager.gameData.pointerParent);
+                    { Selector, new ObjectPool<GamePointer>(selector) },
+                    { Hint, new ObjectPool<GamePointer>(hint) }
+            };
+        }
 
-                hint.gameObject.SetActive(false);
 
-                _hints[i] = hint.GetComponent<GamePointer>();
+        public async UniTask ShowPointer(string name, Vector3 position)
+        {
+            if (!_pools.ContainsKey(name)) return;
 
-                _hints[i].SetName(_hints[i].tag);
+            GamePointer pointer = _pools[name]
+                    .Get()
+                    .SetName(name)
+                    .SetPosition(position);
+
+            _pointers.Add(pointer);
+
+            await pointer.Show(_pools[name]);
+        }
+
+
+        // public void HidePointer(GamePointer pointer)
+        // {
+        //     _pointers.Remove(pointer);
+        //
+        //     pointer.HideAsync().Forget();
+        // }
+
+
+        public async UniTask HideAllVisible()
+        {
+            foreach (GamePointer pointer in _pointers)
+            {
+                pointer.HideAsync().Forget();
             }
-        }
 
+            _pointers.Clear();
 
-        public void ShowSelector(Vector3 position)
-        {
-            _selector.SetPosition(position).Show();
-        
-        }
-
-
-        public void HideSelector()
-        {
-            _selector.HideAsync().Forget();
-        }
-
-
-        public void ShowHints(Vector3 firstPosition, Vector3 secondPosition)
-        {
-            _hints[0].SetPosition(firstPosition).Show();
-
-            _hints[1].SetPosition(secondPosition).Show();
-        }
-
-
-        public void HideHints()
-        {
-            _hints[0].HideAsync().Forget();
-
-            _hints[1].HideAsync().Forget();
+            await UniTask.Yield();
         }
     }
 }

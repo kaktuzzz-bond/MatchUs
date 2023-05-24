@@ -4,7 +4,7 @@ namespace NonMono
 {
     public static class ChipComparer
     {
-        private static Chip _storage;
+        public static Chip _storage;
 
 
         public static void ClearStorage() => _storage = null;

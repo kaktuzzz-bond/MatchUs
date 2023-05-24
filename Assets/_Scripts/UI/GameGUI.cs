@@ -74,6 +74,8 @@ namespace UI
 
         private GameManager _gameManager;
 
+        private bool _isInfoShown;
+
     #endregion
 
 
@@ -110,11 +112,11 @@ namespace UI
         private void Init()
         {
             // game buttons
-            add.onClick.AddListener(() => ChipController.Instance.AddChips().Forget());
+            add.onClick.AddListener(AddChipsClick);
 
             AddButton = add.GetComponent<GameButton>();
 
-            special.onClick.AddListener(() => ChipController.Instance.ShuffleChips().Forget());
+            special.onClick.AddListener(SpecialClick);
 
             SpecialButton = special.GetComponent<GameButton>();
 
@@ -122,7 +124,7 @@ namespace UI
 
             HintButton = hint.GetComponent<GameButton>();
 
-            undo.onClick.AddListener(() => CommandLogger.UndoCommand().Forget());
+            undo.onClick.AddListener(UnoClick);
 
             UndoButton = undo.GetComponent<GameButton>();
 
@@ -132,6 +134,30 @@ namespace UI
             shop.onClick.AddListener(ShopClicked);
 
             infoPanel.Init();
+        }
+
+
+        private void UnoClick()
+        {
+            HideInfo();
+
+            CommandLogger.UndoCommand().Forget();
+        }
+
+
+        private void SpecialClick()
+        {
+            HideInfo();
+
+            ChipController.Instance.ShuffleChips().Forget();
+        }
+
+
+        private void AddChipsClick()
+        {
+            HideInfo();
+
+            ChipController.Instance.AddChips().Forget();
         }
 
 
@@ -163,10 +189,24 @@ namespace UI
         }
 
 
-        public void ShowInfo() => infoPanel.Show().Forget();
+        public void ShowInfo()
+        {
+            if (_isInfoShown) return;
+
+            infoPanel.Show().Forget();
+
+            _isInfoShown = true;
+        }
 
 
-        public void HideInfo() => infoPanel.Hide().Forget();
+        public void HideInfo()
+        {
+            if (!_isInfoShown) return;
+
+            infoPanel.Hide().Forget();
+
+            _isInfoShown = false;
+        }
 
 
         public async UniTask SetupGUIAndFadeOut()

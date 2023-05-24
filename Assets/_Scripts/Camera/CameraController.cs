@@ -100,7 +100,7 @@ public class CameraController : Singleton<CameraController>
 
         if (isChipFadedIn)
         {
-            ChipController.Instance.ProcessTappedChip(chip);
+            ChipController.Instance.ProcessTappedChip(chip).Forget();
         }
     }
 
@@ -212,7 +212,7 @@ public class CameraController : Singleton<CameraController>
 
     private void CalculateBottomBound()
     {
-        Vector2Int nextBoardPos = ChipController.GetBoardPosition(ChipRegistry.Counter);
+        Vector2Int nextBoardPos = ChipInfo.GetBoardPosition(ChipRegistry.Counter);
 
         Vector3 worldPos = _gameManager.gameData.Board[nextBoardPos.x, nextBoardPos.y];
 

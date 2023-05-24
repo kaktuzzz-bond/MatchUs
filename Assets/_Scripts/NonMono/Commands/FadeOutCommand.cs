@@ -26,9 +26,6 @@ namespace NonMono.Commands
 
         public async UniTask Execute()
         {
-            Debug.LogWarning("HIDE selector here");
-            //Board.Board.Instance.HideSelector();
-        
             _first.SetState(ChipState.LightOff);
 
             _second.SetState(ChipState.LightOff);
