@@ -1,3 +1,4 @@
+using Game;
 using NonMono;
 using Sirenix.OdinInspector;
 using UnityEngine;

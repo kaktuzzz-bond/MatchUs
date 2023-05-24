@@ -17,7 +17,7 @@ namespace NonMono.Chip_FSM
                     chip.RemoveFromBoardAsync(),
                     chip.Fade(0f));
 
-            ChipRegistry.Unregister(chip);
+            ChipRegistry.UnregisterFromGame(chip);
 
             chip.Activate(false);
         }

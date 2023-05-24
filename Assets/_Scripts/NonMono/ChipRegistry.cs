@@ -21,10 +21,10 @@ namespace NonMono
                 .ThenBy(c => c.BoardPosition.x)
                 .ToList();
 
-        private static readonly List<Chip> AllChips = new();
+        public static readonly List<Chip> AllChips = new();
     
     
-        public static void Register(Chip chip)
+        public static void RegisterInGame(Chip chip)
         {
             if (!AllChips.Contains(chip))
             {
@@ -34,7 +34,7 @@ namespace NonMono
             InGameChips.Add(chip);
         }
     
-        public static void Unregister(Chip chip)
+        public static void UnregisterFromGame(Chip chip)
         {
             InGameChips.Remove(chip);
 

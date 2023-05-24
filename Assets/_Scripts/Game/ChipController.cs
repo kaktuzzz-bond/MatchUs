@@ -1,61 +1,59 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using UnityEngine;
 using Cysharp.Threading.Tasks;
-using Game;
 using NonMono;
 using NonMono.Commands;
-using Sirenix.OdinInspector;
+using UnityEngine;
 
-public class ChipController : Singleton<ChipController>
+namespace Game
 {
-    public async UniTask AddChips()
+    public class ChipController : Singleton<ChipController>
     {
-        var allChipInfos = ChipInfo.ExtractInfos(ChipRegistry.ActiveChips);
-
-        var infos = ChipInfo.GetClonedInfo(allChipInfos, ChipRegistry.Counter);
-
-        await CommandLogger.AddCommand(new AddChipsCommand(infos));
-    }
-
-
-    public async UniTask ShuffleChips()
-    {
-        await CommandLogger.AddCommand(new ShuffleCommand());
-    }
-
-
-    public void ShowHints()
-    {
-        Debug.Log("SHOW HINTS");
-    }
-
-
-    public void ProcessTappedChip(Chip chip)
-    {
-        var tapped = ChipComparer.HandleTap(chip);
-
-        if (tapped == null)
+        public async UniTask AddChips()
         {
-            Board.Board.Instance.HideSelector();
+            var allChipInfos = ChipInfo.ExtractInfos(ChipRegistry.ActiveChips);
 
-            return;
+            var infos = ChipInfo.GetClonedInfo(allChipInfos, ChipRegistry.Counter);
+
+            await CommandLogger.AddCommand(new AddChipsCommand(infos));
         }
 
-        if (tapped.Length == 1)
-        {
-            Board.Board.Instance.ShowSelector(chip.transform.position);
 
-            return;
+        public async UniTask ShuffleChips()
+        {
+            await CommandLogger.AddCommand(new ShuffleCommand());
         }
 
-        Matching(tapped[0], tapped[1]).Forget();
-    }
+
+        public void ShowHints()
+        {
+            Debug.Log("SHOW HINTS");
+        }
 
 
-    private async UniTask Matching(Chip first, Chip second)
-    {
-        await CommandLogger.AddCommand(new FadeOutCommand(first, second));
+        public void ProcessTappedChip(Chip chip)
+        {
+            var tapped = ChipComparer.HandleTap(chip);
+
+            if (tapped == null)
+            {
+                Board.Board.Instance.HideSelector();
+
+                return;
+            }
+
+            if (tapped.Length == 1)
+            {
+                Board.Board.Instance.ShowSelector(chip.transform.position);
+
+                return;
+            }
+
+            Matching(tapped[0], tapped[1]).Forget();
+        }
+
+
+        private async UniTask Matching(Chip first, Chip second)
+        {
+            await CommandLogger.AddCommand(new FadeOutCommand(first, second));
+        }
     }
 }

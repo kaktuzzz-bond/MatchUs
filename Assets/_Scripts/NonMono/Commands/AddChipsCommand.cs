@@ -89,7 +89,7 @@ namespace NonMono.Commands
 
                 _addedChips.Add(chip);
 
-                ChipRegistry.Register(chip);
+                ChipRegistry.RegisterInGame(chip);
 
                 chip.Init(info);
 

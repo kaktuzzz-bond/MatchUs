@@ -8,29 +8,20 @@ using UnityEngine;
 
 namespace Game
 {
-    public enum ChipState
-    {
-        LightOn,
+    public enum ChipState { LightOn, LightOff, Removed }
 
-        LightOff,
-
-        Removed
-    }
-    
     [RequireComponent(typeof(Collider2D))]
     public class Chip : MonoBehaviour
     {
- 
-      
         [SerializeField]
         private SpriteRenderer spriteRenderer;
 
         [ShowInInspector]
         public ChipState CurrentChipState => _chipInfo.state;
 
-        public int ShapeIndex => _chipInfo.shapeIndex;
+        private int ShapeIndex => _chipInfo.shapeIndex;
 
-        public int ColorIndex => _chipInfo.colorIndex;
+        private int ColorIndex => _chipInfo.colorIndex;
 
         public Vector2Int BoardPosition => Utils.ConvertWorldToBoardCoordinates(transform.position);
 
@@ -245,24 +236,5 @@ namespace Game
 
             return isTopClear && isBottomClear;
         }
-
-
-//
-// #region ENABLE / DISABLE
-//
-//     private void OnEnable()
-//     {
-//         _board.OnLineRemoved += MoveUp;
-//         _board.OnLineRestored += (x) => MoveDownAsync(x).Forget();
-//     }
-//
-//
-//     private void OnDisable()
-//     {
-//         _board.OnLineRemoved -= MoveUp;
-//         _board.OnLineRestored -= MoveDown;
-//     }
-//
-// #endregion
     }
 }

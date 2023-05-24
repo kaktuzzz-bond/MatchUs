@@ -12,7 +12,6 @@ namespace NonMono.Commands
         private readonly List<Chip> _chips;
 
         private readonly int _score;
-    
 
 
         public RemoveSingleLineCommand(List<Chip> chips, int line)
@@ -42,7 +41,7 @@ namespace NonMono.Commands
         {
             await MoveChipsDownAsync(_removedLine);
 
-            await RestoreLine();
+            RestoreLine().Forget();
 
             GameManager.Instance.AddScore(-_score);
         }
@@ -63,14 +62,16 @@ namespace NonMono.Commands
         }
 
 
-        private async UniTask RestoreLine()
+        private async UniTaskVoid RestoreLine()
         {
             Debug.Log($"Restore line ({_removedLine})");
+
             foreach (Chip chip in _chips)
             {
-           
+                ChipRegistry.RegisterInGame(chip);
+
                 chip.SetState(ChipState.LightOff);
-            
+
                 chip.PlaceOnBoardAsync().Forget();
             }
 
