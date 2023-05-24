@@ -1,12 +1,13 @@
 using Cysharp.Threading.Tasks;
 using Game;
 using NonMono;
+using NonMono.Commands;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Popups
 {
-    public class PausePopupBase : PopupBase
+    public class PausePopup : PopupBase
     {
         [SerializeField]
         private Button close;
@@ -61,13 +62,14 @@ namespace UI.Popups
 
         private async UniTaskVoid Restart()
         {
-            await ChipRegistry.ResetRegistry();
-
+            ChipController.Instance.Restart();
+            
             await HidePopupAsync();
-        
+
             await _gameGUI.Fader.FadeOutEffect();
-        
-            //ChipController.Instance.DrawStartArray();
+            
+            await CommandLogger
+                    .AddCommand(new AddChipsCommand(GameManager.Instance.gameData.StartArrayInfos));
         }
 
 

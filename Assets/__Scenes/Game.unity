@@ -2286,8 +2286,8 @@ MonoBehaviour:
   footer: {fileID: 522636954}
   infoPanel: {fileID: 2084665131}
   fader: {fileID: 2055622652}
-  pausePopupBase: {fileID: 1519822272}
-  gameOverPopupBase: {fileID: 4208801709337562330}
+  pausePopup: {fileID: 1519822272}
+  gameOverPopup: {fileID: 4208801709337562330}
   add: {fileID: 2135551233}
   special: {fileID: 1668536134}
   hint: {fileID: 58252160}

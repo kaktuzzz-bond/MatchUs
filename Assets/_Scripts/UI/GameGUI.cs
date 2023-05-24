@@ -37,10 +37,10 @@ namespace UI
         private FaderUI fader;
 
         [SerializeField]
-        private PausePopupBase pausePopupBase;
+        private PausePopup pausePopup;
 
         [SerializeField]
-        private GameOverPopupBase gameOverPopupBase;
+        private GameOverPopup gameOverPopup;
 
         [SerializeField] [FoldoutGroup("Game Buttons")]
         private Button add;
@@ -165,7 +165,7 @@ namespace UI
 
         private void GameOver()
         {
-            gameOverPopupBase.ShowPopupAsync().Forget();
+            gameOverPopup.ShowPopupAsync().Forget();
         }
 
 
@@ -177,9 +177,11 @@ namespace UI
 
             GameManager.Instance.PauseGame();
 
-            pausePopupBase.ShowPopupAsync().Forget();
+            pausePopup.ShowPopupAsync().Forget();
 
             await Fader.FadeInEffect();
+            
+            
         }
 
 

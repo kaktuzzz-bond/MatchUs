@@ -1,13 +1,14 @@
 using Cysharp.Threading.Tasks;
 using Game;
 using NonMono;
+using NonMono.Commands;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Popups
 {
-    public class GameOverPopupBase : PopupBase
+    public class GameOverPopup : PopupBase
     {
         [SerializeField]
         private Button restart;
@@ -38,30 +39,39 @@ namespace UI.Popups
 
         public override async UniTask ShowPopupAsync()
         {
-       
             time.text = GameGUI.Instance.GameTime;
 
             score.text = GameGUI.Instance.GameScore;
-        
-            await base.ShowPopupAsync();
 
+            await base.ShowPopupAsync();
         }
 
 
         private async UniTaskVoid Restart()
         {
-            await ChipRegistry.ResetRegistry();
-
+            // ChipController.Instance.Restart();
+            //
+            // await HidePopupAsync();
+            //
+            // await _gameGUI.Fader.FadeOutEffect();
+            
+            ChipController.Instance.Restart();
+            
             await HidePopupAsync();
-        
+
             await _gameGUI.Fader.FadeOutEffect();
-        
-            //ChipController.Instance.DrawStartArray();
+            
+            await CommandLogger
+                    .AddCommand(new AddChipsCommand(GameManager.Instance.gameData.StartArrayInfos));
         }
 
 
         private async UniTask GoHomeAsync()
         {
+            CommandLogger.Reset();
+
+            ChipRegistry.Reset();
+            
             await HidePopupAsync();
 
             GameManager.Instance.ExitGame();

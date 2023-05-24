@@ -102,5 +102,17 @@ namespace Game
 
             Debug.Log("Draw line here");
         }
+
+
+        public void Restart()
+        {
+            CommandLogger.Reset();
+
+            ChipRegistry.Reset();
+
+            var infos = ChipInfo.GetStartChipInfoArray();
+
+            GameManager.Instance.gameData.SetStartArrayInfos(infos);
+        }
     }
 }

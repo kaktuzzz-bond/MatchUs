@@ -19,9 +19,9 @@ namespace NonMono.Game_FSM
             OrganizeFolders(CameraController.Instance.transform);
 
             _gameManager.gameData.SetBoard(
-                            new(
-                                    _gameManager.gameData.width,
-                                    _gameManager.gameData.height));
+                    new(
+                            _gameManager.gameData.width,
+                            _gameManager.gameData.height));
 
             PrepareToStart().Forget();
         }
@@ -45,16 +45,10 @@ namespace NonMono.Game_FSM
 
         private async UniTaskVoid PrepareToStart()
         {
-            //DOTween.SetTweensCapacity(5000, 100);
-
             await _gameManager.gameData.Board.DrawBoardAsync();
 
             await CameraController.Instance
                     .SetOrthographicSizeAsync();
-
-            await CameraController.Instance.SetBoundsAsync();
-
-            await CameraController.Instance.SetInitialPositionAsync();
 
             await CameraController.Instance.SetBoundsAsync();
 

@@ -10,23 +10,6 @@ namespace Game
 {
     public class GameManager : Singleton<GameManager>
     {
-        // public int allChips;
-        //
-        // public int inGameChipsCounter;
-        //
-        // public int activeChips;
-        //
-        //
-        // private void Update()
-        // {
-        //     allChips = ChipRegistry.AllChips.Count;
-        //
-        //     inGameChipsCounter = ChipRegistry.Counter;
-        //
-        //     activeChips = ChipRegistry.ActiveChips.Count;
-        // }
-
-
         public event Action OnGameOver;
 
         public GameData gameData;

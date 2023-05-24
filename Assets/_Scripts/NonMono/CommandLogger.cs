@@ -45,9 +45,16 @@ namespace NonMono
         }
 
 
-        private static void CheckStackCount()
+        public static void Reset()
+        {
+            Log.Clear();
+        }
+
+                private static void CheckStackCount()
         {
             GameGUI.Instance.UndoButton.SetInteractivity(Log.Count > 1);
         }
+        
+        
     }
 }
