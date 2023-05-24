@@ -108,11 +108,20 @@ namespace Game
         {
             CommandLogger.Reset();
 
-            ChipRegistry.Reset();
+            ChipRegistry.Reset().Forget();
 
             var infos = ChipInfo.GetStartChipInfoArray();
 
             GameManager.Instance.gameData.SetStartArrayInfos(infos);
+        }
+        
+        public void GoHome()
+        {
+            CommandLogger.Reset();
+
+            ChipRegistry.Reset().Forget();
+            
+           
         }
     }
 }

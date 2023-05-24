@@ -11,11 +11,11 @@ namespace NonMono
     public static class ChipRegistry
     {
         [ShowInInspector, ReadOnly]
-        public static int Counter => _inGameChips.Count;
+        public static int Counter => InGameChips.Count;
 
-        private static List<Chip> _inGameChips = new();
+        private static readonly List<Chip> InGameChips = new();
 
-        public static List<Chip> ActiveChips => _inGameChips
+        public static List<Chip> ActiveChips => InGameChips
                 .Where(c => c.CurrentChipState == ChipState.LightOn)
                 .OrderBy(c => c.BoardPosition.y)
                 .ThenBy(c => c.BoardPosition.x)
@@ -31,29 +31,25 @@ namespace NonMono
                 AllChips.Add(chip);
             }
 
-            _inGameChips.Add(chip);
-
-            Debug.LogWarning(_inGameChips.Count);
+            InGameChips.Add(chip);
         }
 
 
         public static void UnregisterFromGame(Chip chip)
         {
-            _inGameChips.Remove(chip);
+            InGameChips.Remove(chip);
 
             CheckCounter();
-
-            Debug.LogError(_inGameChips.Count);
         }
 
 
         public static async UniTask UnregisterAndDestroy(Chip chip)
         {
+            await chip.RemoveFromBoardAsync();
+
             AllChips.Remove(chip);
 
-            _inGameChips.Remove(chip);
-
-            await chip.RemoveFromBoardAsync();
+            InGameChips.Remove(chip);
 
             chip.Destroy();
 
@@ -63,13 +59,13 @@ namespace NonMono
 
         public static List<Chip> GetChipsBelowLine(int boardLine)
         {
-            return _inGameChips.Where(chip => chip.BoardPosition.y > boardLine).ToList();
+            return InGameChips.Where(chip => chip.BoardPosition.y > boardLine).ToList();
         }
 
 
         public static List<Chip> GetChipsOnLineAndBelow(int boardLine)
         {
-            return _inGameChips.Where(chip => chip.BoardPosition.y >= boardLine).ToList();
+            return InGameChips.Where(chip => chip.BoardPosition.y >= boardLine).ToList();
         }
 
 
@@ -79,14 +75,22 @@ namespace NonMono
 
             foreach (Chip chip in AllChips)
             {
-                tasks.Add(UnregisterAndDestroy(chip));
+                tasks.Add(DestroyOnReset(chip));
             }
 
             await UniTask.WhenAll(tasks);
 
-            _inGameChips.Clear();
+            InGameChips.Clear();
 
             AllChips.Clear();
+        }
+
+
+        private static async UniTask DestroyOnReset(Chip chip)
+        {
+            await chip.RemoveFromBoardAsync();
+
+            chip.Destroy();
         }
 
 
@@ -101,7 +105,7 @@ namespace NonMono
 
         public static void CheckBoardCapacity()
         {
-            int emptyCells = GameManager.Instance.gameData.Board.Capacity - _inGameChips.Count;
+            int emptyCells = GameManager.Instance.gameData.Board.Capacity - InGameChips.Count;
 
             GameGUI.Instance.AddButton.SetInteractivity(emptyCells >= Counter);
         }

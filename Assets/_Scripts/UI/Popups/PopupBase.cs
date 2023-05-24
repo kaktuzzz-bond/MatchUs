@@ -1,5 +1,8 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Game;
+using NonMono;
+using NonMono.Commands;
 using UnityEngine;
 
 namespace UI.Popups
@@ -8,13 +11,7 @@ namespace UI.Popups
     {
         private const float PopDuration = 0.5f;
 
-
-        protected void Init()
-        {
-            // gameObject.SetActive(false);
-            //
-            // transform.localScale = Vector3.zero;
-        }
+        
 
 
         public virtual async UniTask ShowPopupAsync()
@@ -39,6 +36,29 @@ namespace UI.Popups
             // await GameGUI.Instance.Fader.FadeOutEffect();
 
             gameObject.SetActive(false);
+        }
+        
+        
+        protected virtual async UniTask Restart()
+        {
+          
+
+            await HidePopupAsync();
+
+            await GameGUI.Instance.Fader.FadeOutEffect();
+
+            await CommandLogger
+                    .AddCommand(new AddChipsCommand(GameManager.Instance.gameData.StartArrayInfos));
+        }
+
+
+        protected virtual async UniTask GoHomeAsync()
+        {
+            ChipController.Instance.GoHome();
+            
+            await HidePopupAsync();
+
+            GameManager.Instance.ExitGame();
         }
     }
 }

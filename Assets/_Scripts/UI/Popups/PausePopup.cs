@@ -35,8 +35,6 @@ namespace UI.Popups
             restart.onClick.AddListener(() => Restart().Forget());
 
             _gameGUI = GameGUI.Instance;
-
-            Init();
         }
 
 
@@ -52,24 +50,21 @@ namespace UI.Popups
         }
 
 
-        private async UniTask GoHomeAsync()
+        protected override async UniTask Restart()
         {
-            await HidePopupAsync();
+            ChipController.Instance.Restart();
 
-            GameManager.Instance.ExitGame();
+            await base.Restart();
         }
 
 
-        private async UniTaskVoid Restart()
+        protected override async UniTask GoHomeAsync()
         {
-            ChipController.Instance.Restart();
-            
+            ChipController.Instance.GoHome();
+
             await HidePopupAsync();
 
-            await _gameGUI.Fader.FadeOutEffect();
-            
-            await CommandLogger
-                    .AddCommand(new AddChipsCommand(GameManager.Instance.gameData.StartArrayInfos));
+            GameManager.Instance.ExitGame();
         }
 
 
