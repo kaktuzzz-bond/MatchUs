@@ -958,6 +958,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: a46fd4c38f8c645949b38476d8ea32ba, type: 3}
+    - target: {fileID: 7314850675831277281, guid: 85fb5d93de3ca49f3bee4fc9644204f8, type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7314850675831277286, guid: 85fb5d93de3ca49f3bee4fc9644204f8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1879,9 +1883,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e83548fc3d284bd48a1c7c0dc734d10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allChips: 0
-  inGameChipsCounter: 0
-  activeChips: 0
   gameData: {fileID: 11400000, guid: 7a43dbd2156fa4882beaa45b8e4256e9, type: 2}
 --- !u!1001 &7314850676994324877
 PrefabInstance:
