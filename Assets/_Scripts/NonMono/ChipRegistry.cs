@@ -45,14 +45,12 @@ namespace NonMono
 
         public static async UniTask UnregisterAndDestroy(Chip chip)
         {
-            await chip.RemoveFromBoardAsync();
-
             AllChips.Remove(chip);
 
             InGameChips.Remove(chip);
 
-            chip.Destroy();
-
+            await DestroyOnReset(chip);
+            
             CheckCounter();
         }
 

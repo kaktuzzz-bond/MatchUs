@@ -44,7 +44,8 @@ namespace NonMono.Game_FSM
 
             await SceneManager.LoadSceneAsync(0);
 
-            GameManager.Instance.GameFiniteStateMachine.Initial();
+            GameManager.Instance.GameFiniteStateMachine
+                    .Initial();
         }
     }
 }

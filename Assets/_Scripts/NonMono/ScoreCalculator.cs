@@ -2,7 +2,7 @@ using Game;
 
 namespace NonMono
 {
-    public class ScoreCalculator
+    public static class ScoreCalculator
     {
         public static int GetScore(Chip first, Chip second)
         {
@@ -17,7 +17,7 @@ namespace NonMono
             return score;
         }
 
-        //public int GetScore(int boardLine) => (boardLine + 1) * width;
+        public static int GetScore(int boardLine) => (boardLine + 1) * GameManager.Instance.gameData.width;
         
     }
 }

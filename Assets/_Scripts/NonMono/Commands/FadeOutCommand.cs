@@ -20,7 +20,7 @@ namespace NonMono.Commands
             _first = first;
             _second = second;
 
-            //_score = GameData.GetScore(first, second);
+            _score = ScoreCalculator.GetScore(first, second);
         }
 
 
@@ -30,14 +30,13 @@ namespace NonMono.Commands
 
             _second.SetState(ChipState.LightOff);
 
+            GameManager.Instance.AddScore(_score);
+
             var emptyLines = LineChecker.GetEmptyLines(_first, _second);
 
             if (emptyLines.Count == 0) return;
 
             RemoveLines(emptyLines).Forget();
-        
-        
-            GameManager.Instance.AddScore(_score);
 
             await UniTask.Yield();
         }
@@ -55,7 +54,8 @@ namespace NonMono.Commands
 
             await UniTask.Yield();
         }
-    
+
+
         private async UniTaskVoid RemoveLines(List<List<Chip>> lines)
         {
             foreach (var list in lines)

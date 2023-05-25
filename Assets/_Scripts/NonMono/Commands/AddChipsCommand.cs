@@ -44,6 +44,8 @@ namespace NonMono.Commands
 
             await RemoveArrayAsync();
 
+            ChipRegistry.CheckBoardCapacity();
+            
             GameGUI.Instance.SetButtonPressPermission(true);
         }
 

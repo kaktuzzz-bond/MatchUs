@@ -22,7 +22,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   width: 9
-  height: 50
+  height: 500
   tilePrefab: {fileID: 8430510590976786998, guid: f07d43acd692a49438a9868d9d2335ba, type: 3}
   dotPrefab: {fileID: 1925143991089153941, guid: 35692112f480e4166b55737c8da273bc, type: 3}
   chipPrefab: {fileID: 6589025527896620549, guid: 558fbdc173c62400d9c7d1c0d7d31dc0, type: 3}
@@ -57,7 +57,7 @@ MonoBehaviour:
   chipMoveTime: 0.4
   chipShuffleTime: 0.6
   placeOnBoardVerticalShift: 0.4
-  difficultyLevel: 0
+  difficultyLevel: 2
   easyMode: 27
   easyRandom: 1
   normalMode: 45

@@ -165,6 +165,7 @@ namespace UI
 
         private void GameOver()
         {
+            Debug.LogWarning("=====GameGUI - GameOver=====");
             gameOverPopup.ShowPopupAsync().Forget();
         }
 
@@ -173,7 +174,7 @@ namespace UI
         {
             Debug.Log("PAUSE");
 
-            //SetButtonPressPermission(false);
+            SetButtonPressPermission(false);
 
             GameManager.Instance.PauseGame();
 

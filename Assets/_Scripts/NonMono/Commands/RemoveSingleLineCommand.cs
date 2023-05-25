@@ -20,7 +20,7 @@ namespace NonMono.Commands
 
             _removedLine = line;
 
-            //_score = GameData.GetScore(_removedLine);
+            _score = ScoreCalculator.GetScore(_removedLine);
         }
 
 

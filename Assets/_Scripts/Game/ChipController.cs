@@ -98,9 +98,10 @@ namespace Game
 
         private async UniTask Matching(Chip first, Chip second)
         {
-            await CommandLogger.AddCommand(new FadeOutCommand(first, second));
+            CommandLogger.AddCommand(new FadeOutCommand(first, second)).Forget();
 
             Debug.Log("Draw line here");
+            await UniTask.Yield();
         }
 
 

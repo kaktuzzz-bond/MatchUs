@@ -58,16 +58,6 @@ namespace UI.Popups
         }
 
 
-        protected override async UniTask GoHomeAsync()
-        {
-            ChipController.Instance.GoHome();
-
-            await HidePopupAsync();
-
-            GameManager.Instance.ExitGame();
-        }
-
-
         private void ShowInfo()
         {
             Debug.Log("SHOW INFO");
