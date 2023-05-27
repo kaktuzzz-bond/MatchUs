@@ -7,10 +7,13 @@ namespace DI.Infrastructure
     {
         event Action<Vector3> OnTouchStarted;
 
-        event Action<Vector3> OnPressing;
+        event Action<Vector3> OnHoldTriggered;
 
-        event Action<Vector3> OnTapDetected;
+        event Action<Vector3> OnTapTriggered;
 
         event Action<Vector3> OnTouchEnded;
+
+
+        Vector3 CurrentInputPosition { get; }
     }
 }

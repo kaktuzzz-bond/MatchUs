@@ -1,29 +1,37 @@
 using System;
-using System.Collections;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
 namespace DI.Infrastructure
 {
-    public class InputService : IInputService
+    public class InputService : MonoBehaviour, IInputService
     {
         public event Action<Vector3> OnTouchStarted;
 
-        public event Action<Vector3> OnPressing;
+        public event Action<Vector3> OnHoldTriggered;
 
-        public event Action<Vector3> OnTapDetected;
+        public event Action<Vector3> OnTapTriggered;
 
         public event Action<Vector3> OnTouchEnded;
+
+        public Vector3 CurrentInputPosition
+        {
+            get
+            {
+                Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
+
+                return GetWorldPosition(touch);
+            }
+        }
 
         private const float MinSwipeDistance = 0.5f;
 
         private const float MinTouchDuration = 0.2f;
 
-        private readonly PlayerInput _input;
+        private PlayerInput _input;
 
-        private readonly Camera _inputCamera;
+        private Camera _inputCamera;
 
         private Vector3 _startTouchPosition;
 
@@ -34,19 +42,47 @@ namespace DI.Infrastructure
         private float _endTouchTime;
 
 
-        public InputService(Camera inputCamera)
+        [Inject]
+        private void Construct(Camera inputCamera)
         {
             _input = new PlayerInput();
             _inputCamera = inputCamera;
+        }
 
+
+        private void OnEnable()
+        {
             _input.Enable();
 
             _input.Touch.Press.started += StartTouch;
             _input.Touch.Press.canceled += EndTouch;
+
+            _input.Touch.Hold.performed += Hold;
+            _input.Touch.Tap.performed += Tap;
         }
 
 
-        private void OnDestroy()
+        private void Hold(InputAction.CallbackContext context)
+        {
+            Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
+
+            Vector3 touchPosition = GetWorldPosition(touch);
+
+            OnHoldTriggered?.Invoke(touchPosition);
+        }
+
+
+        private void Tap(InputAction.CallbackContext context)
+        {
+            Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
+
+            Vector3 touchPosition = GetWorldPosition(touch);
+
+            OnTapTriggered?.Invoke(touchPosition);
+        }
+
+
+        private void OnDisable()
         {
             _input.Disable();
 
@@ -63,24 +99,7 @@ namespace DI.Infrastructure
 
             _startTouchTime = (float)context.startTime;
 
-            // StartCoroutine(HoldRoutine());
-
             OnTouchStarted?.Invoke(_startTouchPosition);
-        }
-
-
-        private IEnumerator HoldRoutine()
-        {
-            while (_input.Touch.Press.ReadValue<float>() != 0f)
-            {
-                Vector2 touch = _input.Touch.TouchPosition.ReadValue<Vector2>();
-
-                Vector3 touchPos = GetWorldPosition(touch);
-
-                OnPressing?.Invoke(touchPos);
-
-                yield return null;
-            }
         }
 
 
@@ -96,13 +115,13 @@ namespace DI.Infrastructure
 
             float touchDuration = _endTouchTime - _startTouchTime;
 
-            if (touchDuration < MinTouchDuration &&
-                distance < MinSwipeDistance)
+            if (touchDuration < MinTouchDuration ||
+                distance > MinSwipeDistance)
             {
-                OnTapDetected?.Invoke(_startTouchPosition);
-
-                return;
+                //OnTapDetected?.Invoke(_startTouchPosition);
             }
+
+            // OnTapDetected?.Invoke(_startTouchPosition);
 
             OnTouchEnded?.Invoke(_endTouchPosition);
         }
