@@ -8,8 +8,6 @@ using UnityEngine.InputSystem;
 [DefaultExecutionOrder(-1)]
 public class InputManager : Singleton<InputManager>
 {
-#region EVENTS
-
     public event Action<Vector3> OnTouchStarted;
 
     public event Action<Vector3> OnPressed;
@@ -17,8 +15,6 @@ public class InputManager : Singleton<InputManager>
     public event Action<Vector3> OnTapDetected;
 
     public event Action OnTouchEnded;
-
-#endregion
 
     [HorizontalGroup("Split", Title = "Swipe Properties", Width = 0.5f)]
     [SerializeField] [PropertyRange(0f, 2f)] [BoxGroup("Split/Min Swipe Distance")] [HideLabel]
@@ -139,7 +135,6 @@ public class InputManager : Singleton<InputManager>
     //     //}
     // }
 
-#region ENABLE / DISABLE
 
     private void OnEnable()
     {
@@ -161,6 +156,4 @@ public class InputManager : Singleton<InputManager>
 
         _input.Disable();
     }
-
-#endregion
 }
