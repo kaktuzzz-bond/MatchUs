@@ -218,9 +218,10 @@ GameObject:
   - component: {fileID: 627861406}
   - component: {fileID: 627861405}
   - component: {fileID: 627861404}
+  - component: {fileID: 627861407}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -260,7 +261,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -291,6 +292,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &627861407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 627861403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488bcb3594d244198b1324a412b8bd77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxDistance: 0.5
+  moveDuration: 1
 --- !u!1 &773965788
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,7 +315,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 773965790}
-  - component: {fileID: 773965792}
   - component: {fileID: 773965793}
   m_Layer: 0
   m_Name: Controller
@@ -324,21 +338,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &773965792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 773965788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 488bcb3594d244198b1324a412b8bd77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 374403587}
-  _startTouchPosition: {x: 0, y: 0, z: 0}
-  _startTargetPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &773965793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,7 +380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a88e212b3de5b418c8b0d608fc8b90fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputCamera: {fileID: 627861405}
+  cameraMover: {fileID: 627861407}
   inputService: {fileID: 773965793}
 --- !u!114 &786243647
 MonoBehaviour:

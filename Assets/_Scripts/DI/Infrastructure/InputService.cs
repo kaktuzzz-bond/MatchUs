@@ -25,10 +25,6 @@ namespace DI.Infrastructure
             }
         }
 
-        private const float MinSwipeDistance = 0.5f;
-
-        private const float MinTouchDuration = 0.2f;
-
         private PlayerInput _input;
 
         private Camera _inputCamera;
@@ -43,22 +39,28 @@ namespace DI.Infrastructure
 
 
         [Inject]
-        private void Construct(Camera inputCamera)
+        private void Construct(CameraMover inputCamera)
         {
             _input = new PlayerInput();
-            _inputCamera = inputCamera;
-        }
+            _inputCamera = inputCamera.GetComponent<Camera>();
 
-
-        private void OnEnable()
-        {
             _input.Enable();
 
             _input.Touch.Press.started += StartTouch;
             _input.Touch.Press.canceled += EndTouch;
-
             _input.Touch.Hold.performed += Hold;
             _input.Touch.Tap.performed += Tap;
+        }
+
+
+        private void OnDisable()
+        {
+            _input.Disable();
+
+            _input.Touch.Press.started -= StartTouch;
+            _input.Touch.Press.canceled -= EndTouch;
+            _input.Touch.Hold.performed -= Hold;
+            _input.Touch.Tap.performed -= Tap;
         }
 
 
@@ -79,15 +81,6 @@ namespace DI.Infrastructure
             Vector3 touchPosition = GetWorldPosition(touch);
 
             OnTapTriggered?.Invoke(touchPosition);
-        }
-
-
-        private void OnDisable()
-        {
-            _input.Disable();
-
-            _input.Touch.Press.started -= StartTouch;
-            _input.Touch.Press.canceled -= EndTouch;
         }
 
 
@@ -114,14 +107,6 @@ namespace DI.Infrastructure
             float distance = Vector3.Distance(_startTouchPosition, _endTouchPosition);
 
             float touchDuration = _endTouchTime - _startTouchTime;
-
-            if (touchDuration < MinTouchDuration ||
-                distance > MinSwipeDistance)
-            {
-                //OnTapDetected?.Invoke(_startTouchPosition);
-            }
-
-            // OnTapDetected?.Invoke(_startTouchPosition);
 
             OnTouchEnded?.Invoke(_endTouchPosition);
         }

@@ -51,7 +51,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""id"": ""43cccd3a-cc27-44af-abab-6f8b302e0a45"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap"",
+                    ""interactions"": ""Tap(duration=0.2)"",
                     ""initialStateCheck"": false
                 },
                 {
