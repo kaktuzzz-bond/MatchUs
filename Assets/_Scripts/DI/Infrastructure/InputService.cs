@@ -27,7 +27,7 @@ namespace DI.Infrastructure
 
         private PlayerInput _input;
 
-        private Camera _inputCamera;
+        private Camera _camera;
 
         private Vector3 _startTouchPosition;
 
@@ -39,10 +39,11 @@ namespace DI.Infrastructure
 
 
         [Inject]
-        private void Construct(CameraMover inputCamera)
+        private void Construct(CameraInputHandler inputCamera, Camera mainCamera)
         {
             _input = new PlayerInput();
-            _inputCamera = inputCamera.GetComponent<Camera>();
+
+            _camera = mainCamera;
 
             _input.Enable();
 
@@ -114,7 +115,7 @@ namespace DI.Infrastructure
 
         private Vector3 GetWorldPosition(Vector3 screenPosition)
         {
-            Vector2 worldPos = _inputCamera.ScreenToWorldPoint(screenPosition);
+            Vector2 worldPos = _camera.ScreenToWorldPoint(screenPosition);
 
             return worldPos;
         }

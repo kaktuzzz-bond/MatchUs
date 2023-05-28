@@ -6,7 +6,13 @@ namespace DI.Infrastructure
     public class GameSceneInstaller : MonoInstaller
     {
         [SerializeField]
-        private CameraMover cameraMover;
+        private Camera mainCamera;
+
+        [SerializeField]
+        private CameraInputHandler cameraInputHandler;
+
+        [SerializeField]
+        private CameraDirector cameraDirector;
 
         [SerializeField]
         private InputService inputService;
@@ -16,15 +22,26 @@ namespace DI.Infrastructure
         {
             BindInputService();
 
-            BindInputCamera();
+            BindCamera();
         }
 
 
-        private void BindInputCamera()
+        private void BindCamera()
         {
-            Container.Bind<CameraMover>()
-                     .FromInstance(cameraMover)
-                     .AsSingle();
+            Container.Bind<Camera>()
+                     .FromInstance(mainCamera)
+                     .AsSingle()
+                     .NonLazy();
+
+            Container.Bind<CameraInputHandler>()
+                     .FromInstance(cameraInputHandler)
+                     .AsSingle()
+                     .NonLazy();
+
+            Container.Bind<CameraDirector>()
+                     .FromInstance(cameraDirector)
+                     .AsSingle()
+                     .NonLazy();
         }
 
 
