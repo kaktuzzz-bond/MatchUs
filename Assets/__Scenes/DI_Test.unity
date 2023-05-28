@@ -400,7 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxDistance: 0.5
-  moveDuration: 1
+  moveDuration: 3
 --- !u!114 &786243651
 MonoBehaviour:
   m_ObjectHideFlags: 0

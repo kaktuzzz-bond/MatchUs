@@ -7,13 +7,12 @@ using Zenject;
 
 namespace DI.Infrastructure
 {
-   
     public class CameraInputHandler : MonoBehaviour
     {
         public event Action<Vector3> OnClearTapDetected;
-        
+
         private Camera _camera;
-        
+
         [SerializeField]
         private float maxDistance;
 
@@ -24,9 +23,11 @@ namespace DI.Infrastructure
 
         private IInputService _inputService;
 
-        private Vector3 _startPosition;
+        private Vector3 _startCameraPosition;
 
         private Vector3 _startTouchPosition;
+
+        private float _startOffset;
 
         private Tween _tween;
 
@@ -38,7 +39,7 @@ namespace DI.Infrastructure
         {
             _inputService = inputService;
             _camera = mainCamera;
-            
+
             _inputService.OnTouchStarted += StartTouch;
             _inputService.OnHoldTriggered += Hold;
             _inputService.OnTapTriggered += Tap;
@@ -52,7 +53,9 @@ namespace DI.Infrastructure
 
             _startTouchPosition = position;
 
-            _startPosition = _camera.transform.position;
+            _startCameraPosition = _camera.transform.position;
+
+            _startOffset = _startCameraPosition.y - _startTouchPosition.y;
 
             _cts = new CancellationTokenSource();
 
@@ -66,7 +69,7 @@ namespace DI.Infrastructure
 
             if (Mathf.Abs(distance) > maxDistance)
             {
-                MoveVertically(distance * MovementMultiplier, moveDuration);
+                MoveVertically(_camera.velocity.y);
 
                 return;
             }
@@ -93,39 +96,34 @@ namespace DI.Infrastructure
 
             Debug.DrawLine(_startTouchPosition, position, Color.red, 3f);
 
-            MoveVertically(_camera.velocity.y, moveDuration);
+            Debug.LogWarning($"Velocity ({_camera.velocity})");
+
+            MoveVertically(_camera.velocity.y);
         }
 
 
         async UniTaskVoid FollowTouchPosition()
         {
-            float offsetY = _startPosition.y - _startTouchPosition.y;
-
-            float velocity = 0f;
-
             while (!_cts.Token.IsCancellationRequested)
             {
-                Vector3 currentCamPos = _camera.transform.position;
+                float currentOffset = _inputService.CurrentInputPosition.y - _startTouchPosition.y;
 
-                currentCamPos.y = Mathf.SmoothDamp(
-                        currentCamPos.y,
-                        _inputService.CurrentInputPosition.y + offsetY,
-                        ref velocity,
-                        0.1f);
+                float targetValue = _startCameraPosition.y - currentOffset;
 
-                _camera.transform.position = currentCamPos;
+                _camera.transform
+                       .DOMoveY(targetValue, 0.1f);
 
                 await UniTask.Yield();
             }
         }
 
 
-        private void MoveVertically(float shift, float duration)
+        private void MoveVertically(float shift)
         {
             float targetY = _camera.transform.position.y + shift;
 
-            _tween = _camera.transform.DOMoveY(targetY, duration)
-                               .SetEase(Ease.OutQuart);
+            _tween = _camera.transform.DOMoveY(targetY, moveDuration)
+                            .SetEase(Ease.OutQuart);
         }
 
 
